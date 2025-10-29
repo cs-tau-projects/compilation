@@ -5,3 +5,6 @@ Repository for all homework in compilation course
 [-] Maxim German <br/>
 [-] Eran Shufaro <br/>
 [-] Ilay Abramovich <br/>
+
+## Test Section
+Rule inforcemnet test - max
