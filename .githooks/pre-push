@@ -1,0 +1,7 @@
+#!/bin/bash
+checkstyle -c .githooks/google_checks.xml src/
+if [ $? -ne 0 ]; then
+  echo "❌ Checkstyle failed. Fix issues before committing."
+  exit 1
+fi
+echo "✅ Checkstyle passed."
