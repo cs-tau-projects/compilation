@@ -1,0 +1,39 @@
+name: Error Prone
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  error-prone:
+    runs-on: ubuntu-latest
+    env:
+      EP_VERSION: 2.28.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK (Error Prone friendly)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Download Error Prone
+        run: |
+          curl -sSL -o error_prone_core.jar \
+            https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/${EP_VERSION}/error_prone_core-${EP_VERSION}.jar
+
+      - name: Compile with Error Prone (fail on diagnostics)
+        run: |
+          mkdir -p out
+          find src -name "*.java" > sources.txt
+          # If you have external deps, add them to -classpath.
+          javac \
+            -J-Xmx2g \
+            -Werror \
+            -XDcompilePolicy=simple \
+            -Xlint:all \
+            -processorpath error_prone_core.jar \
+            -Xplugin:ErrorProne \
+            -d out \
+            @sources.txt
