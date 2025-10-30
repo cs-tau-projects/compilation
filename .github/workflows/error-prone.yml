@@ -1,4 +1,3 @@
-# .github/workflows/error-prone.yml
 name: Error Prone
 on:
   pull_request:
@@ -10,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EP_VERSION: 2.28.0
-      # Exports help EP access internal javac APIs on JDK 17+
       JAVAC_JVM_FLAGS: >-
         -J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
         -J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
@@ -25,22 +23,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
+      - name: Verify javac
+        run: javac -version
 
       - name: Download Error Prone (with dependencies)
         run: |
           curl -sSL -o error_prone_core.jar \
             https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/${EP_VERSION}/error_prone_core-${EP_VERSION}-with-dependencies.jar
 
-      - name: Compile with Error Prone
+      - name: Compile with Error Prone (merge-blocking)
         run: |
           mkdir -p out
           find src -name "*.java" > sources.txt
-          # If you have external deps, add them to -classpath (colon-separated on Linux).
+          # If you have deps, add them to -classpath.
           javac \
             -J-Xmx2g \
             $JAVAC_JVM_FLAGS \
@@ -49,5 +50,8 @@ jobs:
             -Xlint:all \
             -processorpath error_prone_core.jar \
             -Xplugin:ErrorProne \
+
+            # disable only this rule; or remove once you add packages
+            -Xep:DefaultPackage=OFF \  
             -d out \
             @sources.txt
