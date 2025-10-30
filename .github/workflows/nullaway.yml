@@ -1,16 +1,17 @@
-# .github/workflows/error-prone.yml
-name: Error Prone
+# .github/workflows/nullaway.yml
+name: NullAway
 on:
   pull_request:
   push:
     branches: [ main ]
 
 jobs:
-  error-prone:
+  nullaway:
     runs-on: ubuntu-latest
     env:
       EP_VERSION: 2.28.0
-      # Exports help EP access internal javac APIs on JDK 17+
+      NULLAWAY_VERSION: 0.10.24
+      ANNOTATED_PACKAGES: com.yourorg  # ← change me (e.g., edu.tau.compiler)
       JAVAC_JVM_FLAGS: >-
         -J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
         -J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
@@ -31,23 +32,31 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Download Error Prone (with dependencies)
+      - name: Download Error Prone (with deps), NullAway, and JSR-305
         run: |
           curl -sSL -o error_prone_core.jar \
             https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/${EP_VERSION}/error_prone_core-${EP_VERSION}-with-dependencies.jar
+          curl -sSL -o nullaway.jar \
+            https://repo1.maven.org/maven2/com/uber/nullaway/nullaway/${NULLAWAY_VERSION}/nullaway-${NULLAWAY_VERSION}.jar
+          curl -sSL -o jsr305.jar \
+            https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar
 
-      - name: Compile with Error Prone
+      - name: Compile with NullAway (via Error Prone)
         run: |
           mkdir -p out
           find src -name "*.java" > sources.txt
-          # If you have external deps, add them to -classpath (colon-separated on Linux).
+          # If you have external deps, append them to -classpath after jsr305.jar.
           javac \
             -J-Xmx2g \
             $JAVAC_JVM_FLAGS \
             -Werror \
             -XDcompilePolicy=simple \
             -Xlint:all \
-            -processorpath error_prone_core.jar \
+            -classpath jsr305.jar \
+            -processorpath "error_prone_core.jar:nullaway.jar" \
             -Xplugin:ErrorProne \
+            -Xep:NullAway=ERROR \
+            -XepDisableWarningsInGeneratedCode \
+            -XepOpt:NullAway:AnnotatedPackages=${ANNOTATED_PACKAGES} \
             -d out \
             @sources.txt
