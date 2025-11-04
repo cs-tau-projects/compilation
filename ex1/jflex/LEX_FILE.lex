@@ -41,6 +41,10 @@ import java_cup.runtime.*;
 /******************************************************************/
 %cup
 
+/* States */
+%state LINE_COMMENT
+%state BLOCK_COMMENT
+
 /****************/
 /* DECLARATIONS */
 /****************/
@@ -71,10 +75,12 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECLARATIONS */
 /***********************/
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= {LineTerminator} | [ \t\f]
-INTEGER			= 0 | [1-9][0-9]*
-ID				= [a-z]+
+LineTerminator	    = \r|\n|\r\n
+WhiteSpace		    = {LineTerminator} | [ \t\f]
+INTEGER			    = 0 | [1-9][0-9]*
+STRING			    = \"[a-zA-Z]*\"
+ID				    = [a-zA-Z][a-zA-Z0-9]*
+CommentChar         = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-*/.;]
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -94,14 +100,79 @@ ID				= [a-z]+
 
 <YYINITIAL> {
 
+/* Operators */
 "+"					{ return symbol(TokenNames.PLUS);}
 "-"					{ return symbol(TokenNames.MINUS);}
-"PPP"				{ return symbol(TokenNames.TIMES);}
+"*"					{ return symbol(TokenNames.TIMES);}
 "/"					{ return symbol(TokenNames.DIVIDE);}
+
+/* Delimiters */
 "("					{ return symbol(TokenNames.LPAREN);}
 ")"					{ return symbol(TokenNames.RPAREN);}
-{INTEGER}			{ return symbol(TokenNames.NUMBER, Integer.valueOf(yytext()));}
-{ID}				{ return symbol(TokenNames.ID,     yytext());}
+"["					{ return symbol(TokenNames.LBRACK);}
+"]"					{ return symbol(TokenNames.RBRACK);}
+"{"					{ return symbol(TokenNames.LBRACE);}
+"}"					{ return symbol(TokenNames.RBRACE);}
+","					{ return symbol(TokenNames.COMMA);}
+"."					{ return symbol(TokenNames.DOT);}
+";"					{ return symbol(TokenNames.SEMICOLON);}
+
+/* Assignment and Comparison */
+":="				{ return symbol(TokenNames.ASSIGN);}
+"="					{ return symbol(TokenNames.EQ);}
+"<"					{ return symbol(TokenNames.LT);}
+">"					{ return symbol(TokenNames.GT);}
+
+/* Keywords */
+"array"				{ return symbol(TokenNames.ARRAY);}
+"class"				{ return symbol(TokenNames.CLASS);}
+"return"			{ return symbol(TokenNames.RETURN);}
+"while"				{ return symbol(TokenNames.WHILE);}
+"if"				{ return symbol(TokenNames.IF);}
+"else"				{ return symbol(TokenNames.ELSE);}
+"new"				{ return symbol(TokenNames.NEW);}
+"extends"			{ return symbol(TokenNames.EXTENDS);}
+"nil"				{ return symbol(TokenNames.NIL);}
+
+/* Type Keywords */
+"int"				{ return symbol(TokenNames.TYPE_INT);}
+"string"			{ return symbol(TokenNames.TYPE_STRING);}
+"void"				{ return symbol(TokenNames.TYPE_VOID);}
+
+/* Literals and Identifiers */
+{INTEGER}			{
+						int value = Integer.valueOf(yytext());
+						if (value > 32767) {
+							throw new Error("Lexical error: integer out of range at line " + (yyline+1));
+						}
+						return symbol(TokenNames.INT, value);
+					}
+{STRING}			{ return symbol(TokenNames.STRING, yytext());}
+{ID}				{ return symbol(TokenNames.ID, yytext());}
+
+/* Whitespace */
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
+
+/* Comments */
+"//" 				{ yybegin(LINE_COMMENT); }
+"/*"				{ yybegin(BLOCK_COMMENT); }
+
+/* End of File */
 <<EOF>>				{ return symbol(TokenNames.EOF);}
+
+/* Catch-all for invalid tokens */
+[^]					{ throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
+}
+
+<LINE_COMMENT> {
+{CommentChar}*{LineTerminator}      { yybegin(YYINITIAL); }
+<<EOF>>               { return symbol(TokenNames.EOF); }
+[^]                                 { throw new Error("Lexical error: invalid character in comment at line " + (yyline+1)); }
+}
+
+<BLOCK_COMMENT> {
+"*/"				{ yybegin(YYINITIAL); }
+{CommentChar}*      { /* continue in comment */ }
+<<EOF>>             { throw new Error("Lexical error: unclosed comment"); }
+[^]                 { throw new Error("Lexical error: invalid character in comment at line " + (yyline+1)); }
 }
