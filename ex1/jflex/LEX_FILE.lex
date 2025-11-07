@@ -80,7 +80,8 @@ WhiteSpace		    = {LineTerminator} | [ \t\f]
 INTEGER			    = 0 | [1-9][0-9]*
 STRING			    = \"[a-zA-Z]*\"
 ID				    = [a-zA-Z][a-zA-Z0-9]*
-CommentChar         = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-*/.;]
+LineCommentChar     = [a-zA-Z0-9 \t\f()\[\]{}?!+\-*/.;]
+BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -154,8 +155,8 @@ CommentChar         = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-*/.;]
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 
 /* Comments */
-"//" 				{ yybegin(LINE_COMMENT); }
-"/*"				{ yybegin(BLOCK_COMMENT); }
+"//"                { yybegin(LINE_COMMENT); }
+"/*"                { yybegin(BLOCK_COMMENT); }
 
 /* End of File */
 <<EOF>>				{ return symbol(TokenNames.EOF);}
@@ -164,15 +165,18 @@ CommentChar         = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-*/.;]
 [^]					{ throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
 }
 
+
 <LINE_COMMENT> {
-{CommentChar}*{LineTerminator}      { yybegin(YYINITIAL); }
-<<EOF>>               { return symbol(TokenNames.EOF); }
-[^]                                 { throw new Error("Lexical error: invalid character in comment at line " + (yyline+1)); }
+{LineTerminator}    { yybegin(YYINITIAL); }
+{LineCommentChar}   { /* just skip what was found, do nothing */ }
+<<EOF>>             { return symbol(TokenNames.EOF); }
+[^]                 { throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
 }
 
 <BLOCK_COMMENT> {
-"*/"				{ yybegin(YYINITIAL); }
-{CommentChar}*      { /* continue in comment */ }
-<<EOF>>             { throw new Error("Lexical error: unclosed comment"); }
-[^]                 { throw new Error("Lexical error: invalid character in comment at line " + (yyline+1)); }
+"*/"                { yybegin(YYINITIAL); }
+{BlockCommentChar}  { /* just skip what was found, do nothing */ }
+"*"                 { /* just skip what was found, do nothing */ }
+<<EOF>>             { throw new Error("Lexical error: block comment not closed at line " + (yyline+1)); }
+[^]                 { throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
 }

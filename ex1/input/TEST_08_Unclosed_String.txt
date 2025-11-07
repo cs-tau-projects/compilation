@@ -1,0 +1,3 @@
+class
+string s = "sdsdsdsdsd;
+int y = 5;
