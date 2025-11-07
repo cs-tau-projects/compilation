@@ -107,10 +107,15 @@ public class Main
 		catch (Error | Exception e)
 		{
             fileWriter.close();
-            try { fileWriter = new PrintWriter(outputFileName);
-            } catch (Exception e2) {
+
+            try {
+                fileWriter = new PrintWriter(outputFileName);
+            }
+            catch (Exception e2) {
                 e.printStackTrace();
-                return;}
+                return;
+            }
+
             fileWriter.print("ERROR");
             System.out.println(e.getMessage());
 		}
