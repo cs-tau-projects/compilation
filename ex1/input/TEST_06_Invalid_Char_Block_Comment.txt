@@ -1,2 +1,2 @@
 class
-// This comment e,ds abrup...
+/* This comment e,ds abrup... */
