@@ -42,7 +42,6 @@ import java_cup.runtime.*;
 %cup
 
 /* States */
-%state LINE_COMMENT
 %state BLOCK_COMMENT
 
 /****************/
@@ -80,7 +79,7 @@ WhiteSpace		    = {LineTerminator} | [ \t\f]
 INTEGER			    = 0 | [1-9][0-9]*
 STRING			    = \"[a-zA-Z]*\"
 ID				    = [a-zA-Z][a-zA-Z0-9]*
-LineCommentChar     = [a-zA-Z0-9 \t\f()\[\]{}?!+\-*/.;]
+LineCommentRegex    = [a-zA-Z0-9 \t\f()\[\]{}?!+\-*/.;]*
 BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 
 /******************************/
@@ -155,22 +154,14 @@ BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 
 /* Comments */
-"//"                { yybegin(LINE_COMMENT); }
-"/*"                { yybegin(BLOCK_COMMENT); }
+"//"{LineCommentRegex}{LineTerminator}      { /* Ignore Line Comments */ }
+"/*"                                        { yybegin(BLOCK_COMMENT); }
 
 /* End of File */
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 
 /* Catch-all for invalid tokens */
 [^]					{ throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
-}
-
-
-<LINE_COMMENT> {
-{LineTerminator}    { yybegin(YYINITIAL); }
-{LineCommentChar}   { /* just skip what was found, do nothing */ }
-<<EOF>>             { return symbol(TokenNames.EOF); }
-[^]                 { throw new Error("Lexical error: invalid character '" + yytext() + "' at line " + (yyline+1)); }
 }
 
 <BLOCK_COMMENT> {
