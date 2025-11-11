@@ -1,2 +1,2 @@
 class
-// This comment ends abrup...
+// a b c
