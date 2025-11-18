@@ -9,17 +9,16 @@ int IsPrime(int p)
         {
             if (i*j = p)
             {
-                // p is not prime ...
-                return 0;
+                 return 1;
             }
             j := j+1;
         }
         i := i+1;
     }
-    return 1;
+    return 0;
 }
 
-void PrintPrimes(int start, int end)
+void PrintPrimes(int start,)
 {
     int p := 2;
     

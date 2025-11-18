@@ -29,12 +29,12 @@ IntList MergeLists(IntList l1, IntList l2)
         return l3;
     }
     
-    /***************************************************/
-    /* Execution falls off here ... what should we do? */
-    /***************************************************/
+    /**************************************************/
+    /* Execution falls off here ... what should we do */
+    /**************************************************/
 }
 
-void main(void)
+void main()
 {
     IntList a := new IntList;
     IntList b := new IntList;

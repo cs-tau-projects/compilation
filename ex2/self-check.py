@@ -8,14 +8,14 @@ import zipfile
 import socket
 
 SCRIPT_DIR = pathlib.Path(__file__).parent
-EXERCISE_DIR = SCRIPT_DIR / 'ex1'
+EXERCISE_DIR = SCRIPT_DIR / 'ex2'
 
 INPUT_DIR = SCRIPT_DIR / 'tests'
 EXPECTED_OUTPUT_DIR = SCRIPT_DIR / 'expected_output'
-SELF_CHECK_OUTPUT_DIR = SCRIPT_DIR / 'self-check-output'
+SELF_CHECK_OUTPUT_DIR = SCRIPT_DIR / 'self_check_output'
 MAKEFILE_PATH = EXERCISE_DIR / 'Makefile'
 IDS_FILE_PATH = SCRIPT_DIR / 'ids.txt' 
-EXECUTABLE_NAME = "LEXER"
+EXECUTABLE_NAME = "PARSER"
 RESULT_FILE = SCRIPT_DIR / 'self-check-result.csv' 
 
 HOST_NAME = "nova"
@@ -28,15 +28,18 @@ def remove_if_exists(path_obj):
             else:
                 os.remove(str(path_obj))
     except OSError as e:
-        print(f"Error removing {path_obj}: {e}")
+        print(f"Error removing {path_obj.name}: {e}")
+
 
 def ensure_exists(path_obj, is_file=True):
     if not path_obj.exists():
         if is_file:
-            print(f"FATAL ERROR: Required file not found: {path_obj}")
-        else:
-            print(f"FATAL ERROR: Required directory not found: {path_obj}")
+            print(f"FATAL ERROR: Required file not found: {path_obj.name}")
             raise RuntimeError("Missing required file/directory.")
+        else:
+            print(f"FATAL ERROR: Required directory not found: {path_obj.name}")
+            raise RuntimeError("Missing required file/directory.")
+
 
 def unzip_single_archive():
     zip_files = [f for f in SCRIPT_DIR.glob("*.zip") if f.stem.isdigit()]
@@ -49,7 +52,8 @@ def unzip_single_archive():
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:
         zip_ref.extractall(SCRIPT_DIR)
         print("Unzip complete.")
-    
+
+ 
 def setup_self_check():
     print("--- 1. Validating project structure ---")
     ensure_exists(MAKEFILE_PATH)
@@ -84,42 +88,6 @@ def setup_self_check():
     os.makedirs(str(SELF_CHECK_OUTPUT_DIR), exist_ok=True)
     
     return SELF_CHECK_OUTPUT_DIR, executable_file
-    
-def run_test(test_path, output_dir, executable_file):
-    output_path = output_dir / test_path.name
-    
-    process = subprocess.run(
-        ["java", "-jar", str(executable_file.resolve()), str(test_path.resolve()), str(output_path)],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE 
-    )
-    
-    if not output_path.exists():
-        print("FAILED")
-        raise RuntimeError("Output file was not created.")
-        
-    expected_output_path = EXPECTED_OUTPUT_DIR / f"{test_path.stem}.txt"
-    if not expected_output_path.exists():
-        print("FAILED")
-        raise RuntimeError(f"Expected output file not found: {expected_output_path}")
-    
-    with open(str(output_path), 'r') as f1, open(str(expected_output_path), 'r') as f2:
-        content1 = f1.read()
-        content2 = f2.read()
-        
-        if content1 == content2:
-            print("OK")
-        else:
-            print("FAILED")
-            raise RuntimeError(f"Failed test {test_path.name}.")
- 
-def run_all_tests(output_dir, executable_file):
-    print("--- 3. Running all tests ---")
-    for test_path in sorted(INPUT_DIR.glob("*.txt")):
-        if not test_path.name.endswith('.txt'):
-            continue
-        print(f"Running {test_path.name}...", end="")
-        run_test(test_path, output_dir, executable_file)
-        print("--- All tests passed ---")
 
 
 def run_test(test_path, output_dir, executable_file):
@@ -139,7 +107,7 @@ def run_test(test_path, output_dir, executable_file):
         print(f"FAILED (Output file missing)")
         raise RuntimeError("Output file was not created.")
 
-    expected_output_path = EXPECTED_OUTPUT_DIR / f"{test_path.stem}.txt"
+    expected_output_path = EXPECTED_OUTPUT_DIR / f"{test_path.stem}_Expected_Output.txt"
     if not expected_output_path.exists():
         print(f"FAILED (Expected output file missing)")
         raise RuntimeError(f"Expected output file not found")
@@ -153,16 +121,17 @@ def run_test(test_path, output_dir, executable_file):
             print("FAILED")
             raise RuntimeError("Test failed") 
 
+
 def run_all_tests(output_dir, executable_file):
     print("--- 3. Running all tests ---")
     failed = []
 
     for test_path in sorted(INPUT_DIR.glob("*.txt")):
-        print(f"Running {test_path} ... ", end="")
+        print(f"Running {test_path.stem} ... ", end="")
         try:
             run_test(test_path, output_dir, executable_file)
         except RuntimeError as e:
-            failed.append((test_path.name, str(e)))
+            failed.append((test_path.stem, str(e)))
 
     print("--- 4. Test summary ---")
     total = len(list(INPUT_DIR.glob("*.txt")))
@@ -177,7 +146,6 @@ def run_all_tests(output_dir, executable_file):
         raise RuntimeError(f"{len(failed)} test(s) failed.")
 
     print("All tests passed")
-
 
 
 def main():
