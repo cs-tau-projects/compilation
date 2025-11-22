@@ -69,6 +69,10 @@ terminal RBRACE;
 terminal SEMICOLON;
 terminal ASSIGN;
 
+terminal TYPE_INT;
+terminal TYPE_STRING;
+terminal TYPE_VOID;
+
 /*************/
 /* TERMINALS */
 /*************/
@@ -100,6 +104,12 @@ start with stmtList;
 /* DERIVATION RULES */
 /********************/
 
+type		::=		TYPE_INT		{: RESULT = new AstType(AstType.TYPE_INT);     	:}
+                	| TYPE_STRING	{: RESULT = new AstType(AstType.TYPE_STRING);   :}
+                	| TYPE_VOID		{: RESULT = new AstType(AstType.TYPE_VOID);     :}
+                	| ID:name		{: RESULT = new AstType(name);             		:}
+                	;
+
 stmtList	::=		stmt:s	stmtList:l		{: RESULT = new AstStmtList(s,l);    :}
 					| stmt:s				{: RESULT = new AstStmtList(s,null); :}
 					;
@@ -118,4 +128,11 @@ exp			::=		INT:i								{: RESULT = new AstExpInt(i);          :}
 					| var:v								{: RESULT = new AstExpVar(v);          :}
 					| exp:e1 PLUS  exp:e2				{: RESULT = new AstExpBinop(e1, e2, 0);:}
 					| exp:e1 MINUS exp:e2				{: RESULT = new AstExpBinop(e1, e2, 1);:}
+					;
+
+newExp		::=		NEW type:t							{: RESULT = new AstType(t);			   :}
+					| NEW type:t LBRACK exp:i RBRACK	{: RESULT = new AstTypeExp(t, e);	   :}
+					;
+
+arrayTypeDef 	::=	ARRAY ID EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AstArrayTypeDef(t)}
 					;
