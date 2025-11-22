@@ -17,7 +17,7 @@ MANIFEST_DIR      = ${BASEDIR}/manifest
 JFlex_GENERATED_FILE      = ${SRC_DIR}/Lexer.java
 CUP_GENERATED_FILES       = ${SRC_DIR}/Parser.java ${SRC_DIR}/TokenNames.java
 JFlex_CUP_GENERATED_FILES = ${JFlex_GENERATED_FILE} ${CUP_GENERATED_FILES}
-SRC_FILES                 = ${SRC_DIR}/*.java ${SRC_DIR}/*/*.java
+SRC_FILES                 = "${SRC_DIR}"/*.java "${SRC_DIR}"/*/*.java
 EXTERNAL_JAR_FILES        = ${EXTERNAL_JARS_DIR}/java-cup-11b-runtime.jar
 MANIFEST_FILE             = ${MANIFEST_DIR}/MANIFEST.MF
 
@@ -32,7 +32,7 @@ JFlex_FILE     = ${JFlex_DIR}/LEX_FILE.lex
 ######################
 # DEFINITIONS :: CUP #
 ######################
-CUP_PROGRAM                    = java -jar ${EXTERNAL_JARS_DIR}/java-cup-11b.jar 
+CUP_PROGRAM                    = java -jar "${EXTERNAL_JARS_DIR}/java-cup-11b.jar" 
 CUP_FILE                       = ${CUP_DIR}/CUP_FILE.cup
 CUP_GENERATED_PARSER_NAME      = Parser
 CUP_GENERATED_SYMBOLS_FILENAME = TokenNames
@@ -75,7 +75,7 @@ all:
 	@echo "*     TokenNames.java                                      *"
 	@echo "*                                                          *"
 	@echo "************************************************************"
-	rm -rf ${JFlex_CUP_GENERATED_FILES} ${BIN_DIR}/*.class ${BIN_DIR}/*/*.class
+	rm -rf "${JFlex_CUP_GENERATED_FILES}" "${BIN_DIR}"/*.class "${BIN_DIR}"/*/*.class
 	@echo "\n"
 	@echo "************************************************************"
 	@echo "*                                                          *"
@@ -84,7 +84,7 @@ all:
 	@echo "*                                                          *"
 	@echo "*                                                          *"
 	@echo "************************************************************"
-	$(JFlex_PROGRAM) ${JFlex_FLAGS} -d ${JFlex_DEST_DIR} ${JFlex_FILE}
+	"$(JFlex_PROGRAM)" "${JFlex_FLAGS}" -d "${JFlex_DEST_DIR}" "${JFlex_FILE}"
 	@echo "\n"
 	@echo "*******************************************************************************"
 	@echo "*                                                                             *"
@@ -93,7 +93,7 @@ all:
 	@echo "*                                                                             *"
 	@echo "*                                                                             *"
 	@echo "*******************************************************************************"
-	$(CUP_PROGRAM) ${CUP_FLAGS} -destdir ${SRC_DIR} ${CUP_FILE}
+	$(CUP_PROGRAM) ${CUP_FLAGS} -destdir "${SRC_DIR}" "${CUP_FILE}"
 	@echo "\n"
 	@echo "********************************************************"
 	@echo "*                                                      *"
@@ -102,8 +102,8 @@ all:
 	@echo "*                                                      *"
 	@echo "*                                                      *"
 	@echo "********************************************************"
-	mkdir -p ${BIN_DIR}
-	javac -cp ${EXTERNAL_JAR_FILES} -d ${BIN_DIR} ${SRC_FILES}
+	mkdir -p "${BIN_DIR}"
+	javac -cp "${EXTERNAL_JAR_FILES}" -d "${BIN_DIR}" ${SRC_FILES}
 	@echo "\n"
 	@echo "***********************************************************"
 	@echo "*                                                         *"
@@ -112,7 +112,7 @@ all:
 	@echo "*                                                         *"
 	@echo "*                                                         *"
 	@echo "***********************************************************"
-	jar cfm PARSER ${MANIFEST_FILE} -C ${BIN_DIR} .
+	jar cfm PARSER "${MANIFEST_FILE}" -C "${BIN_DIR}" .
 
 debug: all
 	@echo "\n"
@@ -123,7 +123,7 @@ debug: all
 	@echo "*                           *"
 	@echo "*                           *"
 	@echo "*****************************"
-	java -jar PARSER ${INPUT} ${OUTPUT}
+	java -jar PARSER "${INPUT}" "${OUTPUT}"
 	@echo "\n"
 	@echo "***************************************"
 	@echo "*                                     *"
@@ -132,7 +132,7 @@ debug: all
 	@echo "*                                     *"
 	@echo "*                                     *"
 	@echo "***************************************"
-	dot -Tjpeg -o${OUTPUT_DIR}/ast.jpeg ${OUTPUT_DIR}/AST_IN_GRAPHVIZ_DOT_FORMAT.txt
+	dot -Tjpeg -o$"{OUTPUT_DIR}/ast.jpeg" "${OUTPUT_DIR}/AST_IN_GRAPHVIZ_DOT_FORMAT.txt"
 	@echo "\n"
 	@echo "************************************************"
 	@echo "*                                              *"
@@ -141,4 +141,4 @@ debug: all
 	@echo "*                                              *"
 	@echo "*                                              *"
 	@echo "************************************************"
-	eog ${OUTPUT_DIR}/ast.jpeg &
+	eog "${OUTPUT_DIR}/ast.jpeg" &
