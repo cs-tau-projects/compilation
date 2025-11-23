@@ -15,7 +15,7 @@ public class AstTypeExp extends AstNode
 
     public void printMe()
     {
-        System.out.print("TYPE EXP:\n");
+        serialNumber = AstNode.getFreshSerialNumber();
         t.printMe();
         e.printMe();
     }

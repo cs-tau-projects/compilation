@@ -3,48 +3,21 @@ import java.io.PrintWriter;
 
 public class AstType extends AstNode
 {
-	public static final int TYPE_INT = 0;
-	public static final int TYPE_STRING = 1;
-	public static final int TYPE_VOID = 2;
+	public static final String INT_TYPE = "int";
+	public static final String STRING_TYPE = "string";
+	public static final String VOID_TYPE = "void";
 
-	public int type;
-	public String className;
-	
-	// Constructor for built-in types (TYPE_INT, TYPE_STRING, TYPE_VOID)
-	public AstType(int type)
+	String typeName; // has to be one of the above or an identifier name
+
+	public AstType(String typeName)
 	{
-		this.type = type;
-		this.className = null;
+		serialNumber = AstNode.getFreshSerialNumber();
+		this.typeName = typeName;
 	}
-	
-	// Constructor for custom class types
-	public AstType(String className)
-	{
-		this.type = -1; // -1 indicates a identifier
-		this.className = className;
+
+	@Override
+	public void printMe(){
+		System.out.format("AST TYPE NODE: %s\n", typeName);
 	}
-	
-	public void printMe()
-	{
-		if (className != null) {
-			System.out.print("TYPE: " + className + "\n");
-		} else {
-			String typeName = "";
-			switch(type)
-			{
-				case TYPE_INT:
-					typeName = "INT";
-					break;
-				case TYPE_STRING:
-					typeName = "STRING";
-					break;
-				case TYPE_VOID:
-					typeName = "VOID";
-					break;
-				default:
-					typeName = "IDENTIFIER";
-			}
-			System.out.print("TYPE: " + typeName + "\n");
-		}
-	}
+
 }

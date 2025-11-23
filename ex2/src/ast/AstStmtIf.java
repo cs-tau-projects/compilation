@@ -10,6 +10,7 @@ public class AstStmtIf extends AstStmt
 	/*******************/
 	public AstStmtIf(AstExp cond, AstStmtList body)
 	{
+		serialNumber = AstNode.getFreshSerialNumber();
 		this.cond = cond;
 		this.body = body;
 	}
