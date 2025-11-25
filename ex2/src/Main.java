@@ -7,15 +7,15 @@ public class Main
 {
 	static public void main(String argv[])
 	{
-		Lexer l;
+		Lexer l = null;
 		Parser p;
 		Symbol s;
-		AstStmtList ast;
+		AstNode ast;
 		FileReader fileReader;
-		PrintWriter fileWriter;
+		PrintWriter fileWriter = null;
 		String inputFileName = argv[0];
 		String outputFileName = argv[1];
-		
+
 		try
 		{
 			/********************************/
@@ -27,41 +27,72 @@ public class Main
 			/* [2] Initialize a file writer */
 			/********************************/
 			fileWriter = new PrintWriter(outputFileName);
-			
+
 			/******************************/
 			/* [3] Initialize a new lexer */
 			/******************************/
 			l = new Lexer(fileReader);
-			
+
 			/*******************************/
 			/* [4] Initialize a new parser */
 			/*******************************/
 			p = new Parser(l);
 
 			/***********************************/
-			/* [5] 3 ... 2 ... 1 ... Parse !!! */
+			/* [5] Parse the input file */
 			/***********************************/
-			ast = (AstStmtList) p.parse().value;
-			
+			ast = (AstNode) p.parse().value;
+
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
 			ast.printMe();
-			
+
+			/********************************/
+			/* [7] Write OK to output file  */
+			/********************************/
+			fileWriter.print("OK");
+
 			/*************************/
-			/* [7] Close output file */
+			/* [8] Close output file */
 			/*************************/
 			fileWriter.close();
-			
+
 			/*************************************/
-			/* [8] Finalize AST GRAPHIZ DOT file */
+			/* [9] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
     	}
-			     
+
+		catch (Error e)
+		{
+			// Lexical errors throw Error
+			e.printStackTrace();
+			try {
+				if (fileWriter != null) {
+					fileWriter.close();
+					fileWriter = new PrintWriter(outputFileName);
+					fileWriter.print("ERROR");
+					fileWriter.close();
+				}
+			} catch (Exception ex) {
+				// ignore
+			}
+		}
 		catch (Exception e)
 		{
+			// Syntax errors throw RuntimeException
 			e.printStackTrace();
+			try {
+				if (fileWriter != null) {
+					fileWriter.close();
+					fileWriter = new PrintWriter(outputFileName);
+					fileWriter.print("ERROR(" + l.getLine() + ")");
+					fileWriter.close();
+				}
+			} catch (Exception ex) {
+				// ignore
+			}
 		}
 	}
 }

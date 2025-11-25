@@ -1,0 +1,4 @@
+int x;
+/* This is an unclosed comment
+int y;
+

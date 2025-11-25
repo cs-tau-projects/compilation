@@ -7,17 +7,18 @@ public class AstType extends AstNode
 	public static final String STRING_TYPE = "string";
 	public static final String VOID_TYPE = "void";
 
-	String typeName; // has to be one of the above or an identifier name
+	public String typeName; // has to be one of the above or an identifier name
 
 	public AstType(String typeName)
 	{
-		serialNumber = AstNode.getFreshSerialNumber();
+		serialNumber = AstNodeSerialNumber.getFresh();
 		this.typeName = typeName;
 	}
 
 	@Override
 	public void printMe(){
 		System.out.format("AST TYPE NODE: %s\n", typeName);
+		AstGraphviz.getInstance().logNode(serialNumber, String.format("TYPE\n%s", typeName));
 	}
 
 }

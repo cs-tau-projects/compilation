@@ -1,20 +1,23 @@
 package ast;
 
 public class AstParametersList extends AstNode{
-    AstParam param;
-    List<AstParam> params;
+    public AstParam head;
+    public AstParametersList tail;
 
-    public AstParametersList(AstParam param, AstParametersList params){
-        serialNumber = AstNode.getFreshSerialNumber();
-        this.param = param;
-        this.params = params;
+    public AstParametersList(AstParam head, AstParametersList tail){
+        serialNumber = AstNodeSerialNumber.getFresh();
+        this.head = head;
+        this.tail = tail;
     }
 
     public void printMe(){
         System.out.format("AST PARAMETERS LIST NODE:\n");
-        param.printMe();
-        if (params != null) {
-            params.printMe();
-        }
+        if (head != null) head.printMe();
+        if (tail != null) tail.printMe();
+
+        AstGraphviz.getInstance().logNode(serialNumber, "PARAMS\nLIST");
+
+        if (head != null) AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
+        if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
     }
 }

@@ -8,12 +8,20 @@ public abstract class AstNode
 	/* a graphviz dot format of the AST ...    */
 	/*******************************************/
 	public int serialNumber;
-	
+
 	/***********************************************/
 	/* The default message for an unknown AST node */
 	/***********************************************/
 	public void printMe()
 	{
 		System.out.print("AST NODE UNKNOWN\n");
+	}
+
+	/**********************************/
+	/* GET A UNIQUE SERIAL NUMBER ... */
+	/**********************************/
+	public static int getFreshSerialNumber()
+	{
+		return AstNodeSerialNumber.getFresh();
 	}
 }
