@@ -89,13 +89,14 @@ terminal String ID;
 /*****************/
 
 non terminal AstDec 			dec;
-non terminal AstDecClass		decClass;
-non terminal AstDecVar 			decVar;
-non terminal AstFuncDec			decFunc;
+non terminal AstDecClass		classDec;
+non terminal AstDecVar 			varDec;
+non terminal AstFuncDec			funcDec;
 non terminal AstParam			param;
 non terminal AstParametersList	parametersList;
 
 non terminal AstExp 			exp;
+non terminal AstExpNew			newExp;
 non terminal AstVar 			var;
 non terminal AstStmt 			stmt;
 non terminal AstStmtList 		stmtList;
@@ -118,10 +119,9 @@ start with stmtList;
 /* DERIVATION RULES */
 /********************/
 
-
-dec			::= 	decVar:v 			{:RESULT = new AstDec(v);		:}
-					| decFunc:f			{:RESULT = new AstDec(f);		:}
-					| decClass:c 		{:RESULT = new AstDec(c);		:}
+dec			::= 	varDec:v 			{:RESULT = new AstDec(v);		:}
+					| funcDec:f			{:RESULT = new AstDec(f);		:}
+					| classDec:c 		{:RESULT = new AstDec(c);		:}
 					| array:a 			{:RESULT = new AstDec(a);			:}
 					;
 
