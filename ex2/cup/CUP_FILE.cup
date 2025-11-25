@@ -90,8 +90,8 @@ terminal String ID;
 
 non terminal AstDec 			dec;
 non terminal AstDecClass		classDec;
-non terminal AstDecVar 			varDec;
-non terminal AstFuncDec			funcDec;
+non terminal AstDecVar 			DecVar;
+non terminal AstDecFunc			DecFunc;
 non terminal AstParam			param;
 non terminal AstParametersList	parametersList;
 
@@ -101,7 +101,7 @@ non terminal AstVar 			var;
 non terminal AstStmt 			stmt;
 non terminal AstStmtList 		stmtList;
 non terminal AstType 			type;
-non terminal AstArrayTypeDef 	array;
+non terminal AstArrayTypedef 	array;
 
 /***********************/
 /* OPERATOR PRECEDENCE */
@@ -119,8 +119,8 @@ start with stmtList;
 /* DERIVATION RULES */
 /********************/
 
-dec			::= 	varDec:v 			{:RESULT = new AstDec(v);		:}
-					| funcDec:f			{:RESULT = new AstDec(f);		:}
+dec			::= 	DecVar:v 			{:RESULT = new AstDec(v);		:}
+					| DecFunc:f			{:RESULT = new AstDec(f);		:}
 					| classDec:c 		{:RESULT = new AstDec(c);		:}
 					| array:a 			{:RESULT = new AstDec(a);			:}
 					;
@@ -131,13 +131,13 @@ type		::=		TYPE_INT		{: RESULT = new AstType(AstType.TYPE_INT);     	:}
                 	| ID:name		{: RESULT = new AstType(name);             		:}
                 	;
 
-varDec		::=		type:t ID:i SEMICOLON 					{: RESULT = new AstVarDec(i, t);				:}
-					| type:t ID:i ASSIGN exp:e SEMICOLON	{: RESULT = new AstVarDec(i, t, e);				:}
-					| type:t ID:i ASSIGN newExp:e SEMICOLON {: RESULT = new AstVarDec(i, t, e);				:}
+DecVar		::=		type:t ID:i SEMICOLON 					{: RESULT = new AstDecVar(i, t);				:}
+					| type:t ID:i ASSIGN exp:e SEMICOLON	{: RESULT = new AstDecVar(i, t, e);				:}
+					| type:t ID:i ASSIGN newExp:e SEMICOLON {: RESULT = new AstDecVar(i, t, e);				:}
 					;
 
-funcDec		::=		type:t ID:i LPAREN RPAREN LBRACE stmtList:s RBRACE {: RESULT = new AstFuncDec(t, i, null, s);					:}
-					| type:t ID:i LPAREN parametersList:p RPAREN LBRACE stmtList:s RBRACE {: RESULT = new AstFuncDec(t, i, p, s);	:}
+funcDec		::=		type:t ID:i LPAREN RPAREN LBRACE stmtList:s RBRACE {: RESULT = new AstDecFunc(t, i, null, s);					:}
+					| type:t ID:i LPAREN parametersList:p RPAREN LBRACE stmtList:s RBRACE {: RESULT = new AstDecFunc(t, i, p, s);	:}
 					;
 
 parametersList  ::=	type:t ID:i COMMA parametersList:o {: RESULT = new AstParametersList(AstParam(t, i), o);		:}
@@ -163,9 +163,9 @@ exp			::=		INT:i								{: RESULT = new AstExpInt(i);          :}
 					| exp:e1 MINUS exp:e2				{: RESULT = new AstExpBinop(e1, e2, 1);:}
 					;
 
-newExp		::=		NEW type:t							{: RESULT = new AstType(t);			   :}
-					| NEW type:t LBRACK exp:i RBRACK	{: RESULT = new AstTypeExp(t, e);	   :}
+newExp		::=		NEW type:t							{: RESULT = new AstType(t);	:}
+					| NEW type:t LBRACK exp:e RBRACK	{: RESULT = new AstTypeExp(t, e);	   :}
 					;
 
-arrayTypeDef 	::=	ARRAY ID EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AstArrayTypeDef(t);}
+arrayTypedef 	::=	ARRAY ID EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AstArrayTypedef(t);}
 					;

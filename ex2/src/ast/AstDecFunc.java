@@ -5,10 +5,12 @@ public class AstDecFunc extends AstNode
 {
     public AstType returnType;
     public String funcName;
-    public AstDecList params;
-    public AstStmts body;
-
-    public AstDecFunc(AstType returnType, String funcName, AstDecList params, AstStmts body)
+    /* below was: "public AstDecList params; public AstStmts body;" - But arams are stored as AstDecList,but CUP produces AstParametersList. 
+    Body is stored as AstStmts (we dont even have this class), but CUP produces AstStmtList. */
+    public AstParametersList params;   
+    public AstStmtList body;           
+    /*changed below as well, was declared the wrong types as above... (AstDecList params and AstStmts body) */
+    public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body)
     {
         serialNumber = AstNode.getFreshSerialNumber();
         this.returnType = returnType;

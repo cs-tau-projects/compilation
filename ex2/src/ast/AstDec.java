@@ -4,9 +4,10 @@ public class AstDec extends AstNode
 {
     public AstNode decNode;
 
-    public AstDec(AstNode decFunc) {
+    /* was public AstDec(AstNode decFunc) - changed because we store the child in decNode not in decfunc (idk why it was written before) */
+    public AstDec(AstNode decNode) {
         serialNumber = AstNode.getFreshSerialNumber();
-        this.decFunc = decFunc;
+        this.decNode = decNode;
     }
 
     public void printMe() {

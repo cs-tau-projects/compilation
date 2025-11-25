@@ -2,7 +2,8 @@ package ast;
 
 import java.io.PrintWriter;
 
-public class AstTypeExp extends AstNode
+/* changed from: public class AstTypeExp extends AstNode - type missmatch*/
+public class AstTypeExp extends AstExp
 {
     public AstType t;
     public AstExp  e;
