@@ -56,6 +56,7 @@ public class Main
 			/*************************/
 			/* [8] Close output file */
 			/*************************/
+			fileWriter.flush();
 			fileWriter.close();
 
 			/*************************************/
