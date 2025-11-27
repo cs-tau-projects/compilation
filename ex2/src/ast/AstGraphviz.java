@@ -1,6 +1,8 @@
 package ast;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.io.IOException;
 
 public class AstGraphviz
 {
@@ -34,6 +36,10 @@ public class AstGraphviz
 			try
 			{
 				String dirname="./output/";
+				File dir = new File(dirname);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
 				String filename="AST_IN_GRAPHVIZ_DOT_FORMAT.txt";
 				instance.fileWriter = new PrintWriter(dirname+filename);
 			}
