@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstExpString extends AstExp
 {
 	public String value;
@@ -21,6 +23,11 @@ public class AstExpString extends AstExp
 	{
 		System.out.format("AST NODE STRING( %s )\n", value);
 		AstGraphviz.getInstance().logNode(serialNumber, String.format("STRING(%s)", value));
+	}
+
+	public Type semantMe()
+	{
+		return TypeString.getInstance();
 	}
 }
 

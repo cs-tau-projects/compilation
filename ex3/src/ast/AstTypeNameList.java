@@ -1,46 +1,38 @@
 package ast;
+
 import types.*;
 
-public class AstStmtList extends AstNode
+public class AstTypeNameList extends AstNode
 {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
-	public AstStmt head;
-	public AstStmtList tail;
-
+	public AstTypeName head;
+	public AstTypeNameList tail;
+	
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstStmtList(AstStmt head, AstStmtList tail)
+	public AstTypeNameList(AstTypeName head, AstTypeNameList tail)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		if (tail != null) System.out.print("====================== stmts -> stmt stmts\n");
-		if (tail == null) System.out.print("====================== stmts -> stmt      \n");
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.head = head;
 		this.tail = tail;
 	}
 
 	/******************************************************/
-	/* The printing message for a statement list AST node */
+	/* The printing message for a type name list AST node */
 	/******************************************************/
 	public void printMe()
 	{
 		/**************************************/
-		/* AST NODE TYPE = AST STATEMENT LIST */
+		/* AST NODE TYPE = AST TYPE NAME LIST */
 		/**************************************/
-		System.out.print("AST NODE STMT LIST\n");
+		System.out.print("AST TYPE NAME LIST\n");
 
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
@@ -53,7 +45,7 @@ public class AstStmtList extends AstNode
 		/**********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"STMT\nLIST\n");
+			"TYPE-NAME\nLIST\n");
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
@@ -62,11 +54,19 @@ public class AstStmtList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
 	}
 
-	public Type semantMe()
+	public TypeList semantMe()
 	{
-		if (head != null) head.semantMe();
-		if (tail != null) tail.semantMe();
-		
-		return null;
+		if (tail == null)
+		{
+			return new TypeList(
+				head.semantMe(),
+				null);
+		}
+		else
+		{
+			return new TypeList(
+				head.semantMe(),
+				tail.semantMe());
+		}
 	}
 }

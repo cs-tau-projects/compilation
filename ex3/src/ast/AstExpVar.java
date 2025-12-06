@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstExpVar extends AstExp
 {
 	public AstVar var;

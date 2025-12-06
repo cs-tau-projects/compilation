@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstDec extends AstNode
 {
     public AstNode decNode;
@@ -16,4 +18,12 @@ public class AstDec extends AstNode
         AstGraphviz.getInstance().logNode(serialNumber, "DEC");
         if (decNode != null) AstGraphviz.getInstance().logEdge(serialNumber, decNode.serialNumber);
     }
+
+    /***********************************************/
+	/* The default semantic action for an AST node */
+	/***********************************************/
+	public Type semantMe()
+	{
+		return null;
+	}
 }

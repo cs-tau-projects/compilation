@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstStmtVarDec extends AstStmt
 {
 	public AstDecVar varDec;
@@ -26,6 +28,11 @@ public class AstStmtVarDec extends AstStmt
 		AstGraphviz.getInstance().logNode(serialNumber, "VAR DEC\nSTMT");
 		
 		if (varDec != null) AstGraphviz.getInstance().logEdge(serialNumber, varDec.serialNumber);
+	}
+
+	public Type semantMe()
+	{
+		return varDec.semantMe();
 	}
 }
 
