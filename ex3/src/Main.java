@@ -13,10 +13,10 @@ public class Main
 		Symbol s;
 		AstDecList ast;
 		FileReader fileReader;
-		PrintWriter fileWriter;
+		PrintWriter fileWriter = null;
 		String inputFileName = argv[0];
 		String outputFileName = argv[1];
-		
+
 		try
 		{
 			/********************************/
@@ -28,12 +28,12 @@ public class Main
 			/* [2] Initialize a file writer */
 			/********************************/
 			fileWriter = new PrintWriter(outputFileName);
-			
+
 			/******************************/
 			/* [3] Initialize a new lexer */
 			/******************************/
 			l = new Lexer(fileReader);
-			
+
 			/*******************************/
 			/* [4] Initialize a new parser */
 			/*******************************/
@@ -43,7 +43,7 @@ public class Main
 			/* [5] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
 			ast = (AstDecList) p.parse().value;
-			
+
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
@@ -53,10 +53,12 @@ public class Main
 			/* [7] Semant the AST ... */
 			/**************************/
 			ast.semantMe();
-			
-			/*************************/
-			/* [8] Close output file */
-			/*************************/
+
+			/******************************************/
+			/* [8] If we got here, semantic analysis */
+			/*     was successful - write OK         */
+			/******************************************/
+			fileWriter.print("OK");
 			fileWriter.close();
 
 			/*************************************/
@@ -64,10 +66,43 @@ public class Main
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
     	}
-			     
+		catch (SemanticException e)
+		{
+			/********************************************/
+			/* Semantic error - write ERROR(line) to   */
+			/* output file and exit                     */
+			/********************************************/
+			try
+			{
+				if (fileWriter != null)
+				{
+					fileWriter.print("ERROR(" + e.getLineNumber() + ")");
+					fileWriter.close();
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			/********************************************/
+			/* Lexical or syntax error - write ERROR   */
+			/* to output file                           */
+			/********************************************/
+			try
+			{
+				if (fileWriter != null)
+				{
+					fileWriter.print("ERROR");
+					fileWriter.close();
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 		}
 	}
 }

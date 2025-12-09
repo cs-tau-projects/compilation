@@ -19,13 +19,19 @@ import types.*;
 public class SymbolTable
 {
 	private int hashArraySize = 13;
-	
+
 	/**********************************************/
 	/* The actual symbol table data structure ... */
 	/**********************************************/
 	private SymbolTableEntry[] table = new SymbolTableEntry[hashArraySize];
 	private SymbolTableEntry top;
 	private int topIndex = 0;
+
+	/************************************************************/
+	/* Track the current function's return type for validation */
+	/* of return statements                                     */
+	/************************************************************/
+	private Type currentFunctionReturnType = null;
 	
 	/**************************************************************/
 	/* A very primitive hash function for exposition purposes ... */
@@ -271,5 +277,21 @@ public class SymbolTable
 			
 		}
 		return instance;
+	}
+
+	/****************************************************************/
+	/* Set the current function return type (when entering a func) */
+	/****************************************************************/
+	public void setCurrentFunctionReturnType(Type returnType)
+	{
+		this.currentFunctionReturnType = returnType;
+	}
+
+	/****************************************************************/
+	/* Get the current function return type (for return statements)*/
+	/****************************************************************/
+	public Type getCurrentFunctionReturnType()
+	{
+		return this.currentFunctionReturnType;
 	}
 }

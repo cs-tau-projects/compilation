@@ -33,36 +33,57 @@ public class AstDecVar extends AstNode {
         if (exp != null) AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
     }
 
-    public Type semantMe()
+    public Type semantMe() throws SemanticException
 	{
 		Type t;
-	
+
 		/****************************/
 		/* [1] Check If Type exists */
 		/****************************/
-		t = SymbolTable.getInstance().find(type);
+		t = SymbolTable.getInstance().find(type.typeName);
 		if (t == null)
 		{
-			System.out.format(">> ERROR [%d:%d] non existing type %s\n",2,2,type);
-			System.exit(0);
+			throw new SemanticException("non existing type " + type.typeName, lineNumber);
 		}
-		
-		/**************************************/
-		/* [2] Check That Name does NOT exist */
-		/**************************************/
-		if (SymbolTable.getInstance().find(name) != null)
+
+		/******************************************/
+		/* [2] Check that type is not void        */
+		/******************************************/
+		if (t instanceof TypeVoid)
 		{
-			System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",2,2,name);				
+			throw new SemanticException("variable cannot have void type", lineNumber);
+		}
+
+		/**************************************/
+		/* [3] Check That Name does NOT exist */
+		/* in current scope                   */
+		/**************************************/
+		if (SymbolTable.getInstance().find(id) != null)
+		{
+			throw new SemanticException("variable " + id + " already exists in scope", lineNumber);
+		}
+
+		/********************************************************/
+		/* [4] If there's initialization, check type compatibility */
+		/********************************************************/
+		if (exp != null)
+		{
+			Type expType = exp.semantMe();
+
+			if (!TypeUtils.canAssignType(t, expType))
+			{
+				throw new SemanticException("type mismatch in variable initialization", lineNumber);
+			}
 		}
 
 		/************************************************/
-		/* [3] Enter the Identifier to the Symbol Table */
+		/* [5] Enter the Identifier to the Symbol Table */
 		/************************************************/
-		SymbolTable.getInstance().enter(name,t);
+		SymbolTable.getInstance().enter(id, t);
 
 		/************************************************************/
-		/* [4] Return value is irrelevant for variable declarations */
+		/* [6] Return value is irrelevant for variable declarations */
 		/************************************************************/
-		return null;		
+		return null;
 	}
 }
