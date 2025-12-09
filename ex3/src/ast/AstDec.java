@@ -6,7 +6,6 @@ public class AstDec extends AstNode
 {
     public AstNode decNode;
 
-    /* was public AstDec(AstNode decFunc) - changed because we store the child in decNode not in decfunc (idk why it was written before) */
     public AstDec(AstNode decNode) {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.decNode = decNode;
@@ -22,8 +21,15 @@ public class AstDec extends AstNode
     /***********************************************/
 	/* The default semantic action for an AST node */
 	/***********************************************/
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
+		/******************************************/
+		/* Delegate to the actual declaration node */
+		/******************************************/
+		if (decNode != null)
+		{
+			return decNode.semantMe();
+		}
 		return null;
 	}
 }
