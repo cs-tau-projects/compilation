@@ -72,6 +72,8 @@ public class Main
 			/* Semantic error - write ERROR(line) to   */
 			/* output file and exit                     */
 			/********************************************/
+			System.err.println("SemanticException: " + e.getMessage() + " at line " + e.getLineNumber());
+			e.printStackTrace();
 			try
 			{
 				if (fileWriter != null)

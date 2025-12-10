@@ -62,6 +62,12 @@ public class AstVarSimple extends AstVar
 			throw new SemanticException("undefined variable " + name, lineNumber);
 		}
 
+		// If it's a field, return the field's type, not the TypeField wrapper
+		if (t instanceof TypeField)
+		{
+			return ((TypeField) t).fieldType;
+		}
+
 		return t;
 	}
 }

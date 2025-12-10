@@ -41,7 +41,7 @@ public class AstExpList extends AstNode
 	/* Returns a TypeList containing the types of all       */
 	/* expressions in the list                              */
 	/********************************************************/
-	public TypeList semantMe() throws SemanticException
+	public TypeList semantMeTypeList() throws SemanticException
 	{
 		Type headType = null;
 		TypeList tailTypeList = null;
@@ -59,7 +59,7 @@ public class AstExpList extends AstNode
 		/****************************/
 		if (tail != null)
 		{
-			tailTypeList = tail.semantMe();
+			tailTypeList = tail.semantMeTypeList();
 		}
 
 		/****************************/

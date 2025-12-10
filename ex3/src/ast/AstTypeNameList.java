@@ -54,7 +54,7 @@ public class AstTypeNameList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
 	}
 
-	public TypeList semantMe()
+	public TypeList semantMeTypeList() throws SemanticException
 	{
 		if (tail == null)
 		{
@@ -66,7 +66,7 @@ public class AstTypeNameList extends AstNode
 		{
 			return new TypeList(
 				head.semantMe(),
-				tail.semantMe());
+				tail.semantMeTypeList());
 		}
 	}
 }

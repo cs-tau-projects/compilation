@@ -2,8 +2,8 @@
 package ast;
 
 public class AstParam extends AstNode{
-    AstType type;
-    String id;
+    public AstType type;
+    public String id;
 
     public AstParam(AstType type, String id){
         serialNumber = AstNode.getFreshSerialNumber();

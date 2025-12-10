@@ -30,7 +30,7 @@ public class AstStmtVarDec extends AstStmt
 		if (varDec != null) AstGraphviz.getInstance().logEdge(serialNumber, varDec.serialNumber);
 	}
 
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
 		return varDec.semantMe();
 	}

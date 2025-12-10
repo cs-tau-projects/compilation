@@ -92,7 +92,7 @@ public class SymbolTable
 	public Type find(String name)
 	{
 		SymbolTableEntry e;
-				
+
 		for (e = table[hash(name)]; e != null; e = e.next)
 		{
 			if (name.equals(e.name))
@@ -100,7 +100,31 @@ public class SymbolTable
 				return e.type;
 			}
 		}
-		
+
+		return null;
+	}
+
+	/********************************************************/
+	/* Find element with name in current scope only         */
+	/* Returns null if not found in current scope           */
+	/********************************************************/
+	public Type findInCurrentScope(String name)
+	{
+		SymbolTableEntry e;
+
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			// Stop if we hit a scope boundary
+			if (e.name.equals("SCOPE-BOUNDARY"))
+			{
+				return null;
+			}
+			if (name.equals(e.name))
+			{
+				return e.type;
+			}
+		}
+
 		return null;
 	}
 
@@ -260,8 +284,9 @@ public class SymbolTable
 			instance.enter("string", TypeString.getInstance());
 
 			/*************************************/
-			/* [2] How should we handle void ??? */
+			/* [2] Enter void type               */
 			/*************************************/
+			instance.enter("void", TypeVoid.getInstance());
 
 			/***************************************/
 			/* [3] Enter library function PrintInt */

@@ -36,8 +36,13 @@ public class AstDecClass extends AstNode{
 	{
 		TypeClass parentClass = null;
 
+		/************************************/
+		/* [0a] Check for reserved keyword  */
+		/************************************/
+		TypeUtils.checkNotReservedKeyword(id, lineNumber);
+
 		/**************************************/
-		/* [0] Check if class name already exists */
+		/* [0b] Check if class name already exists */
 		/**************************************/
 		if (SymbolTable.getInstance().find(id) != null)
 		{
@@ -70,7 +75,14 @@ public class AstDecClass extends AstNode{
 		}
 
 		/********************************************************/
-		/* [3] Build class members list (fields and methods)   */
+		/* [3] Create a placeholder class type and register it */
+		/*     This allows self-referential fields (e.g., IntList tail) */
+		/********************************************************/
+		TypeClass classType = new TypeClass(parentClass, id, null);
+		SymbolTable.getInstance().enter(id, classType);
+
+		/********************************************************/
+		/* [4] Build class members list (fields and methods)   */
 		/*     Check for overloading, overriding, shadowing    */
 		/********************************************************/
 		TypeList classMembers = null;
@@ -139,17 +151,8 @@ public class AstDecClass extends AstNode{
 					throw new SemanticException("non existing return type " + method.returnType.typeName, lineNumber);
 				}
 
-				// Build parameter type list
-				TypeList paramTypes = null;
-				for (AstParametersList pit = method.params; pit != null; pit = pit.tail)
-				{
-					Type paramType = SymbolTable.getInstance().find(pit.head.type.typeName);
-					if (paramType == null)
-					{
-						throw new SemanticException("non existing parameter type " + pit.head.type.typeName, lineNumber);
-					}
-					paramTypes = new TypeList(paramType, paramTypes);
-				}
+				// Build parameter type list in correct order
+				TypeList paramTypes = TypeUtils.buildParameterTypeList(method.params, lineNumber);
 
 				TypeFunction methodType = new TypeFunction(retType, method.funcName, paramTypes);
 
@@ -189,33 +192,45 @@ public class AstDecClass extends AstNode{
 		}
 
 		/************************************************/
-		/* [4] Create and enter the Class Type         */
+		/* [5] Update the class type with members      */
 		/************************************************/
-		TypeClass classType = new TypeClass(parentClass, id, classMembers);
-		SymbolTable.getInstance().enter(id, classType);
+		classType.dataMembers = classMembers;
 
 		/********************************************************/
 		/* [5] Now process method bodies in class context      */
+		/*     Members can only reference earlier-defined members */
 		/********************************************************/
 		SymbolTable.getInstance().beginScope();
 
-		// Add all class members to scope (including inherited)
+		// Add inherited members to scope (all inherited members are visible)
 		if (parentClass != null)
 		{
-			for (TypeList it = parentClass.dataMembers; it != null; it = it.tail)
-			{
-				SymbolTable.getInstance().enter(it.head.name, it.head);
-			}
-		}
-		for (TypeList it = classMembers; it != null; it = it.tail)
-		{
-			SymbolTable.getInstance().enter(it.head.name, it.head);
+			addInheritedMembersToScope(parentClass);
 		}
 
-		// Process each method body
-		for (AstDecFunc method : methodsToProcess)
+		// Process fields and methods in order, adding each to scope before processing next
+		// This ensures members can only reference earlier-defined members
+		int methodIndex = 0;
+		for (AstFieldList it = fields; it != null; it = it.tail)
 		{
-			method.semantMe();
+			if (it.head.decVar != null)
+			{
+				// Field - add to scope (type already validated above)
+				AstDecVar fieldVar = it.head.decVar;
+				Type fieldType = SymbolTable.getInstance().find(fieldVar.type.typeName);
+				SymbolTable.getInstance().enter(fieldVar.id, new TypeField(fieldType, fieldVar.id));
+			}
+			else if (it.head.decFunc != null)
+			{
+				// Method - process body, then add to scope
+				AstDecFunc method = methodsToProcess.get(methodIndex++);
+				method.semantMe(true);
+
+				// Add method to scope after processing (for later methods to reference)
+				Type retType = SymbolTable.getInstance().find(method.returnType.typeName);
+				TypeList paramTypes = TypeUtils.buildParameterTypeList(method.params, lineNumber);
+				SymbolTable.getInstance().enter(method.funcName, new TypeFunction(retType, method.funcName, paramTypes));
+			}
 		}
 
 		SymbolTable.getInstance().endScope();
@@ -290,5 +305,25 @@ public class AstDecClass extends AstNode{
 
 		// Recursively check tails
 		return parameterListsMatch(list1.tail, list2.tail);
+	}
+
+	/******************************************************************/
+	/* Helper: Add all inherited members to scope recursively        */
+	/******************************************************************/
+	private void addInheritedMembersToScope(TypeClass parentClass)
+	{
+		if (parentClass == null)
+		{
+			return;
+		}
+
+		// First add grandparent's members (so they can be overridden)
+		addInheritedMembersToScope(parentClass.father);
+
+		// Then add parent's members
+		for (TypeList it = parentClass.dataMembers; it != null; it = it.tail)
+		{
+			SymbolTable.getInstance().enter(it.head.name, it.head);
+		}
 	}
 }

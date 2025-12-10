@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public abstract class AstNode
 {
 	/*******************************************/
@@ -29,5 +31,13 @@ public abstract class AstNode
 	public static int getFreshSerialNumber()
 	{
 		return AstNodeSerialNumber.getFresh();
+	}
+
+	/***********************************************/
+	/* The default semantic action for an AST node */
+	/***********************************************/
+	public Type semantMe() throws SemanticException
+	{
+		return null;
 	}
 }

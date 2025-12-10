@@ -29,12 +29,27 @@ public class AstDecFunc extends AstNode
 
     public Type semantMe() throws SemanticException
 	{
-		Type t;
+		return semantMe(false);
+	}
+
+	/******************************************************************/
+	/* Semantic analysis with option to skip registration            */
+	/* isMethod = true when called from AstDecClass for methods      */
+	/* isMethod = false for standalone functions                     */
+	/******************************************************************/
+	public Type semantMe(boolean isMethod) throws SemanticException
+	{
+		Type paramType;
 		Type retType = null;
 		TypeList paramTypeList = null;
 
+		/************************************/
+		/* [0a] Check for reserved keyword  */
+		/************************************/
+		TypeUtils.checkNotReservedKeyword(funcName, lineNumber);
+
 		/*******************/
-		/* [0] Check if return type exists */
+		/* [0b] Check if return type exists */
 		/*******************/
 		retType = SymbolTable.getInstance().find(this.returnType.typeName);
 		if (retType == null)
@@ -44,42 +59,56 @@ public class AstDecFunc extends AstNode
 
 		/**************************************/
 		/* [1] Check if function name already exists */
+		/* (Skip this check for methods - already validated by AstDecClass) */
 		/**************************************/
-		if (SymbolTable.getInstance().find(funcName) != null)
+		if (!isMethod && SymbolTable.getInstance().find(funcName) != null)
 		{
 			throw new SemanticException("function " + funcName + " already exists", lineNumber);
 		}
 
+		/***************************/
+		/* [2] Build parameter type list */
+		/***************************/
+		paramTypeList = TypeUtils.buildParameterTypeList(params, lineNumber);
+
+		/***************************************************/
+		/* [2.5] Enter the Function Type to the Symbol Table */
+		/* BEFORE opening scope to allow recursive calls    */
+		/* and to make function visible to later declarations */
+		/* (Skip for methods - already entered by AstDecClass) */
+		/***************************************************/
+		TypeFunction funcType = new TypeFunction(retType, funcName, paramTypeList);
+		if (!isMethod)
+		{
+			SymbolTable.getInstance().enter(funcName, funcType);
+		}
+
 		/****************************/
-		/* [2] Begin Function Scope */
+		/* [3] Begin Function Scope */
 		/****************************/
 		SymbolTable.getInstance().beginScope();
 
 		/*******************************************************/
-		/* [2.5] Set current function return type for return  */
+		/* [3.5] Set current function return type for return  */
 		/*       statement validation                         */
 		/*******************************************************/
 		SymbolTable.getInstance().setCurrentFunctionReturnType(retType);
 
-		/***************************/
-		/* [3] Semant Input Params */
-		/***************************/
+		// Enter parameters into symbol table
 		for (AstParametersList it = params; it != null; it = it.tail)
 		{
-			t = SymbolTable.getInstance().find(it.head.type.typeName);
-			if (t == null)
-			{
-				throw new SemanticException("non existing type " + it.head.type.typeName, lineNumber);
-			}
+			// Check for reserved keyword in parameter name
+			TypeUtils.checkNotReservedKeyword(it.head.id, lineNumber);
+
+			paramType = SymbolTable.getInstance().find(it.head.type.typeName);
 
 			// Check if parameter name already exists in current scope
-			if (SymbolTable.getInstance().find(it.head.id) != null)
+			if (SymbolTable.getInstance().findInCurrentScope(it.head.id) != null)
 			{
 				throw new SemanticException("parameter " + it.head.id + " already exists in scope", lineNumber);
 			}
 
-			paramTypeList = new TypeList(t, paramTypeList);
-			SymbolTable.getInstance().enter(it.head.id, t);
+			SymbolTable.getInstance().enter(it.head.id, paramType);
 		}
 
 		/*******************/
@@ -99,11 +128,6 @@ public class AstDecFunc extends AstNode
 		/* [5.5] Clear current function return type           */
 		/*******************************************************/
 		SymbolTable.getInstance().setCurrentFunctionReturnType(null);
-
-		/***************************************************/
-		/* [6] Enter the Function Type to the Symbol Table */
-		/***************************************************/
-		SymbolTable.getInstance().enter(funcName, new TypeFunction(retType, funcName, paramTypeList));
 
 		/************************************************************/
 		/* [7] Return value is irrelevant for function declarations */

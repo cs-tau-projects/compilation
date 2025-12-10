@@ -36,7 +36,7 @@ public class AstDecList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */

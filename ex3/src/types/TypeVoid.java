@@ -20,6 +20,7 @@ public class TypeVoid extends Type
 		if (instance == null)
 		{
 			instance = new TypeVoid();
+			instance.name = "void";
 		}
 		return instance;
 	}

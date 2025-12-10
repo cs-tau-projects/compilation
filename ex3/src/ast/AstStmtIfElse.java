@@ -44,7 +44,7 @@ public class AstStmtIfElse extends AstStmt
 	/* Checks that condition is int and analyzes both       */
 	/* branches in separate scopes                          */
 	/********************************************************/
-	public void semantMe() throws SemanticException
+	public Type semantMe() throws SemanticException
 	{
 		/****************************/
 		/* [1] Check condition type */
@@ -82,6 +82,8 @@ public class AstStmtIfElse extends AstStmt
 		}
 
 		SymbolTable.getInstance().endScope();
+
+		return null;
 	}
 }
 

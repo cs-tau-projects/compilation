@@ -62,11 +62,11 @@ public class AstStmtList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
 	}
 
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
 		if (head != null) head.semantMe();
 		if (tail != null) tail.semantMe();
-		
+
 		return null;
 	}
 }

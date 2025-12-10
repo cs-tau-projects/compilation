@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstStmtCallExp extends AstStmt
 {
 	public AstExpCall callExp;
@@ -24,8 +26,25 @@ public class AstStmtCallExp extends AstStmt
 		if (callExp != null) callExp.printMe();
 
 		AstGraphviz.getInstance().logNode(serialNumber, "CALL\nSTMT");
-		
+
 		if (callExp != null) AstGraphviz.getInstance().logEdge(serialNumber, callExp.serialNumber);
+	}
+
+	/********************************************************/
+	/* Semantic analysis for call expression statement     */
+	/* Simply delegates to the call expression             */
+	/********************************************************/
+	public Type semantMe() throws SemanticException
+	{
+		if (callExp != null)
+		{
+			callExp.semantMe();
+		}
+
+		/********************************************************/
+		/* Return value is irrelevant for call statement       */
+		/********************************************************/
+		return null;
 	}
 }
 

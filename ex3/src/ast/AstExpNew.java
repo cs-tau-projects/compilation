@@ -79,13 +79,13 @@ public class AstExpNew extends AstExp
                 throw new SemanticException("array size must be int", lineNumber);
             }
 
-            // Check for constant negative size
+            // Check for constant non-positive size (must be > 0)
             if (exp instanceof AstExpInt)
             {
                 AstExpInt sizeExp = (AstExpInt) exp;
-                if (sizeExp.value < 0)
+                if (sizeExp.value <= 0)
                 {
-                    throw new SemanticException("array size must be >= 0", lineNumber);
+                    throw new SemanticException("array size must be > 0", lineNumber);
                 }
             }
 
