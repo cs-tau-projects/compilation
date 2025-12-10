@@ -50,45 +50,54 @@ public class AstExpVarField extends AstExpVar
 		if (var  != null) AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
 	}
 
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
 		Type t = null;
 		TypeClass tc = null;
-		
+
 		/******************************/
 		/* [1] Recursively semant var */
 		/******************************/
 		if (var != null) t = var.semantMe();
-		
-		/*********************************/
-		/* [2] Make sure type is a class */
-		/*********************************/
-		if (t.isClass() == false)
+
+		/****************************/
+		/* [2] Check for null type  */
+		/****************************/
+		if (t == null)
 		{
-			System.out.format(">> ERROR [%d:%d] access %s field of a non-class variable\n",6,6,fieldName);
-			System.exit(0);
+			throw new SemanticException("variable has no type", lineNumber);
 		}
-		else
+
+		/*********************************/
+		/* [3] Make sure type is a class */
+		/*********************************/
+		if (!t.isClass())
 		{
-			tc = (TypeClass) t;
+			throw new SemanticException("cannot access field " + fieldName + " of non-class variable", lineNumber);
 		}
-		
-		/************************************/
-		/* [3] Look for fiedlName inside tc */
-		/************************************/
-		for (TypeList it = tc.dataMembers; it != null; it=it.tail)
+
+		tc = (TypeClass) t;
+
+		/**************************************************************/
+		/* [4] Look for fieldName in class and parent class hierarchy */
+		/**************************************************************/
+		TypeClass currentClass = tc;
+		while (currentClass != null)
 		{
-			if (it.head.name == fieldName)
+			for (TypeList it = currentClass.dataMembers; it != null; it = it.tail)
 			{
-				return it.head;
+				if (it.head.name.equals(fieldName))
+				{
+					return it.head;
+				}
 			}
+			// Move to parent class
+			currentClass = currentClass.father;
 		}
-		
+
 		/*********************************************/
-		/* [4] fieldName does not exist in class var */
+		/* [5] fieldName does not exist in class hierarchy */
 		/*********************************************/
-		System.out.format(">> ERROR [%d:%d] field %s does not exist in class\n",6,6,fieldName);							
-		System.exit(0);
-		return null;
+		throw new SemanticException("field " + fieldName + " does not exist in class " + tc.name, lineNumber);
 	}
 }

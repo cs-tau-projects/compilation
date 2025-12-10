@@ -9,6 +9,12 @@ public abstract class AstNode
 	/*******************************************/
 	public int serialNumber;
 
+	/*******************************************/
+	/* Line number for error reporting         */
+	/* Used by SemanticException               */
+	/*******************************************/
+	public int lineNumber = -1;
+
 	/***********************************************/
 	/* The default message for an unknown AST node */
 	/***********************************************/

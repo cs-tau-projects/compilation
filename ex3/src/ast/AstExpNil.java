@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstExpNil extends AstExp
 {
 	/******************/
@@ -18,6 +20,14 @@ public class AstExpNil extends AstExp
 	{
 		System.out.print("AST NODE NIL\n");
 		AstGraphviz.getInstance().logNode(serialNumber, "NIL");
+	}
+
+	/************************************************/
+	/* Semantic analysis for nil expression        */
+	/************************************************/
+	public Type semantMe()
+	{
+		return TypeNil.getInstance();
 	}
 }
 

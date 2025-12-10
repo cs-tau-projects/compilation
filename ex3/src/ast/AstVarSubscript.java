@@ -115,15 +115,8 @@ public class AstVarSubscript extends AstVar
 
 		/********************************************************/
 		/* [7] Return the element type of the array            */
-		/*     For now, we'll need to cast to TypeArray        */
-		/*     (TypeArray class needs to be created)           */
 		/********************************************************/
-		// TODO: This assumes TypeArray exists with elementType field
-		// TypeArray arrayType = (TypeArray) t;
-		// return arrayType.elementType;
-
-		// For now, return the type itself until TypeArray is implemented
-		// This is a placeholder that will need to be fixed
-		return t;
+		TypeArray arrayType = (TypeArray) t;
+		return arrayType.elementType;
 	}
 }

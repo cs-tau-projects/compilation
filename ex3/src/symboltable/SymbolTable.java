@@ -274,7 +274,19 @@ public class SymbolTable
 					new TypeList(
 						TypeInt.getInstance(),
 						null)));
-			
+
+			/******************************************/
+			/* [4] Enter library function PrintString */
+			/******************************************/
+			instance.enter(
+				"PrintString",
+				new TypeFunction(
+					TypeVoid.getInstance(),
+					"PrintString",
+					new TypeList(
+						TypeString.getInstance(),
+						null)));
+
 		}
 		return instance;
 	}

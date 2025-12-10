@@ -56,5 +56,27 @@ public class TypeUtils {
         }
         return false;
     }
+
+    /******************************************************************/
+    /* Find a member (field or method) in class hierarchy            */
+    /* Searches the class and all parent classes for a member with   */
+    /* the given name                                                 */
+    /******************************************************************/
+    public static Type findMemberInClassHierarchy(TypeClass classType, String memberName)
+    {
+        TypeClass currentClass = classType;
+        while (currentClass != null)
+        {
+            for (TypeList it = currentClass.dataMembers; it != null; it = it.tail)
+            {
+                if (it.head.name.equals(memberName))
+                {
+                    return it.head;
+                }
+            }
+            currentClass = currentClass.father;
+        }
+        return null;
+    }
 }
 

@@ -1,5 +1,8 @@
 package ast;
 
+import types.*;
+import symboltable.*;
+
 public class AstStmtIfElse extends AstStmt
 {
 	public AstExp cond;
@@ -34,6 +37,51 @@ public class AstStmtIfElse extends AstStmt
 		if (cond != null) AstGraphviz.getInstance().logEdge(serialNumber, cond.serialNumber);
 		if (ifBody != null) AstGraphviz.getInstance().logEdge(serialNumber, ifBody.serialNumber);
 		if (elseBody != null) AstGraphviz.getInstance().logEdge(serialNumber, elseBody.serialNumber);
+	}
+
+	/********************************************************/
+	/* Semantic analysis for if-else statement              */
+	/* Checks that condition is int and analyzes both       */
+	/* branches in separate scopes                          */
+	/********************************************************/
+	public void semantMe() throws SemanticException
+	{
+		/****************************/
+		/* [1] Check condition type */
+		/****************************/
+		if (cond != null)
+		{
+			Type condType = cond.semantMe();
+
+			if (condType != TypeInt.getInstance())
+			{
+				throw new SemanticException("condition inside IF is not integral", lineNumber);
+			}
+		}
+
+		/****************************/
+		/* [2] Analyze if body in new scope */
+		/****************************/
+		SymbolTable.getInstance().beginScope();
+
+		if (ifBody != null)
+		{
+			ifBody.semantMe();
+		}
+
+		SymbolTable.getInstance().endScope();
+
+		/****************************/
+		/* [3] Analyze else body in new scope */
+		/****************************/
+		SymbolTable.getInstance().beginScope();
+
+		if (elseBody != null)
+		{
+			elseBody.semantMe();
+		}
+
+		SymbolTable.getInstance().endScope();
 	}
 }
 

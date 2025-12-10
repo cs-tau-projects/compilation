@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstExpList extends AstNode
 {
 	/****************/
@@ -32,6 +34,38 @@ public class AstExpList extends AstNode
 		
 		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
+	}
+
+	/********************************************************/
+	/* Semantic analysis for expression list                */
+	/* Returns a TypeList containing the types of all       */
+	/* expressions in the list                              */
+	/********************************************************/
+	public TypeList semantMe() throws SemanticException
+	{
+		Type headType = null;
+		TypeList tailTypeList = null;
+
+		/****************************/
+		/* [1] Analyze head expression */
+		/****************************/
+		if (head != null)
+		{
+			headType = head.semantMe();
+		}
+
+		/****************************/
+		/* [2] Recursively analyze tail */
+		/****************************/
+		if (tail != null)
+		{
+			tailTypeList = tail.semantMe();
+		}
+
+		/****************************/
+		/* [3] Build and return TypeList */
+		/****************************/
+		return new TypeList(headType, tailTypeList);
 	}
 }
 

@@ -53,6 +53,19 @@ public class AstExpVar extends AstExp
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
 		AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
-			
+
+	}
+
+	/********************************************************/
+	/* Semantic analysis for variable expression           */
+	/* Simply delegates to the variable's semantMe method  */
+	/********************************************************/
+	public Type semantMe() throws SemanticException
+	{
+		if (var == null)
+		{
+			throw new SemanticException("variable expression has no variable", lineNumber);
+		}
+		return var.semantMe();
 	}
 }

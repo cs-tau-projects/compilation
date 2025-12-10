@@ -49,7 +49,7 @@ public class AstTypeName extends AstNode
 			String.format("NAME:TYPE\n%s:%s",name,type));
 	}
 
-	public Type semantMe()
+	public Type semantMe() throws SemanticException
 	{
 		Type t = SymbolTable.getInstance().find(type);
 		if (t == null)
@@ -57,8 +57,7 @@ public class AstTypeName extends AstNode
 			/**************************/
 			/* ERROR: undeclared type */
 			/**************************/
-			System.exit(0);
-			return null;
+			throw new SemanticException("undeclared type " + type, lineNumber);
 		}
 		else
 		{
