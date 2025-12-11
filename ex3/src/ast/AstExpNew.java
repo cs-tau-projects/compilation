@@ -9,19 +9,21 @@ public class AstExpNew extends AstExp
     public AstType type;
 
     // Constructor for: new Type
-    public AstExpNew(AstType type)
+    public AstExpNew(AstType type, int lineNumber)
     {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.exp = null;
         this.type = type;
+        this.lineNumber = lineNumber;
     }
 
     // Constructor for: new Type[exp]
-    public AstExpNew(AstType type, AstExp exp)
+    public AstExpNew(AstType type, AstExp exp, int lineNumber)
     {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.exp = exp;
         this.type = type;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe(){

@@ -13,11 +13,12 @@ public class AstExpList extends AstNode
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpList(AstExp head, AstExpList tail)
+	public AstExpList(AstExp head, AstExpList tail, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		this.head = head;
 		this.tail = tail;
+		this.lineNumber = lineNumber;
 	}
 
 	/****************************************************/

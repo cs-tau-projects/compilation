@@ -9,10 +9,11 @@ public class AstType extends AstNode
 
 	public String typeName; // has to be one of the above or an identifier name
 
-	public AstType(String typeName)
+	public AstType(String typeName, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		this.typeName = typeName;
+		this.lineNumber = lineNumber;
 	}
 
 	@Override

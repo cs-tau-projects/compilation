@@ -22,3 +22,15 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Other
+AST_IN_GRAPHVIZ_DOT_FORMAT.txt
+*.xml
+Lexer.java
+*.iml
+PARSER
+SEMANT
+SYMBOL_TABLE_*.txt
+output/
+TokenNames.java
+Parser.java

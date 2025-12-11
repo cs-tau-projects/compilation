@@ -9,11 +9,12 @@ public class AstStmtVarDec extends AstStmt
 	/*******************/
 	/*  CONSTRUCTOR(S) */
 	/*******************/
-	public AstStmtVarDec(AstDecVar varDec)
+	public AstStmtVarDec(AstDecVar varDec, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		System.out.print("====================== stmt -> varDec\n");
 		this.varDec = varDec;
+		this.lineNumber = lineNumber;
 	}
 
 	/********************************************************/

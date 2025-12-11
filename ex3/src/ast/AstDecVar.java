@@ -8,17 +8,19 @@ public class AstDecVar extends AstNode {
     public AstType type;
     public AstExp exp = null;
 
-    public AstDecVar(String id, AstType type) {
+    public AstDecVar(String id, AstType type, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.id = id;
         this.type = type;
+        this.lineNumber = lineNumber;
     }
 
-    public AstDecVar(String id, AstType type, AstExp exp) {
+    public AstDecVar(String id, AstType type, AstExp exp, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.id = id;
         this.type = type;
         this.exp = exp;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe() {

@@ -13,11 +13,12 @@ public class AstDecList extends AstNode
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstDecList(AstDec head, AstDecList tail)
+	public AstDecList(AstDec head, AstDecList tail, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		this.head = head;
 		this.tail = tail;
+		this.lineNumber = lineNumber;
 	}
 
 	/******************************************************/

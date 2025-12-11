@@ -13,21 +13,23 @@ public class AstExpCall extends AstExp
 	/* CONSTRUCTOR(S) */
 	/******************/
 	// Constructor for simple function call: funcName(params)
-	public AstExpCall(String funcName, AstExpList params)
+	public AstExpCall(String funcName, AstExpList params, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		this.var = null;
 		this.funcName = funcName;
 		this.params = params;
+		this.lineNumber = lineNumber;
 	}
 
 	// Constructor for method call: var.funcName(params)
-	public AstExpCall(AstVar var, String funcName, AstExpList params)
+	public AstExpCall(AstVar var, String funcName, AstExpList params, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
 		this.var = var;
 		this.funcName = funcName;
 		this.params = params;
+		this.lineNumber = lineNumber;
 	}
 
 	/*************************************************/

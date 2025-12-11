@@ -4,10 +4,11 @@ public class AstParametersList extends AstNode{
     public AstParam head;
     public AstParametersList tail;
 
-    public AstParametersList(AstParam head, AstParametersList tail){
+    public AstParametersList(AstParam head, AstParametersList tail, int lineNumber){
         serialNumber = AstNodeSerialNumber.getFresh();
         this.head = head;
         this.tail = tail;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe(){

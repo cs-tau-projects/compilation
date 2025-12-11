@@ -4,10 +4,11 @@ public class AstFieldList extends AstNode {
     public AstField         head;
     public AstFieldList     tail;
 
-    public AstFieldList(AstField head, AstFieldList tail) {
+    public AstFieldList(AstField head, AstFieldList tail, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.head = head;
         this.tail = tail;
+        this.lineNumber = lineNumber;
     }
 
     @Override

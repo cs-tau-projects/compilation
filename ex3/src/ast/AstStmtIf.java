@@ -11,11 +11,12 @@ public class AstStmtIf extends AstStmt
 	/*******************/
 	/*  CONSTRUCTOR(S) */
 	/*******************/
-	public AstStmtIf(AstExp cond, AstStmtList body)
+	public AstStmtIf(AstExp cond, AstStmtList body, int lineNumber)
 	{
 		serialNumber = AstNode.getFreshSerialNumber();
 		this.cond = cond;
 		this.body = body;
+		this.lineNumber = lineNumber;
 	}
 
 	public Type semantMe() throws SemanticException

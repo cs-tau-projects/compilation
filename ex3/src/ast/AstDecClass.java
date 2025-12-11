@@ -9,11 +9,12 @@ public class AstDecClass extends AstNode{
     public String parentId; // can be null
     public AstFieldList fields;
 
-    public AstDecClass(String id, String parentId, AstFieldList fields){
+    public AstDecClass(String id, String parentId, AstFieldList fields, int lineNumber){
         serialNumber = AstNodeSerialNumber.getFresh();
         this.id = id;
         this.parentId = parentId;
         this.fields = fields;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe(){
@@ -163,7 +164,7 @@ public class AstDecClass extends AstNode{
 					// Check if inherited member is a field (shadowing not allowed)
 					if (inheritedMember instanceof TypeField)
 					{
-						throw new SemanticException("method " + method.funcName + " shadows inherited field", lineNumber);
+						throw new SemanticException("method " + method.funcName + " shadows inherited field", method.lineNumber);
 					}
 
 					// It's a method - validate override signature matches exactly
@@ -174,13 +175,13 @@ public class AstDecClass extends AstNode{
 						// Check return type matches
 						if (inheritedMethod.returnType != retType)
 						{
-							throw new SemanticException("method " + method.funcName + " override has different return type", lineNumber);
+							throw new SemanticException("method " + method.funcName + " override has different return type", method.lineNumber);
 						}
 
 						// Check parameter types match exactly (same types, same order)
 						if (!parameterListsMatch(inheritedMethod.params, paramTypes))
 						{
-							throw new SemanticException("method " + method.funcName + " override has different parameter types", lineNumber);
+							throw new SemanticException("method " + method.funcName + " override has different parameter types", method.lineNumber);
 						}
 
 						// Override is valid - signature matches exactly

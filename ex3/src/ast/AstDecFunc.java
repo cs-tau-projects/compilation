@@ -10,13 +10,14 @@ public class AstDecFunc extends AstNode
     public String funcName;
     public AstParametersList params;   
     public AstStmtList body;           
-    public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body)
+    public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body, int lineNumber)
     {
         serialNumber = AstNode.getFreshSerialNumber();
         this.returnType = returnType;
         this.funcName = funcName;
         this.params = params;
         this.body = body;
+        this.lineNumber = lineNumber;
     }
 
     @Override

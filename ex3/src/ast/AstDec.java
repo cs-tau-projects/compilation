@@ -6,9 +6,10 @@ public class AstDec extends AstNode
 {
     public AstNode decNode;
 
-    public AstDec(AstNode decNode) {
+    public AstDec(AstNode decNode, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
         this.decNode = decNode;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe() {

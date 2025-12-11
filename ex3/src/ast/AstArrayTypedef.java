@@ -7,10 +7,11 @@ public class AstArrayTypedef extends AstNode{
     String id;
     public AstType type;
     
-    public AstArrayTypedef(String id, AstType type) {
+    public AstArrayTypedef(String id, AstType type, int lineNumber) {
         serialNumber = AstNode.getFreshSerialNumber();
         this.id = id;
         this.type = type;
+        this.lineNumber = lineNumber;
     }
 
     public void printMe() {

@@ -2,6 +2,15 @@
 
 cd "$(dirname "$0")"
 
+echo "Building project..."
+make > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo "Build failed!"
+  exit 1
+fi
+echo "Build successful."
+echo ""
+
 echo "Running all semantic analysis tests..."
 echo ""
 

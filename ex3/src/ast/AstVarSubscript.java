@@ -10,7 +10,7 @@ public class AstVarSubscript extends AstVar
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstVarSubscript(AstVar var, AstExp subscript)
+	public AstVarSubscript(AstVar var, AstExp subscript, int lineNumber)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -27,6 +27,7 @@ public class AstVarSubscript extends AstVar
 		/*******************************/
 		this.var = var;
 		this.subscript = subscript;
+		this.lineNumber = lineNumber;
 	}
 
 	/*****************************************************/
