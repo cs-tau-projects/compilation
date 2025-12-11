@@ -26,7 +26,7 @@ for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20; do
     continue
   fi
 
-  java -jar SEMANT "$input_file" output/test_output.txt 2>/dev/null
+  java -jar SEMANT "$input_file" output/test_output.txt >/dev/null 2>&1
   result=$(cat output/test_output.txt)
   expected=$(cat "$expected_file")
 
@@ -42,4 +42,8 @@ done
 echo ""
 echo "================================"
 echo "Results: $passed passed, $failed failed"
+
+if [ $failed -gt 0 ]; then
+  exit 1
+fi
 
