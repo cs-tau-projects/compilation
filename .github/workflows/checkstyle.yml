@@ -23,5 +23,5 @@ jobs:
 
       - name: Run Checkstyle
         run: |
-          java -jar checkstyle.jar -c /google_checks.xml src | tee checkstyle.txt
+          java -jar checkstyle.jar -c /google_checks.xml ex3/src | tee checkstyle.txt
           if grep -q '^\[ERROR\]' checkstyle.txt; then exit 1; fi
