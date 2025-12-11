@@ -2,12 +2,16 @@
 
 cd "$(dirname "$0")"
 
-echo "Building project..."
-if ! make; then
-  echo "Build failed!"
-  exit 1
+if [ ! -f SEMANT ]; then
+  echo "Building project..."
+  if ! make; then
+    echo "Build failed!"
+    exit 1
+  fi
+  echo "Build successful."
+else
+  echo "Using existing SEMANT build."
 fi
-echo "Build successful."
 echo ""
 
 echo "Running all semantic analysis tests..."
