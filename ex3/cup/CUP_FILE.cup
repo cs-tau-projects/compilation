@@ -216,13 +216,13 @@ stmt		::=		varDec:v												{: RESULT = new AstStmtVarDec(v, vleft+1); 			:}
 /* expressions */
 exp			::=		var:v								{: RESULT = new AstExpVar(v, vleft+1);          		:}
 					| LPAREN exp:e RPAREN				{: RESULT = e;          					:}
-					| exp:e1 PLUS  exp:e2				{: RESULT = new AstExpBinop(e1, e2, 0, e1left+1);		:}
-					| exp:e1 MINUS exp:e2				{: RESULT = new AstExpBinop(e1, e2, 1, e1left+1);		:}
-					| exp:e1 TIMES exp:e2				{: RESULT = new AstExpBinop(e1, e2, 2, e1left+1);		:}
-					| exp:e1 DIVIDE exp:e2				{: RESULT = new AstExpBinop(e1, e2, 3, e1left+1);		:}
-					| exp:e1 LT exp:e2					{: RESULT = new AstExpBinop(e1, e2, 4, e1left+1);		:}
-					| exp:e1 GT exp:e2					{: RESULT = new AstExpBinop(e1, e2, 5, e1left+1);		:}
-					| exp:e1 EQ exp:e2					{: RESULT = new AstExpBinop(e1, e2, 6, e1left+1);		:}
+					| exp:e1 PLUS  exp:e2				{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.PLUS, e1left+1);		:}
+					| exp:e1 MINUS exp:e2				{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.MINUS, e1left+1);		:}
+					| exp:e1 TIMES exp:e2				{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.TIMES, e1left+1);		:}
+					| exp:e1 DIVIDE exp:e2				{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.DIVIDE, e1left+1);		:}
+					| exp:e1 LT exp:e2					{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.LT, e1left+1);		:}
+					| exp:e1 GT exp:e2					{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.GT, e1left+1);		:}
+					| exp:e1 EQ exp:e2					{: RESULT = new AstExpBinop(e1, e2, ast.BinOp.EQ, e1left+1);		:}
 					| callExp:c							{: RESULT = c;          					:}
 					| INT:i								{: RESULT = new AstExpInt(i, ileft+1);          		:}
 					| MINUS:m INT:i						{: RESULT = new AstExpInt(-i, mleft+1);          	:}

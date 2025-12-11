@@ -34,3 +34,4 @@ SYMBOL_TABLE_*.txt
 output/
 TokenNames.java
 Parser.java
+LEXER

@@ -4,14 +4,14 @@ import symboltable.*;
 
 public class AstExpBinop extends AstExp
 {
-	int op;
+	BinOp op;
 	public AstExp left;
 	public AstExp right;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpBinop(AstExp left, AstExp right, int op, int lineNumber)
+	public AstExpBinop(AstExp left, AstExp right, BinOp op, int lineNumber)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -37,19 +37,6 @@ public class AstExpBinop extends AstExp
 	/*************************************************/
 	public void printMe()
 	{
-		String sop="";
-		
-		/*********************************/
-		/* CONVERT op to a printable sop */
-		/*********************************/
-		if (op == 0) {sop = "+";}
-		if (op == 1) {sop = "-";}
-		if (op == 2) {sop = "*";}
-		if (op == 3) {sop = "/";}
-		if (op == 4) {sop = "<";}
-		if (op == 5) {sop = ">";}
-		if (op == 6) {sop = "=";}
-		
 		/*************************************/
 		/* AST NODE TYPE = AST BINOP EXP */
 		/*************************************/
@@ -66,7 +53,7 @@ public class AstExpBinop extends AstExp
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			String.format("BINOP(%s)",sop));
+			String.format("BINOP(%s)", op.toString()));
 		
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
@@ -98,100 +85,98 @@ public class AstExpBinop extends AstExp
 		/* [3] Handle different operator types    */
 		/******************************************/
 
-		// Operators: 0=+, 1=-, 2=*, 3=/, 4=<, 5=>, 6==
-
-		if (op == 0)
+		switch (op)
 		{
-			// Plus operator: + can be used for int+int OR string+string
-			if (t1 == TypeInt.getInstance() && t2 == TypeInt.getInstance())
-			{
+			case PLUS:
+				// Plus operator: + can be used for int+int OR string+string
+				if (t1 == TypeInt.getInstance() && t2 == TypeInt.getInstance())
+				{
+					return TypeInt.getInstance();
+				}
+				else if (t1 == TypeString.getInstance() && t2 == TypeString.getInstance())
+				{
+					return TypeString.getInstance();
+				}
+				else
+				{
+					throw new SemanticException("+ operator requires both operands to be int or both to be string", lineNumber);
+				}
+
+			case MINUS:
+			case TIMES:
+			case DIVIDE:
+				// Arithmetic operators: -, *, /
+				// Both operands must be int, returns int
+				if (t1 != TypeInt.getInstance() || t2 != TypeInt.getInstance())
+				{
+					throw new SemanticException("arithmetic operator requires int operands", lineNumber);
+				}
+
+				// Division by zero check for constant expressions
+				if (op == BinOp.DIVIDE && right instanceof AstExpInt)
+				{
+					AstExpInt rightInt = (AstExpInt) right;
+					if (rightInt.value == 0)
+					{
+						throw new SemanticException("division by zero", lineNumber);
+					}
+				}
+
 				return TypeInt.getInstance();
-			}
-			else if (t1 == TypeString.getInstance() && t2 == TypeString.getInstance())
-			{
-				return TypeString.getInstance();
-			}
-			else
-			{
-				throw new SemanticException("+ operator requires both operands to be int or both to be string", lineNumber);
-			}
-		}
-		else if (op >= 1 && op <= 3)
-		{
-			// Arithmetic operators: -, *, /
-			// Both operands must be int, returns int
-			if (t1 != TypeInt.getInstance() || t2 != TypeInt.getInstance())
-			{
-				throw new SemanticException("arithmetic operator requires int operands", lineNumber);
-			}
 
-			// Division by zero check for constant expressions
-			if (op == 3 && right instanceof AstExpInt)
-			{
-				AstExpInt rightInt = (AstExpInt) right;
-				if (rightInt.value == 0)
+			case LT:
+			case GT:
+				// Comparison operators: <, >
+				// Both operands must be int, returns int (0 or 1)
+				if (t1 != TypeInt.getInstance() || t2 != TypeInt.getInstance())
 				{
-					throw new SemanticException("division by zero", lineNumber);
+					throw new SemanticException("comparison operator requires int operands", lineNumber);
 				}
-			}
-
-			return TypeInt.getInstance();
-		}
-		else if (op == 4 || op == 5)
-		{
-			// Comparison operators: <, >
-			// Both operands must be int, returns int (0 or 1)
-			if (t1 != TypeInt.getInstance() || t2 != TypeInt.getInstance())
-			{
-				throw new SemanticException("comparison operator requires int operands", lineNumber);
-			}
-			return TypeInt.getInstance();
-		}
-		else if (op == 6)
-		{
-			// Equality operator: =
-			// Both operands must be compatible types, returns int (0 or 1)
-
-			// Check if types are compatible for equality comparison
-			if (t1 == t2)
-			{
-				// Same type - always valid
 				return TypeInt.getInstance();
-			}
 
-			// Check if one is nil and the other is class/array
-			if (t1.name != null && t1.name.equals("nil"))
-			{
-				if (t2.isClass() || t2.isArray())
+			case EQ:
+				// Equality operator: =
+				// Both operands must be compatible types, returns int (0 or 1)
+
+				// Check if types are compatible for equality comparison
+				if (t1 == t2)
 				{
+					// Same type - always valid
 					return TypeInt.getInstance();
 				}
-			}
-			if (t2.name != null && t2.name.equals("nil"))
-			{
-				if (t1.isClass() || t1.isArray())
-				{
-					return TypeInt.getInstance();
-				}
-			}
 
-			// Check if both are classes and one is subclass of the other
-			if (t1.isClass() && t2.isClass())
-			{
-				TypeClass c1 = (TypeClass) t1;
-				TypeClass c2 = (TypeClass) t2;
-				if (TypeUtils.isSubclassOf(c1, c2) || TypeUtils.isSubclassOf(c2, c1))
+				// Check if one is nil and the other is class/array
+				if (t1.name != null && t1.name.equals("nil"))
 				{
-					return TypeInt.getInstance();
+					if (t2.isClass() || t2.isArray())
+					{
+						return TypeInt.getInstance();
+					}
 				}
-			}
+				if (t2.name != null && t2.name.equals("nil"))
+				{
+					if (t1.isClass() || t1.isArray())
+					{
+						return TypeInt.getInstance();
+					}
+				}
 
-			// Types are not compatible for equality
-			throw new SemanticException("incompatible types for equality comparison", lineNumber);
-		}
-		else
-		{
-			throw new SemanticException("unknown binary operator", lineNumber);
+				// Check if both are classes and one is subclass of the other
+				if (t1.isClass() && t2.isClass())
+				{
+					TypeClass c1 = (TypeClass) t1;
+					TypeClass c2 = (TypeClass) t2;
+					if (TypeUtils.isSubclassOf(c1, c2) || TypeUtils.isSubclassOf(c2, c1))
+					{
+						return TypeInt.getInstance();
+					}
+				}
+
+				// Types are not compatible for equality
+				throw new SemanticException("incompatible types for equality comparison", lineNumber);
+
+			default:
+				throw new SemanticException("unknown binary operator", lineNumber);
 		}
 	}
 }
