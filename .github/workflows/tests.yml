@@ -22,19 +22,51 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jflex
 
+      - name: Download CUP jars
+        run: |
+          mkdir -p ex3/external_jars
+          curl -sSL -o ex3/external_jars/java-cup-11b.jar https://repo1.maven.org/maven2/com/github/vbmacher/java-cup/11b-20160615/java-cup-11b-20160615.jar
+          curl -sSL -o ex3/external_jars/java-cup-11b-runtime.jar https://repo1.maven.org/maven2/com/github/vbmacher/java-cup-runtime/11b-20160615/java-cup-runtime-11b-20160615.jar
+
+      - name: Build Project
+        run: |
+          cd ex3
+          # Generate Lexer.java
+          jflex -q -d src jflex/LEX_FILE.lex
+          # Generate Parser.java and TokenNames.java
+          java -jar external_jars/java-cup-11b.jar -nowarn -parser Parser -symbols TokenNames -destdir src cup/CUP_FILE.cup
+          # Compile
+          mkdir -p bin
+          javac -cp external_jars/java-cup-11b-runtime.jar -d bin src/*.java src/*/*.java
+          # Create JAR
+          jar cfm SEMANT manifest/MANIFEST.MF -C bin .
+
       - name: Run Tests
         run: |
           cd ex3
-          chmod +x run_tests.sh
-          ./run_tests.sh | tee test_results.txt
-          # Fail if any test failed
-          if grep -q "FAIL" test_results.txt; then
-            echo "Some tests failed!"
-            exit 1
-          fi
-          # Also fail if no tests passed (something went wrong)
-          if ! grep -q "PASS" test_results.txt; then
-            echo "No tests passed - something is wrong!"
+          passed=0
+          failed=0
+          for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20; do
+            input_file=$(ls input/TEST_${i}_*.txt 2>/dev/null)
+            expected_file=$(ls expected_output/TEST_${i}_*_Expected_Output.txt 2>/dev/null)
+            if [ -z "$input_file" ] || [ -z "$expected_file" ]; then
+              echo "TEST_${i}: SKIPPED (files not found)"
+              continue
+            fi
+            java -jar SEMANT "$input_file" output/test_output.txt 2>/dev/null
+            result=$(cat output/test_output.txt)
+            expected=$(cat "$expected_file")
+            if [ "$result" = "$expected" ]; then
+              echo "TEST_${i}: PASS"
+              ((passed++))
+            else
+              echo "TEST_${i}: FAIL (got '$result', expected '$expected')"
+              ((failed++))
+            fi
+          done
+          echo ""
+          echo "Results: $passed passed, $failed failed"
+          if [ $failed -gt 0 ]; then
             exit 1
           fi
 

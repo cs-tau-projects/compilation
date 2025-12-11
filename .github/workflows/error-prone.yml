@@ -22,6 +22,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jflex
 
+      - name: Download CUP jars
+        run: |
+          mkdir -p ex3/external_jars
+          curl -sSL -o ex3/external_jars/java-cup-11b.jar https://repo1.maven.org/maven2/com/github/vbmacher/java-cup/11b-20160615/java-cup-11b-20160615.jar
+          curl -sSL -o ex3/external_jars/java-cup-11b-runtime.jar https://repo1.maven.org/maven2/com/github/vbmacher/java-cup-runtime/11b-20160615/java-cup-runtime-11b-20160615.jar
+
       - name: Generate Lexer and Parser
         run: |
           cd ex3
