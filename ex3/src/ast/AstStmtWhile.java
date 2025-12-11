@@ -52,4 +52,37 @@ public class AstStmtWhile extends AstStmt
 
 		return null;
 	}
+
+	/********************************************************/
+	/* Semantic analysis for while statement                */
+	/* Checks that condition is int and analyzes body       */
+	/* in a new scope                                       */
+	/********************************************************/
+	public void semantMe() throws SemanticException
+	{
+		/****************************/
+		/* [1] Check condition type */
+		/****************************/
+		if (cond != null)
+		{
+			Type condType = cond.semantMe();
+
+			if (condType != TypeInt.getInstance())
+			{
+				throw new SemanticException("condition inside WHILE is not integral", lineNumber);
+			}
+		}
+
+		/****************************/
+		/* [2] Analyze body in new scope */
+		/****************************/
+		SymbolTable.getInstance().beginScope();
+
+		if (body != null)
+		{
+			body.semantMe();
+		}
+
+		SymbolTable.getInstance().endScope();
+	}
 }
