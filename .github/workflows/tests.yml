@@ -39,5 +39,5 @@ jobs:
         run: |
           cd ex3
           chmod +x run_tests.sh
-          ./run_tests.sh
+          TERM=dumb ./run_tests.sh
 
