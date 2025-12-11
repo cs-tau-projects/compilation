@@ -17,6 +17,19 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Install JFlex
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jflex
+
+      - name: Generate Lexer and Parser
+        run: |
+          cd ex3
+          # Generate Lexer.java from LEX_FILE.lex
+          jflex -q -d src jflex/LEX_FILE.lex
+          # Generate Parser.java and TokenNames.java from CUP_FILE.cup
+          java -jar external_jars/java-cup-11b.jar -nowarn -parser Parser -symbols TokenNames -destdir src cup/CUP_FILE.cup
+
       - name: Install Error Prone
         run: |
           chmod +x scripts/install_errorprone.sh
