@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-EP_VERSION="2.41.0"                 # recent; requires JDK 17+
-DATAFLOW_VERSION="3.42.0"           # works with EP on modern JDKs
+EP_VERSION="2.41.0"
+DATAFLOW_VERSION="3.42.0-eisop4"
 
 mkdir -p tools
 cd tools
