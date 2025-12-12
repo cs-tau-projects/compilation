@@ -81,13 +81,23 @@ public class TypeUtils {
             return isSubclassOf(sourceClass, targetClass);
         }
 
-        // Array assignment: element types must match
-        // This handles the case of new T[] being assigned to a named array type
+        // Array assignment: only anonymous arrays (from new T[]) can be assigned to named array types
+        // Two different named array types are NOT compatible (nominal typing per Table 5)
         if (targetType.isArray() && sourceType.isArray())
         {
             TypeArray targetArray = (TypeArray) targetType;
             TypeArray sourceArray = (TypeArray) sourceType;
-            return targetArray.elementType == sourceArray.elementType;
+
+            // Anonymous arrays (from new T[]) have names like "array of T"
+            // They can be assigned to named array types if element types match
+            if (sourceArray.name != null && sourceArray.name.startsWith("array of "))
+            {
+                return sourceArray.elementType == targetArray.elementType;
+            }
+
+            // Two different named array types are NOT compatible (nominal typing)
+            // Same named types would have been caught by targetType == sourceType above
+            return false;
         }
 
         return false;
