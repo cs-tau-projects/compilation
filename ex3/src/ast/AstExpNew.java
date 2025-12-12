@@ -82,13 +82,10 @@ public class AstExpNew extends AstExp
             }
 
             // Check for constant non-positive size (must be > 0)
-            if (exp instanceof AstExpInt)
+            Integer constantSize = exp.tryEvaluateConstant();
+            if (constantSize != null && constantSize <= 0)
             {
-                AstExpInt sizeExp = (AstExpInt) exp;
-                if (sizeExp.value <= 0)
-                {
-                    throw new SemanticException("array size must be > 0", lineNumber);
-                }
+                throw new SemanticException("array size must be > 0", lineNumber);
             }
 
             // Return an array type with element type t

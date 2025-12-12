@@ -50,4 +50,13 @@ public class AstExpInt extends AstExp
 	{
 		return TypeInt.getInstance();
 	}
+
+	/********************************************************/
+	/* Return the constant integer value                    */
+	/********************************************************/
+	@Override
+	public Integer tryEvaluateConstant()
+	{
+		return value;
+	}
 }

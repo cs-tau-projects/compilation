@@ -179,4 +179,35 @@ public class AstExpBinop extends AstExp
 				throw new SemanticException("unknown binary operator", lineNumber);
 		}
 	}
+
+	/********************************************************/
+	/* Try to evaluate this binary expression as a constant */
+	/* Returns the integer value if both operands are       */
+	/* constant, null otherwise                             */
+	/********************************************************/
+	@Override
+	public Integer tryEvaluateConstant()
+	{
+		Integer leftVal = (left != null) ? left.tryEvaluateConstant() : null;
+		Integer rightVal = (right != null) ? right.tryEvaluateConstant() : null;
+
+		if (leftVal == null || rightVal == null)
+		{
+			return null;
+		}
+
+		switch (op)
+		{
+			case PLUS:
+				return leftVal + rightVal;
+			case MINUS:
+				return leftVal - rightVal;
+			case TIMES:
+				return leftVal * rightVal;
+			case DIVIDE:
+				return (rightVal != 0) ? leftVal / rightVal : null;
+			default:
+				return null;
+		}
+	}
 }

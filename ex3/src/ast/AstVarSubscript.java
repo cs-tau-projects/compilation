@@ -105,13 +105,10 @@ public class AstVarSubscript extends AstVar
 		/********************************************************/
 		/* [6] Check if subscript is a constant >= 0           */
 		/********************************************************/
-		if (subscript instanceof AstExpInt)
+		Integer constantSubscript = subscript.tryEvaluateConstant();
+		if (constantSubscript != null && constantSubscript < 0)
 		{
-			AstExpInt subscriptInt = (AstExpInt) subscript;
-			if (subscriptInt.value < 0)
-			{
-				throw new SemanticException("array subscript must be >= 0", lineNumber);
-			}
+			throw new SemanticException("array subscript must be >= 0", lineNumber);
 		}
 
 		/********************************************************/

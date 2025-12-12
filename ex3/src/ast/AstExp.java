@@ -11,4 +11,13 @@ public abstract class AstExp extends AstNode
 	{
 		return null;
 	}
+
+	/********************************************************/
+	/* Try to evaluate this expression as a constant        */
+	/* Returns the integer value if constant, null otherwise */
+	/********************************************************/
+	public Integer tryEvaluateConstant()
+	{
+		return null;
+	}
 }
