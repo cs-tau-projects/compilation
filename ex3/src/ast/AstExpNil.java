@@ -10,7 +10,7 @@ public class AstExpNil extends AstExp
 	public AstExpNil(int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.print("====================== exp -> NIL\n");
+		// System.out.print("====================== exp -> NIL\n");
 		this.lineNumber = lineNumber;
 	}
 

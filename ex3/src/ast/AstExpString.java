@@ -12,7 +12,7 @@ public class AstExpString extends AstExp
 	public AstExpString(String value, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.format("====================== exp -> STRING( %s )\n", value);
+		// System.out.format("====================== exp -> STRING( %s )\n", value);
 		this.value = value;
 		this.lineNumber = lineNumber;
 	}

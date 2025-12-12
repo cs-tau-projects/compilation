@@ -20,7 +20,7 @@ public class AstVarSubscript extends AstVar
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.print("====================== var -> var [ exp ]\n");
+		// System.out.print("====================== var -> var [ exp ]\n");
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */

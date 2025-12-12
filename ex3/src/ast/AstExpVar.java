@@ -19,7 +19,7 @@ public class AstExpVar extends AstExp
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.print("====================== exp -> var\n");
+		// System.out.print("====================== exp -> var\n");
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */

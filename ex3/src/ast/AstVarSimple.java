@@ -23,7 +23,7 @@ public class AstVarSimple extends AstVar
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.format("====================== var -> ID( %s )\n",name);
+		// System.out.format("====================== var -> ID( %s )\n",name);
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */

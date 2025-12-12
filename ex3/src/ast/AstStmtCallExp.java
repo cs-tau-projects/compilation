@@ -12,7 +12,7 @@ public class AstStmtCallExp extends AstStmt
 	public AstStmtCallExp(AstExpCall callExp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.print("====================== stmt -> callExp SEMICOLON\n");
+		// System.out.print("====================== stmt -> callExp SEMICOLON\n");
 		this.callExp = callExp;
 		this.lineNumber = lineNumber;
 	}

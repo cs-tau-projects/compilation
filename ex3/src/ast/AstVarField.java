@@ -20,7 +20,7 @@ public class AstVarField extends AstVar
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.format("====================== var -> var DOT ID( %s )\n",fieldName);
+		// System.out.format("====================== var -> var DOT ID( %s )\n",fieldName);
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
