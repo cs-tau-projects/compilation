@@ -110,15 +110,16 @@ public class SymbolTable
 	/********************************************************/
 	public Type findInCurrentScope(String name)
 	{
-		SymbolTableEntry e;
-
-		for (e = table[hash(name)]; e != null; e = e.next)
+		// Walk through the prevtop chain (entries in order of insertion)
+		// starting from the most recent entry (top)
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop)
 		{
-			// Stop if we hit a scope boundary
+			// Stop if we hit a scope boundary - we've left the current scope
 			if (e.name.equals("SCOPE-BOUNDARY"))
 			{
 				return null;
 			}
+			// Check if this entry matches the name we're looking for
 			if (name.equals(e.name))
 			{
 				return e.type;
