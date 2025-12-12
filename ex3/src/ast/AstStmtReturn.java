@@ -13,7 +13,7 @@ public class AstStmtReturn extends AstStmt
 	public AstStmtReturn(AstExp exp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.print("====================== stmt -> RETURN exp SEMICOLON\n");
+		// System.out.print("====================== stmt -> RETURN exp SEMICOLON\n");
 		this.exp = exp;
 		this.lineNumber = lineNumber;
 	}

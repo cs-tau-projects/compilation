@@ -23,7 +23,7 @@ public class AstStmtAssign extends AstStmt
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.print("====================== stmt -> var ASSIGN exp SEMICOLON\n");
+		// System.out.print("====================== stmt -> var ASSIGN exp SEMICOLON\n");
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */

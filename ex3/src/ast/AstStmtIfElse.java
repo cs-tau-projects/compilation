@@ -15,7 +15,7 @@ public class AstStmtIfElse extends AstStmt
 	public AstStmtIfElse(AstExp cond, AstStmtList ifBody, AstStmtList elseBody, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.print("====================== stmt -> IF LPAREN exp RPAREN LBRACE stmtList RBRACE ELSE LBRACE stmtList RBRACE\n");
+		// System.out.print("====================== stmt -> IF LPAREN exp RPAREN LBRACE stmtList RBRACE ELSE LBRACE stmtList RBRACE\n");
 		this.cond = cond;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;

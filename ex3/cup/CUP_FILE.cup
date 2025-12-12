@@ -38,19 +38,19 @@ scan with
 	Symbol s;
 	s = lexer.next_token();
 	//System.out.print(s.sym);
-	System.out.print("[");
-	System.out.print(lexer.getLine());
-	System.out.print(":");
-	System.out.print(lexer.getTokenStartPosition());
-	System.out.print("] ");
-	System.out.print(TokenNames.terminalNames[s.sym]);
-	if (s.value != null)
-	{
-		System.out.print("( ");
-		System.out.print(s.value);
-		System.out.print(" )");
-	}
-	System.out.print("\n");
+	// System.out.print("[");
+	// System.out.print(lexer.getLine());
+	// System.out.print(":");
+	// System.out.print(lexer.getTokenStartPosition());
+	// System.out.print("] ");
+	// System.out.print(TokenNames.terminalNames[s.sym]);
+	// if (s.value != null)
+	// {
+	// 	System.out.print("( ");
+	// 	System.out.print(s.value);
+	// 	System.out.print(" )");
+	// }
+	// System.out.print("\n");
 	return s;
 :};
 

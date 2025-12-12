@@ -22,8 +22,8 @@ public class AstStmtList extends AstNode
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		if (tail != null) System.out.print("====================== stmts -> stmt stmts\n");
-		if (tail == null) System.out.print("====================== stmts -> stmt      \n");
+		// if (tail != null) System.out.print("====================== stmts -> stmt stmts\n");
+		// if (tail == null) System.out.print("====================== stmts -> stmt      \n");
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */

@@ -16,7 +16,7 @@ public class AstStmtAssignNew extends AstStmt
 	public AstStmtAssignNew(AstVar var, AstExpNew newExp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		System.out.print("====================== stmt -> var ASSIGN newExp SEMICOLON\n");
+		// System.out.print("====================== stmt -> var ASSIGN newExp SEMICOLON\n");
 		this.var = var;
 		this.newExp = newExp;
 		this.lineNumber = lineNumber;
