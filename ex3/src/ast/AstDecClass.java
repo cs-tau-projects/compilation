@@ -100,14 +100,14 @@ public class AstDecClass extends AstNode{
 				// Check if name already exists in current class
 				if (memberNames.contains(fieldVar.id))
 				{
-					throw new SemanticException("duplicate field " + fieldVar.id + " in class " + id, lineNumber);
+					throw new SemanticException("duplicate field " + fieldVar.id + " in class " + id, fieldVar.lineNumber);
 				}
 
 				// Check for shadowing - field can't have same name as ANY inherited member
 				Type inheritedMember = findInParent(parentClass, fieldVar.id);
 				if (inheritedMember != null)
 				{
-					throw new SemanticException("field " + fieldVar.id + " shadows inherited member", lineNumber);
+					throw new SemanticException("field " + fieldVar.id + " shadows inherited member", fieldVar.lineNumber);
 				}
 
 				memberNames.add(fieldVar.id);
@@ -116,13 +116,13 @@ public class AstDecClass extends AstNode{
 				Type fieldType = SymbolTable.getInstance().find(fieldVar.type.typeName);
 				if (fieldType == null)
 				{
-					throw new SemanticException("non existing type " + fieldVar.type.typeName, lineNumber);
+					throw new SemanticException("non existing type " + fieldVar.type.typeName, fieldVar.lineNumber);
 				}
 
 				// Check that field type is not void
 				if (fieldType instanceof TypeVoid)
 				{
-					throw new SemanticException("field cannot have void type", lineNumber);
+					throw new SemanticException("field cannot have void type", fieldVar.lineNumber);
 				}
 
 				classMembers = new TypeList(new TypeField(fieldType, fieldVar.id), classMembers);
@@ -136,7 +136,7 @@ public class AstDecClass extends AstNode{
 				// (catches duplicate methods and field-method name conflicts)
 				if (memberNames.contains(method.funcName))
 				{
-					throw new SemanticException("duplicate member name: " + method.funcName, lineNumber);
+					throw new SemanticException("duplicate member name: " + method.funcName, method.lineNumber);
 				}
 
 				memberNames.add(method.funcName);
@@ -149,7 +149,7 @@ public class AstDecClass extends AstNode{
 				Type retType = SymbolTable.getInstance().find(method.returnType.typeName);
 				if (retType == null)
 				{
-					throw new SemanticException("non existing return type " + method.returnType.typeName, lineNumber);
+					throw new SemanticException("non existing return type " + method.returnType.typeName, method.lineNumber);
 				}
 
 				// Build parameter type list in correct order
