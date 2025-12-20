@@ -145,6 +145,10 @@ BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 						if (value > 32767) {
 							throw new Error("Lexical error: integer out of range at line " + (yyline+1));
 						}
+
+						else if (yytext().startsWith("0")){
+							throw new Error("Lexical error: trailing zeros are not permitted " + (yyline+1));
+						}
 						return symbol(TokenNames.INT, value);
 					}
 {STRING}			{ return symbol(TokenNames.STRING, yytext());}
