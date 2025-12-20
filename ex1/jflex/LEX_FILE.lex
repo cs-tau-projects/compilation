@@ -146,7 +146,7 @@ BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 							throw new Error("Lexical error: integer out of range at line " + (yyline+1));
 						}
 
-						else if (yytext().startsWith("0")){
+						else if (yytext().startsWith("0") && 1 != yytext().length()){
 							throw new Error("Lexical error: trailing zeros are not permitted " + (yyline+1));
 						}
 						return symbol(TokenNames.INT, value);
