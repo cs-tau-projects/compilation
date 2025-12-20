@@ -77,6 +77,7 @@ import java_cup.runtime.*;
 LineTerminator	    = \r|\n|\r\n
 WhiteSpace		    = {LineTerminator} | [ \t\f]
 INTEGER			    = 0 | [1-9][0-9]*
+BAD_INTEGER			= 0[0-9]+
 STRING			    = \"[a-zA-Z]*\"
 ID				    = [a-zA-Z][a-zA-Z0-9]*
 LineCommentRegex    = [a-zA-Z0-9 \t\f()\[\]{}?!+\-*/.;]*
@@ -145,11 +146,10 @@ BlockCommentChar    = [a-zA-Z0-9 \t\f\r\n()\[\]{}?!+\-/.;]
 						if (value > 32767) {
 							throw new Error("Lexical error: integer out of range at line " + (yyline+1));
 						}
-
-						else if (yytext().startsWith("0") && 1 != yytext().length()){
-							throw new Error("Lexical error: trailing zeros are not permitted " + (yyline+1));
-						}
 						return symbol(TokenNames.INT, value);
+					}
+{BAD_INTEGER}		{
+						throw new Error("Lexical error: trailing zeros are not allowed" + (yyline+1));
 					}
 {STRING}			{ return symbol(TokenNames.STRING, yytext());}
 {ID}				{ return symbol(TokenNames.ID, yytext());}
