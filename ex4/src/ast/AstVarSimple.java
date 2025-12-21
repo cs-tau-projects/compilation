@@ -1,0 +1,74 @@
+package ast;
+
+import types.*;
+import symboltable.*;
+
+public class AstVarSimple extends AstVar
+{
+	/************************/
+	/* simple variable name */
+	/************************/
+	public String name;
+	
+	/******************/
+	/* CONSTRUCTOR(S) */
+	/******************/
+	public AstVarSimple(String name, int lineNumber)
+	{
+		/******************************/
+		/* SET A UNIQUE SERIAL NUMBER */
+		/******************************/
+		serialNumber = AstNodeSerialNumber.getFresh();
+
+		/***************************************/
+		/* PRINT CORRESPONDING DERIVATION RULE */
+		/***************************************/
+		// System.out.format("====================== var -> ID( %s )\n",name);
+
+		/*******************************/
+		/* COPY INPUT DATA MEMBERS ... */
+		/*******************************/
+		this.name = name;
+		this.lineNumber = lineNumber;
+	}
+
+	/**************************************************/
+	/* The printing message for a simple var AST node */
+	/**************************************************/
+	public void printMe()
+	{
+		/**********************************/
+		/* AST NODE TYPE = AST SIMPLE VAR */
+		/**********************************/
+		System.out.format("AST NODE SIMPLE VAR( %s )\n",name);
+
+		/*********************************/
+		/* Print to AST GRAPHVIZ DOT file */
+		/*********************************/
+		AstGraphviz.getInstance().logNode(
+				serialNumber,
+			String.format("SIMPLE\nVAR\n(%s)",name));
+	}
+
+	/********************************************************/
+	/* Semantic analysis for simple variable               */
+	/* Looks up the variable name in the symbol table      */
+	/********************************************************/
+	public Type semantMe() throws SemanticException
+	{
+		Type t = SymbolTable.getInstance().find(name);
+
+		if (t == null)
+		{
+			throw new SemanticException("undefined variable " + name, lineNumber);
+		}
+
+		// If it's a field, return the field's type, not the TypeField wrapper
+		if (t instanceof TypeField)
+		{
+			return ((TypeField) t).fieldType;
+		}
+
+		return t;
+	}
+}
