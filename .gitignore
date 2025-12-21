@@ -35,3 +35,4 @@ output/
 TokenNames.java
 Parser.java
 LEXER
+.DS_Store
