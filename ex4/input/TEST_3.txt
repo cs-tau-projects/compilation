@@ -1,0 +1,8 @@
+int g ;
+void main ( ) {
+int x := g ∗ 2 ;
+int y ;
+int z ;
+g := 1 ;
+i f ( y>0) { z := x + 1 ; }
+}
