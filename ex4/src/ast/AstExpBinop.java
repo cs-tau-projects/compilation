@@ -1,8 +1,7 @@
 package ast;
-import types.*;
-import symboltable.*;
-import temp.*;
 import ir.*;
+import temp.*;
+import types.*;
 
 public class AstExpBinop extends AstExp
 {
@@ -231,6 +230,12 @@ public class AstExpBinop extends AstExp
 						AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
 				break;
 			
+			case MINUS:
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandBinopSubIntegers(dst,t1,t2));
+				break;
+
 			case TIMES:
 				Ir.
 						getInstance().
@@ -247,6 +252,13 @@ public class AstExpBinop extends AstExp
 				Ir.
 						getInstance().
 						AddIrCommand(new IrCommandBinopLtIntegers(dst,t1,t2));
+				break;
+			
+			case GT:
+				// Notice the order of t2 and t1 for implementing GT using LT
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandBinopLtIntegers(dst,t2,t1));
 				break;
 			
 			default:

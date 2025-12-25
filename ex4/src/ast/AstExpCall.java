@@ -169,13 +169,18 @@ public class AstExpCall extends AstExp
 	@Override
 	public Temp irMe()
 	{
-		Temp t = null;
+		// Handle libarary functions
+		if (funcName.equals("PrintInt") && params != null){
+			Temp t = params.head.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+			return null;
+		}
 
-		if (params != null) { t = params.head.irMe(); }
-
-		Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
-
-		return null;
+		else if (funcName.equals("PrintString") && params != null){
+			Temp t = params.head.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandPrintString(t));
+			return null;
+		}
 	}
 }
 
