@@ -16,11 +16,6 @@ public class AstExpVar extends AstExp
 		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.print("====================== exp -> var\n");
-
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
@@ -31,6 +26,7 @@ public class AstExpVar extends AstExp
 	/***********************************************/
 	/* The default message for an exp var AST node */
 	/***********************************************/
+	@Override
 	public void printMe()
 	{
 		/************************************/
@@ -61,6 +57,7 @@ public class AstExpVar extends AstExp
 	/* Semantic analysis for variable expression           */
 	/* Simply delegates to the variable's semantMe method  */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		if (var == null)

@@ -1,7 +1,8 @@
 package ast;
 
-import types.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstStmtReturn extends AstStmt
 {
@@ -13,7 +14,6 @@ public class AstStmtReturn extends AstStmt
 	public AstStmtReturn(AstExp exp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		// System.out.print("====================== stmt -> RETURN exp SEMICOLON\n");
 		this.exp = exp;
 		this.lineNumber = lineNumber;
 	}
@@ -21,6 +21,7 @@ public class AstStmtReturn extends AstStmt
 	/*********************************************************/
 	/* The printing message for a return statement AST node */
 	/*********************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE RETURN STMT\n");
@@ -35,6 +36,7 @@ public class AstStmtReturn extends AstStmt
 	/*********************************************************/
 	/* Semantic analysis for return statement               */
 	/*********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type expectedReturnType = SymbolTable.getInstance().getCurrentFunctionReturnType();
@@ -77,6 +79,12 @@ public class AstStmtReturn extends AstStmt
 			throw new SemanticException("return type mismatch", lineNumber);
 		}
 
+		return null;
+	}
+
+	@Override
+	public Temp irMe(){
+		// Needed in the future but not in ex4
 		return null;
 	}
 }

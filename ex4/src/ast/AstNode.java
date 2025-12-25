@@ -1,5 +1,6 @@
 package ast;
 
+import temp.*;
 import types.*;
 
 public abstract class AstNode

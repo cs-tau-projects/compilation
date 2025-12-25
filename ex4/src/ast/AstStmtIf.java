@@ -1,7 +1,8 @@
 package ast;
 
-import types.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstStmtIf extends AstStmt
 {
@@ -19,6 +20,7 @@ public class AstStmtIf extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		/****************************/
@@ -48,5 +50,11 @@ public class AstStmtIf extends AstStmt
 		/* [4] Return value is irrelevant for if statement */
 		/**************************************************/
 		return null;		
+	}
+
+	@Override
+	public Temp irMe(){
+		// Needed in the future but not in ex4
+		return null;
 	}
 }

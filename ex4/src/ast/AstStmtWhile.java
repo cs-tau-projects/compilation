@@ -1,7 +1,9 @@
 package ast;
 
-import types.*;
+import ir.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstStmtWhile extends AstStmt
 {
@@ -23,6 +25,7 @@ public class AstStmtWhile extends AstStmt
 	/* Checks that condition is int and analyzes body       */
 	/* in a new scope                                       */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		/****************************/
@@ -53,6 +56,7 @@ public class AstStmtWhile extends AstStmt
 		return null;
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		/*******************************/

@@ -1,4 +1,5 @@
 package ast;
+import temp.*;
 
 public class AstFieldList extends AstNode {
     public AstField         head;
@@ -21,5 +22,15 @@ public class AstFieldList extends AstNode {
 
         if (head != null) AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
         if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
+    }
+
+    @Override
+    public Temp irMe() {
+        // Probably not needed for ex4, but will be needed in the future
+        if (head != null) head.irMe();
+        if (tail != null) tail.irMe();
+
+        // UNREACHABLE
+        return null;
     }
 }

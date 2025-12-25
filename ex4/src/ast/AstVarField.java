@@ -33,6 +33,7 @@ public class AstVarField extends AstVar
 	/*************************************************/
 	/* The printing message for a field var AST node */
 	/*************************************************/
+	@Override
 	public void printMe()
 	{
 		/*********************************/
@@ -63,6 +64,7 @@ public class AstVarField extends AstVar
 	/* Semantic analysis for field access (var.field)      */
 	/* Looks up the field in the class hierarchy           */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type t = null;

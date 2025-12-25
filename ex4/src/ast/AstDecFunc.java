@@ -1,8 +1,10 @@
 
 package ast;
 
-import types.*;
+import ir.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstDecFunc extends AstNode
 {
@@ -28,6 +30,7 @@ public class AstDecFunc extends AstNode
         if (body != null) body.printMe();
     }
 
+	@Override
     public Type semantMe() throws SemanticException
 	{
 		return semantMe(false);
@@ -135,7 +138,8 @@ public class AstDecFunc extends AstNode
 		/************************************************************/
 		return null;
 	}
-
+	
+	@Override
 	public Temp irMe()
 	{
 		Ir.

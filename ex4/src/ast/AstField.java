@@ -1,5 +1,7 @@
 package ast;
 
+import temp.*;
+
 public class AstField extends AstNode {
     public AstDecVar    decVar;
     public AstDecFunc   decFunc;
@@ -16,6 +18,7 @@ public class AstField extends AstNode {
         this.lineNumber = lineNumber;
     }
 
+    @Override
     public void printMe() {
         System.out.print("AST NODE FIELD\n");
         if (decVar != null) {
@@ -24,5 +27,19 @@ public class AstField extends AstNode {
         if (decFunc != null) {
             decFunc.printMe();
         }
+    }
+
+    @Override
+    public Temp irMe() {
+        // Probably not needed for ex4, but will be needed in the future
+        if (decVar != null) {
+            return decVar.irMe();
+        }
+        if (decFunc != null) {
+            return decFunc.irMe();
+        }
+
+        // UNREACHABLE
+        return null;
     }
 }

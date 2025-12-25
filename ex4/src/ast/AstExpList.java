@@ -1,6 +1,8 @@
 package ast;
 
+import temp.*;
 import types.*;
+
 
 public class AstExpList extends AstNode
 {
@@ -24,6 +26,7 @@ public class AstExpList extends AstNode
 	/****************************************************/
 	/* The printing message for an exp list AST node */
 	/****************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE EXP LIST\n");
@@ -69,6 +72,7 @@ public class AstExpList extends AstNode
 		return new TypeList(headType, tailTypeList);
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		return head.irMe();

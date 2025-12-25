@@ -1,5 +1,6 @@
 package ast;
 
+import temp.*;
 import types.*;
 
 public class AstDecList extends AstNode
@@ -24,6 +25,7 @@ public class AstDecList extends AstNode
 	/******************************************************/
 	/* The printing message for a declaration list node */
 	/******************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE DEC LIST\n");
@@ -37,6 +39,7 @@ public class AstDecList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		/*************************************/
@@ -48,6 +51,7 @@ public class AstDecList extends AstNode
 		return null;
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		if (head != null) head.irMe();

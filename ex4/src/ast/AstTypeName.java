@@ -6,8 +6,8 @@ package ast;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
-import types.*;
 import symboltable.*;
+import types.*;
 
 public class AstTypeName extends AstNode
 {
@@ -34,6 +34,7 @@ public class AstTypeName extends AstNode
 	/*************************************************/
 	/* The printing message for a type name AST node */
 	/*************************************************/
+	@Override
 	public void printMe()
 	{
 		/**************************************/
@@ -49,6 +50,7 @@ public class AstTypeName extends AstNode
 			String.format("NAME:TYPE\n%s:%s",name,type));
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type t = SymbolTable.getInstance().find(type);

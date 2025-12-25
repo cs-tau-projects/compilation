@@ -1,7 +1,8 @@
 package ast;
 
-import types.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstExpNew extends AstExp
 {
@@ -26,6 +27,7 @@ public class AstExpNew extends AstExp
         this.lineNumber = lineNumber;
     }
 
+    @Override
     public void printMe(){
         System.out.println("AST NODE NEW EXPRESSION");
         if (type != null) type.printMe();
@@ -46,6 +48,7 @@ public class AstExpNew extends AstExp
     /* Handles: new Type (for classes)                     */
     /*          new Type[exp] (for arrays)                 */
     /********************************************************/
+    @Override
     public Type semantMe() throws SemanticException
     {
         Type t = null;
@@ -107,5 +110,12 @@ public class AstExpNew extends AstExp
 
             return t;
         }
+    }
+
+    @Override
+    public Temp irMe()
+    {
+        // Not needed for this exercise, will need to be implemented in future exercises
+        return null;
     }
 }

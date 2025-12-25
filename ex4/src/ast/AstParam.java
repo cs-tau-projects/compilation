@@ -12,6 +12,7 @@ public class AstParam extends AstNode{
         this.lineNumber = lineNumber;
     }
 
+    @Override
     public void printMe(){
         System.out.format("AST PARAM NODE: %s %s\n", type.typeName, id);
     }

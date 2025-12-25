@@ -1,5 +1,7 @@
 package ast;
 
+import ir.*;
+import temp.*;
 import types.*;
 
 public class AstExpInt extends AstExp
@@ -16,11 +18,6 @@ public class AstExpInt extends AstExp
 		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.format("====================== exp -> INT( %d )\n", value);
-
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
@@ -31,6 +28,7 @@ public class AstExpInt extends AstExp
 	/************************************************/
 	/* The printing message for an int exp AST node */
 	/************************************************/
+	@Override
 	public void printMe()
 	{
 		/*******************************/
@@ -46,6 +44,7 @@ public class AstExpInt extends AstExp
 			String.format("INT(%d)",value));
 	}
 
+	@Override
 	public Type semantMe()
 	{
 		return TypeInt.getInstance();
@@ -60,6 +59,7 @@ public class AstExpInt extends AstExp
 		return value;
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		Temp t = TempFactory.getInstance().getFreshTemp();

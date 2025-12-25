@@ -17,11 +17,6 @@ public class AstVarSubscript extends AstVar
 		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.print("====================== var -> var [ exp ]\n");
-
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
@@ -33,6 +28,7 @@ public class AstVarSubscript extends AstVar
 	/*****************************************************/
 	/* The printing message for a subscript var AST node */
 	/*****************************************************/
+	@Override
 	public void printMe()
 	{
 		/*************************************/
@@ -60,6 +56,7 @@ public class AstVarSubscript extends AstVar
 		if (subscript != null) AstGraphviz.getInstance().logEdge(serialNumber,subscript.serialNumber);
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type t = null;

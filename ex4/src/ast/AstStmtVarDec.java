@@ -1,5 +1,6 @@
 package ast;
 
+import temp.*;
 import types.*;
 
 public class AstStmtVarDec extends AstStmt
@@ -12,7 +13,6 @@ public class AstStmtVarDec extends AstStmt
 	public AstStmtVarDec(AstDecVar varDec, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
-		// System.out.print("====================== stmt -> varDec\n");
 		this.varDec = varDec;
 		this.lineNumber = lineNumber;
 	}
@@ -20,6 +20,7 @@ public class AstStmtVarDec extends AstStmt
 	/********************************************************/
 	/* The printing message for a var dec statement node */
 	/********************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE VAR DEC STMT\n");
@@ -31,11 +32,13 @@ public class AstStmtVarDec extends AstStmt
 		if (varDec != null) AstGraphviz.getInstance().logEdge(serialNumber, varDec.serialNumber);
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		return varDec.semantMe();
 	}
 
+	@Override
 	public Temp irMe() { 
 		return varDec.irMe(); 
 	}

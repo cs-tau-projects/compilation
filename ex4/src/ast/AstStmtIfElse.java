@@ -1,7 +1,8 @@
 package ast;
 
-import types.*;
 import symboltable.*;
+import temp.Temp;
+import types.*;
 
 public class AstStmtIfElse extends AstStmt
 {
@@ -25,6 +26,7 @@ public class AstStmtIfElse extends AstStmt
 	/************************************************************/
 	/* The printing message for an if-else statement AST node */
 	/************************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE IF-ELSE STMT\n");
@@ -45,6 +47,7 @@ public class AstStmtIfElse extends AstStmt
 	/* Checks that condition is int and analyzes both       */
 	/* branches in separate scopes                          */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		/****************************/
@@ -84,6 +87,12 @@ public class AstStmtIfElse extends AstStmt
 
 		SymbolTable.getInstance().endScope();
 
+		return null;
+	}
+
+	@Override
+	public Temp irMe(){
+		// Needed in the future but not in ex4
 		return null;
 	}
 }

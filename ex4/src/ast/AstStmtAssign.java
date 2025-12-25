@@ -1,6 +1,8 @@
 package ast;
 
 import types.*;
+import temp.*;
+import ir.*;
 
 public class AstStmtAssign extends AstStmt
 {
@@ -36,6 +38,7 @@ public class AstStmtAssign extends AstStmt
 	/*********************************************************/
 	/* The printing message for an assign statement AST node */
 	/*********************************************************/
+	@Override
 	public void printMe()
 	{
 		/********************************************/
@@ -63,6 +66,7 @@ public class AstStmtAssign extends AstStmt
 		AstGraphviz.getInstance().logEdge(serialNumber,exp.serialNumber);
 	}
 
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type t1 = null;
@@ -100,12 +104,13 @@ public class AstStmtAssign extends AstStmt
 		return null;
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		Temp src = exp.irMe();
 		Ir.
 				getInstance().
-				AddIrCommand(new IrCommandStore(((AstExpVarSimple) var).name,src));
+				AddIrCommand(new IrCommandStore(var.name,src));
 
 		return null;
 	}

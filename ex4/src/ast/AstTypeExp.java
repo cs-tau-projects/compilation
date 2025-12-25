@@ -1,8 +1,5 @@
 package ast;
 
-import java.io.PrintWriter;
-
-/* changed from: public class AstTypeExp extends AstNode - type missmatch*/
 public class AstTypeExp extends AstExp
 {
     public AstType t;
@@ -14,6 +11,7 @@ public class AstTypeExp extends AstExp
         this.e = exp;
     }
 
+    @Override
     public void printMe()
     {
         serialNumber = AstNode.getFreshSerialNumber();

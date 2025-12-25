@@ -2,6 +2,8 @@ package ast;
 
 import types.*;
 import symboltable.*;
+import ir.*;
+import temp.*;
 
 public class AstDecVar extends AstNode {
     public String id;
@@ -23,6 +25,7 @@ public class AstDecVar extends AstNode {
         this.lineNumber = lineNumber;
     }
 
+	@Override
     public void printMe() {
         System.out.print("AST NODE VAR DEC\n");
         System.out.print("VAR NAME: " + id + "\n");
@@ -35,6 +38,7 @@ public class AstDecVar extends AstNode {
         if (exp != null) AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
     }
 
+	@Override
     public Type semantMe() throws SemanticException
 	{
 		Type t;
@@ -94,6 +98,7 @@ public class AstDecVar extends AstNode {
 		return null;
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id));

@@ -1,7 +1,9 @@
 package ast;
 
-import types.*;
+import ir.*;
 import symboltable.*;
+import temp.*;
+import types.*;
 
 public class AstExpCall extends AstExp
 {
@@ -35,6 +37,7 @@ public class AstExpCall extends AstExp
 	/*************************************************/
 	/* The printing message for a call exp AST node */
 	/*************************************************/
+	@Override
 	public void printMe()
 	{
 		System.out.print("AST NODE CALL EXP\n");
@@ -58,6 +61,7 @@ public class AstExpCall extends AstExp
 	/* Handles: funcName(params) - function call           */
 	/*          var.funcName(params) - method call         */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type funcType = null;
@@ -162,6 +166,7 @@ public class AstExpCall extends AstExp
 		}
 	}
 
+	@Override
 	public Temp irMe()
 	{
 		Temp t = null;

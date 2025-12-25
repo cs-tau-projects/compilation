@@ -1,7 +1,7 @@
 package ast;
 
-import types.*;
 import symboltable.*;
+import types.*;
 
 public class AstVarSimple extends AstVar
 {
@@ -35,6 +35,7 @@ public class AstVarSimple extends AstVar
 	/**************************************************/
 	/* The printing message for a simple var AST node */
 	/**************************************************/
+	@Override
 	public void printMe()
 	{
 		/**********************************/
@@ -54,6 +55,7 @@ public class AstVarSimple extends AstVar
 	/* Semantic analysis for simple variable               */
 	/* Looks up the variable name in the symbol table      */
 	/********************************************************/
+	@Override
 	public Type semantMe() throws SemanticException
 	{
 		Type t = SymbolTable.getInstance().find(name);
