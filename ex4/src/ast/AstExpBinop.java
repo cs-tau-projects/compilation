@@ -223,18 +223,29 @@ public class AstExpBinop extends AstExp
 		if (left  != null) t1 = left.irMe();
 		if (right != null) t2 = right.irMe();
 
-		// Might need to add more cases here in the future
 		switch(op){
 			case PLUS:
 				Ir.
 						getInstance().
 						AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
 				break;
-			
+
+			case MINUS:
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandBinopSubIntegers(dst,t1,t2));
+				break;
+
 			case TIMES:
 				Ir.
 						getInstance().
 						AddIrCommand(new IrCommandBinopMulIntegers(dst,t1,t2));
+				break;
+
+			case DIVIDE:
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandBinopDivIntegers(dst,t1,t2));
 				break;
 
 			case EQ:
@@ -242,13 +253,19 @@ public class AstExpBinop extends AstExp
 						getInstance().
 						AddIrCommand(new IrCommandBinopEqIntegers(dst,t1,t2));
 				break;
-			
+
 			case LT:
 				Ir.
 						getInstance().
 						AddIrCommand(new IrCommandBinopLtIntegers(dst,t1,t2));
 				break;
-			
+
+			case GT:
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandBinopGtIntegers(dst,t1,t2));
+				break;
+
 			default:
 				break;
 		}

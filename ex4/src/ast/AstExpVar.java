@@ -1,5 +1,6 @@
 package ast;
 
+import temp.*;
 import types.*;
 
 public class AstExpVar extends AstExp
@@ -68,5 +69,18 @@ public class AstExpVar extends AstExp
 			throw new SemanticException("variable expression has no variable", lineNumber);
 		}
 		return var.semantMe();
+	}
+
+	/********************************************************/
+	/* IR generation for variable expression               */
+	/* Simply delegates to the variable's irMe method      */
+	/********************************************************/
+	public Temp irMe()
+	{
+		if (var != null)
+		{
+			return var.irMe();
+		}
+		return null;
 	}
 }

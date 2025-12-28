@@ -1,5 +1,7 @@
 package ast;
 
+import ir.*;
+import temp.*;
 import types.*;
 
 public class AstStmtAssign extends AstStmt
@@ -105,7 +107,7 @@ public class AstStmtAssign extends AstStmt
 		Temp src = exp.irMe();
 		Ir.
 				getInstance().
-				AddIrCommand(new IrCommandStore(((AstExpVarSimple) var).name,src));
+				AddIrCommand(new IrCommandStore(((AstVarSimple) var).name, src));
 
 		return null;
 	}

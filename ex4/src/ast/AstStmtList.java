@@ -1,4 +1,7 @@
 package ast;
+
+import ir.*;
+import temp.*;
 import types.*;
 
 public class AstStmtList extends AstNode

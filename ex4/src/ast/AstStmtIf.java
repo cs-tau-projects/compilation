@@ -1,5 +1,7 @@
 package ast;
 
+import ir.*;
+import temp.*;
 import types.*;
 import symboltable.*;
 
@@ -47,6 +49,44 @@ public class AstStmtIf extends AstStmt
 		/***************************************************/
 		/* [4] Return value is irrelevant for if statement */
 		/**************************************************/
-		return null;		
+		return null;
+	}
+
+	public Temp irMe()
+	{
+		/*******************************/
+		/* [1] Allocate a fresh label  */
+		/*******************************/
+		String labelEnd = IrCommand.getFreshLabel("end");
+
+		/********************/
+		/* [2] cond.irMe(); */
+		/********************/
+		Temp condTemp = cond.irMe();
+
+		/******************************************/
+		/* [3] Jump conditionally to the end      */
+		/*     (skip body if condition is false)  */
+		/******************************************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelEnd));
+
+		/*******************/
+		/* [4] body.irMe() */
+		/*******************/
+		if (body != null) body.irMe();
+
+		/*********************/
+		/* [5] End label     */
+		/*********************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandLabel(labelEnd));
+
+		/*******************/
+		/* [6] return null */
+		/*******************/
+		return null;
 	}
 }

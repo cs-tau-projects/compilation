@@ -1,6 +1,7 @@
-
 package ast;
 
+import ir.*;
+import temp.*;
 import types.*;
 import symboltable.*;
 

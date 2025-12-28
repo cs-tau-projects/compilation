@@ -1,5 +1,7 @@
 package ast;
 
+import ir.*;
+import temp.*;
 import types.*;
 import symboltable.*;
 
@@ -86,5 +88,63 @@ public class AstStmtIfElse extends AstStmt
 
 		return null;
 	}
-}
 
+	public Temp irMe()
+	{
+		/*********************************/
+		/* [1] Allocate 2 fresh labels   */
+		/*********************************/
+		String labelElse = IrCommand.getFreshLabel("else");
+		String labelEnd = IrCommand.getFreshLabel("end");
+
+		/********************/
+		/* [2] cond.irMe(); */
+		/********************/
+		Temp condTemp = cond.irMe();
+
+		/********************************************/
+		/* [3] Jump conditionally to else branch    */
+		/*     (skip if-body when condition false)  */
+		/********************************************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelElse));
+
+		/***********************/
+		/* [4] ifBody.irMe()   */
+		/***********************/
+		if (ifBody != null) ifBody.irMe();
+
+		/****************************************/
+		/* [5] Jump unconditionally to end      */
+		/*     (skip else-body after if-body)   */
+		/****************************************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandJumpLabel(labelEnd));
+
+		/***********************/
+		/* [6] Else label      */
+		/***********************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandLabel(labelElse));
+
+		/***********************/
+		/* [7] elseBody.irMe() */
+		/***********************/
+		if (elseBody != null) elseBody.irMe();
+
+		/*********************/
+		/* [8] End label     */
+		/*********************/
+		Ir.
+				getInstance().
+				AddIrCommand(new IrCommandLabel(labelEnd));
+
+		/*******************/
+		/* [9] return null */
+		/*******************/
+		return null;
+	}
+}
