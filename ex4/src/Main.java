@@ -2,6 +2,8 @@ import java.io.*;
 import java.io.PrintWriter;
 import java_cup.runtime.Symbol;
 import ast.*;
+import ir.*;
+import cfg.*;
 
 public class Main
 {
@@ -58,13 +60,23 @@ public class Main
 			/**********************/
 			ast.irMe();
 
+			/****************************/
+			/* [9] Build the CFG ...    */
+			/****************************/
+			CFG cfg = new CFG(Ir.getInstance().getCommands());
+
+			/****************************/
+			/* [10] Debug: Print CFG    */
+			/****************************/
+			cfg.printCFG();
+
 			/**************************/
-			/* [9] Close output file */
+			/* [11] Close output file */
 			/**************************/
 			fileWriter.close();
 
 			/*************************************/
-			/* [10] Finalize AST GRAPHIZ DOT file */
+			/* [12] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
 		}
