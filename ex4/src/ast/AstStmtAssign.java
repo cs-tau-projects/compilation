@@ -105,9 +105,15 @@ public class AstStmtAssign extends AstStmt
 	public Temp irMe()
 	{
 		Temp src = exp.irMe();
+		/****************************************/
+		/* Get the scope offset for this var   */
+		/* from the symbol table               */
+		/****************************************/
+		String varName = ((AstVarSimple) var).name;
+		int scopeOffset = symboltable.SymbolTable.getInstance().getScopeOffset(varName);
 		Ir.
 				getInstance().
-				AddIrCommand(new IrCommandStore(((AstVarSimple) var).name, src));
+				AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
 
 		return null;
 	}

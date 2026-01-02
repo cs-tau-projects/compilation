@@ -14,9 +14,9 @@ import temp.*;
 
 public class IrCommandJumpIfEqToZero extends IrCommand
 {
-	Temp t;
-	String labelName;
-	
+	public Temp t;
+	public String labelName;
+
 	public IrCommandJumpIfEqToZero(Temp t, String labelName)
 	{
 		this.t          = t;

@@ -13,10 +13,19 @@ package ir;
 
 public class IrCommandAllocate extends IrCommand
 {
-	String varName;
-	
-	public IrCommandAllocate(String varName)
+	public VarId varId;
+
+	public IrCommandAllocate(VarId varId)
 	{
-		this.varName = varName;
+		this.varId = varId;
+	}
+
+	/****************************************/
+	/* Convenience constructor for backward */
+	/* compatibility during transition      */
+	/****************************************/
+	public IrCommandAllocate(String varName, int scopeOffset)
+	{
+		this.varId = new VarId(varName, scopeOffset);
 	}
 }

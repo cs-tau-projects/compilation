@@ -105,6 +105,41 @@ public class SymbolTable
 	}
 
 	/********************************************************/
+	/* Find the entry (with offset info) for a variable    */
+	/* Returns the SymbolTableEntry for the inner-most     */
+	/* scope element with the given name                   */
+	/********************************************************/
+	public SymbolTableEntry findEntry(String name)
+	{
+		SymbolTableEntry e;
+
+		for (e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name))
+			{
+				return e;
+			}
+		}
+
+		return null;
+	}
+
+	/********************************************************/
+	/* Get the scope offset for a variable                 */
+	/* This is the prevtopIndex which uniquely identifies  */
+	/* the variable declaration in the symbol table        */
+	/********************************************************/
+	public int getScopeOffset(String name)
+	{
+		SymbolTableEntry e = findEntry(name);
+		if (e != null)
+		{
+			return e.prevtopIndex;
+		}
+		return -1; // Not found
+	}
+
+	/********************************************************/
 	/* Find element with name in current scope only         */
 	/* Returns null if not found in current scope           */
 	/********************************************************/
