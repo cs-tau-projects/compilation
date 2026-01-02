@@ -1,9 +1,11 @@
 import java.io.*;
 import java.io.PrintWriter;
+import java.util.Set;
 import java_cup.runtime.Symbol;
 import ast.*;
 import ir.*;
 import cfg.*;
+import dataflow.*;
 
 public class Main
 {
@@ -65,18 +67,28 @@ public class Main
 			/****************************/
 			CFG cfg = new CFG(Ir.getInstance().getCommands());
 
-			/****************************/
-			/* [10] Debug: Print CFG    */
-			/****************************/
-			cfg.printCFG();
+			/****************************************/
+			/* [10] Run uninitialized var analysis  */
+			/****************************************/
+			UninitializedVarAnalysis analysis = new UninitializedVarAnalysis(cfg);
+			analysis.analyze();
+
+			/****************************************/
+			/* [11] Write results to output file    */
+			/****************************************/
+			Set<String> uninitVars = analysis.getUninitializedUses();
+			for (String varName : uninitVars)
+			{
+				fileWriter.println(varName);
+			}
 
 			/**************************/
-			/* [11] Close output file */
+			/* [12] Close output file */
 			/**************************/
 			fileWriter.close();
 
 			/*************************************/
-			/* [12] Finalize AST GRAPHIZ DOT file */
+			/* [13] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
 		}
