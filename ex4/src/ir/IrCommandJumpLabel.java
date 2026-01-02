@@ -13,8 +13,8 @@ package ir;
 
 public class IrCommandJumpLabel extends IrCommand
 {
-	String labelName;
-	
+	public String labelName;
+
 	public IrCommandJumpLabel(String labelName)
 	{
 		this.labelName = labelName;

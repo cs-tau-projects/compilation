@@ -81,7 +81,12 @@ public class AstVarSimple extends AstVar
 	public Temp irMe()
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name));
+		/****************************************/
+		/* Get the scope offset for this var   */
+		/* from the symbol table               */
+		/****************************************/
+		int scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset));
 		return dst;
 	}
 }

@@ -6,6 +6,8 @@ package ir;
 /*******************/
 /* GENERAL IMPORTS */
 /*******************/
+import java.util.ArrayList;
+import java.util.List;
 
 /*******************/
 /* PROJECT IMPORTS */
@@ -13,31 +15,42 @@ package ir;
 
 public class Ir
 {
-	private IrCommand head=null;
-	private IrCommandList tail=null;
+	/****************************************/
+	/* Store IR commands in an ArrayList   */
+	/* for easy iteration during analysis  */
+	/****************************************/
+	private List<IrCommand> commands = new ArrayList<>();
 
 	/******************/
 	/* Add Ir command */
 	/******************/
 	public void AddIrCommand(IrCommand cmd)
 	{
-		if ((head == null) && (tail == null))
-		{
-			this.head = cmd;
-		}
-		else if ((head != null) && (tail == null))
-		{
-			this.tail = new IrCommandList(cmd,null);
-		}
-		else
-		{
-			IrCommandList it = tail;
-			while ((it != null) && (it.tail != null))
-			{
-				it = it.tail;
-			}
-			it.tail = new IrCommandList(cmd,null);
-		}
+		commands.add(cmd);
+	}
+
+	/****************************************/
+	/* Get all IR commands for analysis    */
+	/****************************************/
+	public List<IrCommand> getCommands()
+	{
+		return commands;
+	}
+
+	/****************************************/
+	/* Get the number of IR commands       */
+	/****************************************/
+	public int size()
+	{
+		return commands.size();
+	}
+
+	/****************************************/
+	/* Reset the IR (for testing purposes) */
+	/****************************************/
+	public void reset()
+	{
+		commands.clear();
 	}
 
 	/**************************************/

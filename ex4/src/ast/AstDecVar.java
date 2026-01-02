@@ -98,11 +98,17 @@ public class AstDecVar extends AstNode {
 
 	public Temp irMe()
 	{
-		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id));
+		/****************************************/
+		/* Get the scope offset for this var   */
+		/* from the symbol table               */
+		/****************************************/
+		int scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
+
+		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset));
 
 		if (exp != null)
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandStore(id,exp.irMe()));
+			Ir.getInstance().AddIrCommand(new IrCommandStore(id, scopeOffset, exp.irMe()));
 		}
 		return null;
 	}

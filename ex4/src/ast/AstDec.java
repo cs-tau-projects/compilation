@@ -1,5 +1,6 @@
 package ast;
 
+import temp.*;
 import types.*;
 
 public class AstDec extends AstNode
@@ -30,6 +31,18 @@ public class AstDec extends AstNode
 		if (decNode != null)
 		{
 			return decNode.semantMe();
+		}
+		return null;
+	}
+
+	/***********************************************/
+	/* IR generation - delegate to the decNode    */
+	/***********************************************/
+	public Temp irMe()
+	{
+		if (decNode != null)
+		{
+			return decNode.irMe();
 		}
 		return null;
 	}
