@@ -77,9 +77,22 @@ public class Main
 			/* [11] Write results to output file    */
 			/****************************************/
 			Set<String> uninitVars = analysis.getUninitializedUses();
-			for (String varName : uninitVars)
+			if (uninitVars.isEmpty())
 			{
-				fileWriter.println(varName);
+				fileWriter.print("!OK");
+			}
+			else
+			{
+				boolean first = true;
+				for (String varName : uninitVars)
+				{
+					if (!first)
+					{
+						fileWriter.println();
+					}
+					fileWriter.print(varName);
+					first = false;
+				}
 			}
 
 			/**************************/
