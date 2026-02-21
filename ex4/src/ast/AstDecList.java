@@ -52,10 +52,34 @@ public class AstDecList extends AstNode
 
 	public Temp irMe()
 	{
-		if (head != null) head.irMe();
-		if (tail != null) tail.irMe();
+		/****************************************/
+		/* IR generation with reordering:      */
+		/* 1. Global variables first           */
+		/* 2. Functions and classes second     */
+		/****************************************/
+		
+		// Pass 1: Global variable declarations
+		AstDecList current = this;
+		while (current != null)
+		{
+			if (current.head != null && current.head.decNode instanceof AstDecVar)
+			{
+				current.head.irMe();
+			}
+			current = current.tail;
+		}
+
+		// Pass 2: Function declarations (and anything else)
+		current = this;
+		while (current != null)
+		{
+			if (current.head != null && !(current.head.decNode instanceof AstDecVar))
+			{
+				current.head.irMe();
+			}
+			current = current.tail;
+		}
 
 		return null;
 	}
 }
-
