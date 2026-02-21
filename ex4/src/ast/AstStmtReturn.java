@@ -2,6 +2,8 @@ package ast;
 
 import types.*;
 import symboltable.*;
+import ir.*;
+import temp.*;
 
 public class AstStmtReturn extends AstStmt
 {
@@ -79,5 +81,13 @@ public class AstStmtReturn extends AstStmt
 
 		return null;
 	}
-}
 
+	public Temp irMe()
+	{
+		if (exp != null)
+		{
+			exp.irMe();
+		}
+		return null;
+	}
+}

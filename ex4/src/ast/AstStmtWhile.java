@@ -85,7 +85,7 @@ public class AstStmtWhile extends AstStmt
 		/*******************/
 		/* [5] body.IRme() */
 		/*******************/
-		body.irMe();
+		if (body != null) body.irMe();
 
 		/******************************/
 		/* [6] Jump to the loop entry */

@@ -1,6 +1,8 @@
 package ast;
 
 import types.*;
+import ir.*;
+import temp.*;
 
 public class AstStmtAssignNew extends AstStmt
 {
@@ -109,5 +111,21 @@ public class AstStmtAssignNew extends AstStmt
 		/********************************************************/
 		return null;
 	}
-}
 
+	public Temp irMe()
+	{
+		if (newExp != null)
+		{
+			Temp src = newExp.irMe();
+			if (var instanceof AstVarSimple)
+			{
+				String varName = ((AstVarSimple) var).name;
+				int scopeOffset = ((AstVarSimple) var).getScopeOffset();
+				Ir.
+						getInstance().
+						AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
+			}
+		}
+		return null;
+	}
+}

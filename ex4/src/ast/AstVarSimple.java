@@ -12,6 +12,12 @@ public class AstVarSimple extends AstVar
 	/************************/
 	public String name;
 	
+	/*************************************************/
+	/* The scope offset captured during semantic     */
+	/* analysis for use in IR generation             */
+	/*************************************************/
+	private int scopeOffset = -1;
+	
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -64,6 +70,11 @@ public class AstVarSimple extends AstVar
 		{
 			throw new SemanticException("undefined variable " + name, lineNumber);
 		}
+		
+		/*************************************************/
+		/* Capture the scope offset while scope is active */
+		/*************************************************/
+		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
 
 		// If it's a field, return the field's type, not the TypeField wrapper
 		if (t instanceof TypeField)
@@ -82,11 +93,20 @@ public class AstVarSimple extends AstVar
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();
 		/****************************************/
-		/* Get the scope offset for this var   */
-		/* from the symbol table               */
+		/* Use the captured scope offset       */
 		/****************************************/
-		int scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		if (scopeOffset == -1)
+		{
+			// Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
+			scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		}
+		
 		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset));
 		return dst;
+	}
+	
+	public int getScopeOffset()
+	{
+		return scopeOffset;
 	}
 }

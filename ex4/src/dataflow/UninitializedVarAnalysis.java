@@ -216,5 +216,94 @@ public class UninitializedVarAnalysis extends DataflowAnalysis<UninitializedVarS
     {
         return uninitializedUses;
     }
+    
+    /**
+     * Run the dataflow analysis using chaotic iteration (worklist algorithm).
+     * After this method returns, inStates and outStates contain the fixed-point solution.
+     */
+    @Override
+    public void analyze()
+    {
+        int n = cfg.size();
+        if (n == 0) return;
+        
+        // Initialize IN and OUT states for all nodes
+        for (int i = 0; i < n; i++)
+        {
+            inStates.add(createInitialState());
+            outStates.add(createInitialState());
+        }
+        
+        // Set boundary condition for entry node (node 0)
+        inStates.set(0, createBoundaryState());
+        
+        // Initialize worklist with all nodes
+        Queue<Integer> worklist = new LinkedList<>();
+        Set<Integer> inWorklist = new HashSet<>();
+        for (int i = 0; i < n; i++)
+        {
+            worklist.add(i);
+            inWorklist.add(i);
+        }
+        
+        // Iterate until fixed point
+        while (!worklist.isEmpty())
+        {
+            // Remove a node from the worklist
+            int nodeIdx = worklist.poll();
+            inWorklist.remove(nodeIdx);
+            
+            // Compute IN[n] = join of OUT[p] for all predecessors p
+            // (except for entry node which keeps its boundary state)
+            Set<Integer> preds = cfg.getPredecessors(nodeIdx);
+            if (!preds.isEmpty())
+            {
+                UninitializedVarState newIn = createInitialState();
+                for (int predIdx : preds)
+                {
+                    newIn.join(outStates.get(predIdx));
+                }
+                inStates.set(nodeIdx, newIn);
+            }
+            
+            // Compute OUT[n] = transfer(n, IN[n])
+            UninitializedVarState newOut = inStates.get(nodeIdx).copy();
+            
+            // Capture uninitialized uses during the transfer function
+            // We need to do this carefully because we might visit nodes multiple times
+            // and we don't want to report the same error multiple times if we were printing immediately,
+            // but since we're collecting into a Set, it's fine.
+            // However, we only want to collect errors from the FINAL fixed-point state.
+            // But since this is a monotonic analysis, if it's uninitialized once, it will stay uninitialized.
+            // Wait, that's not strictly true if we had "must initialized" analysis, but this is "may uninitialized".
+            // If we find a path where it's uninitialized, it's a valid error.
+            
+            transfer(cfg.getCommand(nodeIdx), newOut);
+            
+            // If OUT changed, add successors to worklist
+            if (!newOut.equals(outStates.get(nodeIdx)))
+            {
+                outStates.set(nodeIdx, newOut);
+                for (int succIdx : cfg.getSuccessors(nodeIdx))
+                {
+                    if (!inWorklist.contains(succIdx))
+                    {
+                        worklist.add(succIdx);
+                        inWorklist.add(succIdx);
+                    }
+                }
+            }
+        }
+        
+        // After fixed point is reached, do one final pass to collect all uninitialized uses
+        // based on the final IN states.
+        uninitializedUses.clear(); // Clear any intermediate results
+        for (int i = 0; i < n; i++)
+        {
+            // We need to run transfer one last time on the final IN state to catch uses
+            // We use a copy so we don't modify the stored IN state (though it shouldn't matter at this point)
+            UninitializedVarState state = inStates.get(i).copy();
+            transfer(cfg.getCommand(i), state);
+        }
+    }
 }
-

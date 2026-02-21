@@ -39,7 +39,7 @@ public class AstStmtIf extends AstStmt
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		body.semantMe();
+		if (body != null) body.semantMe();
 
 		/*****************/
 		/* [3] End Scope */

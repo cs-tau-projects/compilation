@@ -9,6 +9,12 @@ public class AstDecVar extends AstNode {
     public String id;
     public AstType type;
     public AstExp exp = null;
+    
+    /*************************************************/
+    /* The scope offset captured during semantic     */
+    /* analysis for use in IR generation             */
+    /*************************************************/
+    private int scopeOffset = -1;
 
     public AstDecVar(String id, AstType type, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
@@ -89,9 +95,14 @@ public class AstDecVar extends AstNode {
 		/* [5] Enter the Identifier to the Symbol Table */
 		/************************************************/
 		SymbolTable.getInstance().enter(id, t);
+		
+		/*************************************************/
+		/* [6] Capture the scope offset while scope is active */
+		/*************************************************/
+		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
 
 		/************************************************************/
-		/* [6] Return value is irrelevant for variable declarations */
+		/* [7] Return value is irrelevant for variable declarations */
 		/************************************************************/
 		return null;
 	}
@@ -99,10 +110,13 @@ public class AstDecVar extends AstNode {
 	public Temp irMe()
 	{
 		/****************************************/
-		/* Get the scope offset for this var   */
-		/* from the symbol table               */
+		/* Use the captured scope offset       */
 		/****************************************/
-		int scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
+		if (scopeOffset == -1)
+		{
+			// Fallback if semantMe wasn't called or failed
+			scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
+		}
 
 		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset));
 
