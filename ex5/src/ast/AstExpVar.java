@@ -1,0 +1,86 @@
+package ast;
+
+import temp.*;
+import types.*;
+
+public class AstExpVar extends AstExp
+{
+	public AstVar var;
+
+	/******************/
+	/* CONSTRUCTOR(S) */
+	/******************/
+	public AstExpVar(AstVar var, int lineNumber)
+	{
+		/******************************/
+		/* SET A UNIQUE SERIAL NUMBER */
+		/******************************/
+		serialNumber = AstNodeSerialNumber.getFresh();
+
+		/***************************************/
+		/* PRINT CORRESPONDING DERIVATION RULE */
+		/***************************************/
+		// System.out.print("====================== exp -> var\n");
+
+		/*******************************/
+		/* COPY INPUT DATA MEMBERS ... */
+		/*******************************/
+		this.var = var;
+		this.lineNumber = lineNumber;
+	}
+	
+	/***********************************************/
+	/* The default message for an exp var AST node */
+	/***********************************************/
+	public void printMe()
+	{
+		/************************************/
+		/* AST NODE TYPE = EXP VAR AST NODE */
+		/************************************/
+		System.out.print("AST NODE EXP VAR\n");
+
+		/*****************************/
+		/* RECURSIVELY PRINT var ... */
+		/*****************************/
+		if (var != null) var.printMe();
+		
+		/*********************************/
+		/* Print to AST GRAPHVIZ DOT file */
+		/*********************************/
+		AstGraphviz.getInstance().logNode(
+				serialNumber,
+			"EXP\nVAR");
+
+		/****************************************/
+		/* PRINT Edges to AST GRAPHVIZ DOT file */
+		/****************************************/
+		AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
+
+	}
+
+	/********************************************************/
+	/* Semantic analysis for variable expression           */
+	/* Simply delegates to the variable's semantMe method  */
+	/********************************************************/
+	public Type semantMe() throws SemanticException
+	{
+		if (var == null)
+		{
+			throw new SemanticException("variable expression has no variable", lineNumber);
+		}
+		return var.semantMe();
+	}
+
+	/********************************************************/
+	/* IR generation for variable expression               */
+	/* Simply delegates to the variable's irMe method      */
+	/********************************************************/
+	public Temp irMe()
+	{
+		if (var != null)
+		{
+			return var.irMe();
+		}
+		return null;
+	}
+}
