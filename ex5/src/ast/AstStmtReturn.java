@@ -84,10 +84,16 @@ public class AstStmtReturn extends AstStmt
 
 	public Temp irMe()
 	{
+		Temp retVal = null;
 		if (exp != null)
 		{
-			exp.irMe();
+			retVal = exp.irMe();
+		} else {
+		    retVal = TempFactory.getInstance().getFreshTemp();
+		    Ir.getInstance().AddIrCommand(new IRcommandConstInt(retVal, 0));
 		}
+		
+		Ir.getInstance().AddIrCommand(new IrCommandReturn(retVal));
 		return null;
 	}
 }

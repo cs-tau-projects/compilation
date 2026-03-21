@@ -9,6 +9,8 @@ public class AstExpBinop extends AstExp
 	BinOp op;
 	public AstExp left;
 	public AstExp right;
+	public Type leftType;
+	public Type rightType;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -72,8 +74,8 @@ public class AstExpBinop extends AstExp
 		/****************************/
 		/* [1] Semant both operands */
 		/****************************/
-		if (left  != null) t1 = left.semantMe();
-		if (right != null) t2 = right.semantMe();
+		if (left  != null) t1 = leftType = left.semantMe();
+		if (right != null) t2 = rightType = right.semantMe();
 
 		/****************************/
 		/* [2] Check for null types */
@@ -225,9 +227,11 @@ public class AstExpBinop extends AstExp
 
 		switch(op){
 			case PLUS:
-				Ir.
-						getInstance().
-						AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
+				if (leftType instanceof TypeString) {
+					Ir.getInstance().AddIrCommand(new IrCommandBinopStrConcat(dst, t1, t2));
+				} else {
+					Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
+				}
 				break;
 
 			case MINUS:
@@ -249,9 +253,14 @@ public class AstExpBinop extends AstExp
 				break;
 
 			case EQ:
-				Ir.
-						getInstance().
-						AddIrCommand(new IrCommandBinopEqIntegers(dst,t1,t2));
+				if (leftType instanceof TypeString || rightType instanceof TypeString) {
+					Ir.getInstance().AddIrCommand(new IrCommandBinopEqStrings(dst, t1, t2));
+				} else if (leftType instanceof TypeClass || leftType instanceof TypeArray || leftType instanceof TypeNil ||
+						   rightType instanceof TypeClass || rightType instanceof TypeArray || rightType instanceof TypeNil) {
+					Ir.getInstance().AddIrCommand(new IrCommandBinopEqRefs(dst, t1, t2));
+				} else {
+					Ir.getInstance().AddIrCommand(new IrCommandBinopEqIntegers(dst,t1,t2));
+				}
 				break;
 
 			case LT:

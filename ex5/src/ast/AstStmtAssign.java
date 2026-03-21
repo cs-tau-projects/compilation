@@ -105,17 +105,29 @@ public class AstStmtAssign extends AstStmt
 	public Temp irMe()
 	{
 		Temp src = exp.irMe();
-		/****************************************/
-		/* Get the scope offset for this var   */
-		/* from the symbol table               */
-		/****************************************/
 		if (var instanceof AstVarSimple)
 		{
 			String varName = ((AstVarSimple) var).name;
 			int scopeOffset = ((AstVarSimple) var).getScopeOffset();
-			Ir.
-					getInstance().
-					AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
+			Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
+		}
+		else if (var instanceof AstVarField)
+		{
+			AstVarField f = (AstVarField) var;
+			Temp objAddr = f.var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
+			TypeClass tc = null;
+			try { tc = (TypeClass) f.var.semantMe(); } catch (SemanticException e) {}
+			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, tc.name, f.fieldName, src));
+		}
+		else if (var instanceof AstVarSubscript)
+		{
+			AstVarSubscript sub = (AstVarSubscript) var;
+			Temp arrayAddr = sub.var.irMe();
+			Temp indexTemp = sub.subscript.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(arrayAddr));
+			Ir.getInstance().AddIrCommand(new IrCommandCheckBounds(arrayAddr, indexTemp));
+			Ir.getInstance().AddIrCommand(new IrCommandArraySet(arrayAddr, indexTemp, src));
 		}
 		return null;
 	}

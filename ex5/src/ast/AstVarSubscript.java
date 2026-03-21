@@ -117,4 +117,15 @@ public class AstVarSubscript extends AstVar
 		TypeArray arrayType = (TypeArray) t;
 		return arrayType.elementType;
 	}
+
+	public temp.Temp irMe()
+	{
+		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+		temp.Temp arrayAddr = var.irMe();
+		temp.Temp indexTemp = subscript.irMe();
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandCheckNull(arrayAddr));
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandCheckBounds(arrayAddr, indexTemp));
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandArrayGet(dst, arrayAddr, indexTemp));
+		return dst;
+	}
 }

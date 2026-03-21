@@ -17,6 +17,7 @@ public class AstVarSimple extends AstVar
 	/* analysis for use in IR generation             */
 	/*************************************************/
 	private int scopeOffset = -1;
+	public boolean isGlobal = false;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -75,6 +76,18 @@ public class AstVarSimple extends AstVar
 		/* Capture the scope offset while scope is active */
 		/*************************************************/
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		
+		SymbolTableEntry entry = SymbolTable.getInstance().findEntry(name);
+		if (entry != null) { // If it has no SCOPE-BOUNDARY below it, it's global
+			boolean global = true;
+			for (SymbolTableEntry e = entry; e != null; e = e.prevtop) {
+				if ("SCOPE-BOUNDARY".equals(e.name)) {
+					global = false;
+					break;
+				}
+			}
+			this.isGlobal = global;
+		}
 
 		// If it's a field, return the field's type, not the TypeField wrapper
 		if (t instanceof TypeField)
@@ -101,7 +114,7 @@ public class AstVarSimple extends AstVar
 			scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
 		}
 		
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset));
+		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset, isGlobal));
 		return dst;
 	}
 	

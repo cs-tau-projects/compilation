@@ -139,10 +139,17 @@ public class AstDecFunc extends AstNode
 
 	public Temp irMe()
 	{
-		Ir.
-				getInstance().
-				AddIrCommand(new IrCommandLabel(funcName));
+	    String emitName = funcName;
+	    if (funcName.equals("main")) {
+	        emitName = "user_main";
+	    }
+		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
 		if (body != null) body.irMe();
+
+        // Ensure functions always have a return just in case
+        Temp dst = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
+        Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));
 
 		return null;
 	}

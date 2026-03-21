@@ -112,4 +112,15 @@ public class AstVarField extends AstVar
 		// If it's a method, return the function type
 		return member;
 	}
+
+	public temp.Temp irMe()
+	{
+		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+		temp.Temp objAddr = var.irMe();
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandCheckNull(objAddr));
+		TypeClass tc = null;
+		try { tc = (TypeClass) var.semantMe(); } catch (SemanticException e) {}
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldGet(dst, objAddr, tc.name, fieldName));
+		return dst;
+	}
 }

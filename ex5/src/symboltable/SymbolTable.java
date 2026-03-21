@@ -367,4 +367,13 @@ public class SymbolTable
 	{
 		return this.currentFunctionReturnType;
 	}
+
+	public boolean isGlobalScope() {
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop) {
+			if ("SCOPE-BOUNDARY".equals(e.name)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

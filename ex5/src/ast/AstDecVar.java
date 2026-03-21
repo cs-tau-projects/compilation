@@ -15,6 +15,7 @@ public class AstDecVar extends AstNode {
     /* analysis for use in IR generation             */
     /*************************************************/
     private int scopeOffset = -1;
+    public boolean isGlobal = false;
 
     public AstDecVar(String id, AstType type, int lineNumber) {
         serialNumber = AstNodeSerialNumber.getFresh();
@@ -100,6 +101,7 @@ public class AstDecVar extends AstNode {
 		/* [6] Capture the scope offset while scope is active */
 		/*************************************************/
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
+		this.isGlobal = SymbolTable.getInstance().isGlobalScope();
 
 		/************************************************************/
 		/* [7] Return value is irrelevant for variable declarations */
@@ -118,11 +120,11 @@ public class AstDecVar extends AstNode {
 			scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
 		}
 
-		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset));
+		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset, isGlobal));
 
 		if (exp != null)
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandStore(id, scopeOffset, exp.irMe()));
+			Ir.getInstance().AddIrCommand(new IrCommandStore(id, scopeOffset, exp.irMe(), isGlobal));
 		}
 		return null;
 	}

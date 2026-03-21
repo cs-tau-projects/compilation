@@ -108,4 +108,19 @@ public class AstExpNew extends AstExp
             return t;
         }
     }
+
+    public temp.Temp irMe()
+    {
+        temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+        if (exp != null)
+        {
+            temp.Temp sizeTemp = exp.irMe();
+            ir.Ir.getInstance().AddIrCommand(new ir.IrCommandNewArray(dst, sizeTemp));
+        }
+        else
+        {
+            ir.Ir.getInstance().AddIrCommand(new ir.IrCommandNewObject(dst, type.typeName));
+        }
+        return dst;
+    }
 }

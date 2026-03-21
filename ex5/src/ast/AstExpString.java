@@ -30,5 +30,12 @@ public class AstExpString extends AstExp
 	{
 		return TypeString.getInstance();
 	}
+
+	public temp.Temp irMe()
+	{
+		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandConstString(dst, value));
+		return dst;
+	}
 }
 

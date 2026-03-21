@@ -166,13 +166,52 @@ public class AstExpCall extends AstExp
 
 	public Temp irMe()
 	{
-		Temp t = null;
+		Temp dst = TempFactory.getInstance().getFreshTemp();
 
-		if (params != null) { t = params.head.irMe(); }
+		if (var == null) {
+			if (funcName.equals("PrintInt")) {
+				Temp t = null;
+				if (params != null) t = params.head.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+				return dst;
+			} else if (funcName.equals("PrintString")) {
+				Temp t = null;
+				if (params != null) t = params.head.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandPrintString(t));
+				return dst;
+			}
+		}
 
-		Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+		java.util.List<Temp> paramTemps = new java.util.ArrayList<>();
+		if (params != null) {
+			for (AstExpList it = params; it != null; it = it.tail) {
+				paramTemps.add(it.head.irMe());
+			}
+		}
 
-		return null;
+		for (Temp p : paramTemps) {
+			Ir.getInstance().AddIrCommand(new IrCommandPushParam(p));
+		}
+
+		if (var != null) {
+			Temp objAddr = var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
+			
+			TypeClass classType = null;
+			try {
+			    classType = (TypeClass) var.semantMe();
+			} catch (SemanticException e) {}
+			
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, objAddr, classType.name, funcName));
+		} else {
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
+		}
+
+		if (paramTemps.size() > 0) {
+			Ir.getInstance().AddIrCommand(new IrCommandPopParams(paramTemps.size()));
+		}
+
+		return dst;
 	}
 }
 

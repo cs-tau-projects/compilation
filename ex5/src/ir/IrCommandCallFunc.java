@@ -1,0 +1,49 @@
+package ir;
+
+import temp.Temp;
+
+public class IrCommandCallFunc extends IrCommand {
+    public Temp dst;
+    public String funcLabel;
+    public Temp objAddr;
+    public String className;
+    public String methodName;
+
+    public IrCommandCallFunc(Temp dst, String funcLabel) {
+        this.dst = dst;
+        this.funcLabel = funcLabel;
+    }
+
+    public IrCommandCallFunc(Temp dst, Temp objAddr, String className, String methodName) {
+        this.dst = dst;
+        this.funcLabel = null;
+        this.objAddr = objAddr;
+        this.className = className;
+        this.methodName = methodName;
+    }
+
+	@Override
+	public java.util.List<temp.Temp> getUsedTemps() {
+		java.util.List<temp.Temp> list = new java.util.ArrayList<>();
+		if (objAddr != null) list.add(objAddr);
+		return list;
+	}
+
+	@Override
+	public java.util.List<temp.Temp> getDefinedTemps() {
+		java.util.List<temp.Temp> list = new java.util.ArrayList<>();
+		if (dst != null) list.add(dst);
+		return list;
+	}
+
+	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
+		if (objAddr != null) {
+		    gen.emitInstruction("lw", "$t0", "0(" + regMap.get(objAddr) + ")");
+		    gen.emitInstruction("la", "$t1", "Method_" + className + "_" + methodName);
+		    gen.emitInstruction("jalr", "$t1");
+		} else {
+		    gen.emitInstruction("jal", funcLabel);
+		}
+		if (dst != null) gen.emitInstruction("move", regMap.get(dst), "$v0");
+	}
+}
