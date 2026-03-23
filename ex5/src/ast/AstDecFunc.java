@@ -144,6 +144,21 @@ public class AstDecFunc extends AstNode
 	        emitName = "user_main";
 	    }
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
+		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());
+		
+		int numArgs = 0;
+		AstParametersList p = params;
+		while (p != null) { numArgs++; p = p.tail; }
+		
+		p = params;
+		int i = 0;
+		while (p != null) {
+		    int paramScopeOffset = SymbolTable.getInstance().getScopeOffset(p.head.id);
+		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(p.head.id, paramScopeOffset, i, numArgs));
+		    i++;
+		    p = p.tail;
+		}
+
 		if (body != null) body.irMe();
 
         // Ensure functions always have a return just in case

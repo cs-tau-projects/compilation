@@ -29,6 +29,9 @@ public class IrCommandBinopStrConcat extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		gen.emitInstruction("move", regMap.get(dst), regMap.get(left));
+		gen.emitInstruction("move", "$a0", regMap.get(left));
+		gen.emitInstruction("move", "$a1", regMap.get(right));
+		gen.emitInstruction("jal", "Runtime_StrConcat");
+		gen.emitInstruction("move", regMap.get(dst), "$v0");
 	}
 }

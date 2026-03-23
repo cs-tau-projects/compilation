@@ -327,4 +327,56 @@ public class AstDecClass extends AstNode{
 			SymbolTable.getInstance().enter(it.head.name, it.head);
 		}
 	}
+
+	public temp.Temp irMe()
+	{
+		TypeClass classType = (TypeClass) SymbolTable.getInstance().find(id);
+		if (classType == null) return null;
+		
+		java.util.List<String> methods = buildVtable(classType);
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandVtable(id, methods));
+
+		for (AstFieldList it = fields; it != null; it = it.tail) {
+			if (it.head.decFunc != null) {
+				it.head.decFunc.irMe();
+			}
+		}
+
+		return null;
+	}
+
+	public static java.util.List<String> buildVtable(TypeClass classType) {
+		java.util.List<String> methods = new java.util.ArrayList<>();
+		if (classType == null) return methods;
+
+		if (classType.father != null) {
+			methods.addAll(buildVtable(classType.father));
+		}
+
+		java.util.List<Type> ownMembers = new java.util.ArrayList<>();
+		for (TypeList it = classType.dataMembers; it != null; it = it.tail) {
+			ownMembers.add(it.head);
+		}
+		java.util.Collections.reverse(ownMembers);
+
+		for (Type member : ownMembers) {
+			if (member instanceof TypeFunction) {
+				String funcName = member.name;
+				String methodLabel = "Method_" + classType.name + "_" + funcName;
+				
+				boolean overridden = false;
+				for (int i = 0; i < methods.size(); i++) {
+					if (methods.get(i).endsWith("_" + funcName)) {
+						methods.set(i, methodLabel);
+						overridden = true;
+						break;
+					}
+				}
+				if (!overridden) {
+					methods.add(methodLabel);
+				}
+			}
+		}
+		return methods;
+	}
 }

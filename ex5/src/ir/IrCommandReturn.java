@@ -25,8 +25,9 @@ public class IrCommandReturn extends IrCommand {
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		if (src != null) gen.emitInstruction("move", "$v0", regMap.get(src));
 		gen.emitInstruction("move", "$sp", "$fp");
-		gen.emitInstruction("lw", "$ra", "-4(" + "$sp" + ")");
-		gen.emitInstruction("lw", "$fp", "0(" + "$sp" + ")");
+		gen.emitInstruction("lw", "$ra", "4($sp)");
+		gen.emitInstruction("lw", "$fp", "8($sp)");
+		gen.emitInstruction("add", "$sp", "$sp", "8");
 		gen.emitInstruction("jr", "$ra");
 	}
 }

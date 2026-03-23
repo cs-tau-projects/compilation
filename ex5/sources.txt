@@ -71,6 +71,7 @@ D:\compilation\compilation\ex5\src\ir\IrCommandConstString.java
 D:\compilation\compilation\ex5\src\ir\IrCommandExit.java
 D:\compilation\compilation\ex5\src\ir\IrCommandFieldGet.java
 D:\compilation\compilation\ex5\src\ir\IrCommandFieldSet.java
+D:\compilation\compilation\ex5\src\ir\IrCommandFuncPrologue.java
 D:\compilation\compilation\ex5\src\ir\IrCommandJumpIfEqToZero.java
 D:\compilation\compilation\ex5\src\ir\IrCommandJumpLabel.java
 D:\compilation\compilation\ex5\src\ir\IrCommandLabel.java
@@ -85,6 +86,7 @@ D:\compilation\compilation\ex5\src\ir\IrCommandPrintString.java
 D:\compilation\compilation\ex5\src\ir\IrCommandPushParam.java
 D:\compilation\compilation\ex5\src\ir\IrCommandReturn.java
 D:\compilation\compilation\ex5\src\ir\IrCommandStore.java
+D:\compilation\compilation\ex5\src\ir\IrCommandVtable.java
 D:\compilation\compilation\ex5\src\ir\VarId.java
 D:\compilation\compilation\ex5\src\mips\MipsGenerator.java
 D:\compilation\compilation\ex5\src\regalloc\InterferenceGraph.java

@@ -202,7 +202,17 @@ public class AstExpCall extends AstExp
 			    classType = (TypeClass) var.semantMe();
 			} catch (SemanticException e) {}
 			
-			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, objAddr, classType.name, funcName));
+			int vtableOffset = 0;
+			if (classType != null) {
+			    java.util.List<String> methods = AstDecClass.buildVtable(classType);
+			    for (int i = 0; i < methods.size(); i++) {
+			        if (methods.get(i).endsWith("_" + funcName)) {
+			            vtableOffset = i * 4;
+			            break;
+			        }
+			    }
+			}
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, objAddr, vtableOffset));
 		} else {
 			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
 		}

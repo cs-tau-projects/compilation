@@ -14,12 +14,13 @@ public class IrCommandCallFunc extends IrCommand {
         this.funcLabel = funcLabel;
     }
 
-    public IrCommandCallFunc(Temp dst, Temp objAddr, String className, String methodName) {
+    public int vtableOffset;
+
+    public IrCommandCallFunc(Temp dst, Temp objAddr, int vtableOffset) {
         this.dst = dst;
         this.funcLabel = null;
         this.objAddr = objAddr;
-        this.className = className;
-        this.methodName = methodName;
+        this.vtableOffset = vtableOffset;
     }
 
 	@Override
@@ -39,7 +40,7 @@ public class IrCommandCallFunc extends IrCommand {
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		if (objAddr != null) {
 		    gen.emitInstruction("lw", "$t0", "0(" + regMap.get(objAddr) + ")");
-		    gen.emitInstruction("la", "$t1", "Method_" + className + "_" + methodName);
+		    gen.emitInstruction("lw", "$t1", vtableOffset + "($t0)");
 		    gen.emitInstruction("jalr", "$t1");
 		} else {
 		    gen.emitInstruction("jal", funcLabel);
