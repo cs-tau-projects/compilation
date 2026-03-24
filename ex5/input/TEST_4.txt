@@ -1,8 +1,0 @@
-int g ;
-void main ( ) {
-int x ;
-int y ;
-int z ;
-while ( y>0) { z := x + 1 ; g := 1; y:= y−1;}
-P ri n t I n t ( g ) ;
-}

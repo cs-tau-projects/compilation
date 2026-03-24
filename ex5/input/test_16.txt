@@ -1,5 +1,0 @@
-int x;
-void main () {
-	x := 1;
-}
-int y := x + 1;

@@ -36,3 +36,5 @@ TokenNames.java
 Parser.java
 LEXER
 .DS_Store
+COMPILER
+diff_report.txt

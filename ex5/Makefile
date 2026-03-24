@@ -59,11 +59,11 @@ compile:
 	@echo "*******************************"
 	@echo "*                             *"
 	@echo "*                             *"
-	@echo "* [0] Remove ANALYZER program *"
+	@echo "* [0] Remove COMPILER program *"
 	@echo "*                             *"
 	@echo "*                             *"
 	@echo "*******************************"
-	rm -rf ANALYZER
+	rm -rf COMPILER
 	@echo "\n"
 	@echo "************************************************************"
 	@echo "*                                                          *"
@@ -112,7 +112,7 @@ compile:
 	@echo "*                                                         *"
 	@echo "*                                                         *"
 	@echo "***********************************************************"
-	jar cfm ANALYZER ${MANIFEST_FILE} -C ${BIN_DIR} .
+	jar cfm COMPILER ${MANIFEST_FILE} -C ${BIN_DIR} .
 	@echo "\n"
 	@echo "*****************************"
 	@echo "*                           *"
@@ -121,4 +121,5 @@ compile:
 	@echo "*                           *"
 	@echo "*                           *"
 	@echo "*****************************"
-	java -jar ANALYZER ${INPUT} ${OUTPUT}
+	mkdir -p ${OUTPUT_DIR}
+	java -jar COMPILER ${INPUT} ${OUTPUT}
