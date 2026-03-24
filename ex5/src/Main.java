@@ -109,15 +109,17 @@ public class Main {
 		} catch (SemanticException e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
 				pw.printf("ERROR(%d)\n", e.getLineNumber());
+				e.printStackTrace();
 			} catch (Exception ex) {}
 		} catch (Exception e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
 				pw.print("ERROR\n");
+				e.printStackTrace();
 			} catch (Exception ex) {}
 		} catch (Error e) {
-			// Catch lexical errors which sometimes are thrown as Error in JFlex
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
 				pw.print("ERROR\n");
+				e.printStackTrace();
 			} catch (Exception ex) {}
 		}
 	}

@@ -109,7 +109,8 @@ public class AstStmtAssign extends AstStmt
 		{
 			String varName = ((AstVarSimple) var).name;
 			int scopeOffset = ((AstVarSimple) var).getScopeOffset();
-			Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
+			boolean isGlobal = ((AstVarSimple) var).isGlobal;
+			Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
 		}
 		else if (var instanceof AstVarField)
 		{

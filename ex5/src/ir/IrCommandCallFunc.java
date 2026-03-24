@@ -39,9 +39,9 @@ public class IrCommandCallFunc extends IrCommand {
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		if (objAddr != null) {
-		    gen.emitInstruction("lw", "$t0", "0(" + regMap.get(objAddr) + ")");
-		    gen.emitInstruction("lw", "$t1", vtableOffset + "($t0)");
-		    gen.emitInstruction("jalr", "$t1");
+		    gen.emitInstruction("lw", "$v1", "0(" + regMap.get(objAddr) + ")");
+		    gen.emitInstruction("lw", "$a3", vtableOffset + "($v1)");
+		    gen.emitInstruction("jalr", "$a3");
 		} else {
 		    gen.emitInstruction("jal", funcLabel);
 		}

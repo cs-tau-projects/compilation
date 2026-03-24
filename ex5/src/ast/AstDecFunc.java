@@ -11,6 +11,8 @@ public class AstDecFunc extends AstNode
     public String funcName;
     public AstParametersList params;   
     public AstStmtList body;           
+    public String className = null;           
+
     public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body, int lineNumber)
     {
         serialNumber = AstNode.getFreshSerialNumber();
@@ -142,6 +144,8 @@ public class AstDecFunc extends AstNode
 	    String emitName = funcName;
 	    if (funcName.equals("main")) {
 	        emitName = "user_main";
+	    } else if (className != null) {
+	        emitName = "Method_" + className + "_" + funcName;
 	    }
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
 		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());

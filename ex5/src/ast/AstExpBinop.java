@@ -247,6 +247,7 @@ public class AstExpBinop extends AstExp
 				break;
 
 			case DIVIDE:
+				Ir.getInstance().AddIrCommand(new IrCommandCheckDivZero(t2));
 				Ir.
 						getInstance().
 						AddIrCommand(new IrCommandBinopDivIntegers(dst,t1,t2));

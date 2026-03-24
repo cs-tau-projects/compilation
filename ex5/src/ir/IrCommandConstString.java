@@ -26,7 +26,7 @@ public class IrCommandConstString extends IrCommand {
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		String label = "str_" + java.util.UUID.randomUUID().toString().replace("-", "");
-		gen.emitDataString(label, "\"" + value + "\"");
+		gen.emitDataString(label, value);
 		gen.emitInstruction("la", regMap.get(dst), label);
 	}
 }

@@ -1,0 +1,11 @@
+void main() {
+    string a := "hello";
+    string b := "world";
+    string c := a + b;
+    PrintString(c); 
+    if (a = "hello") {
+        PrintInt(1);
+    } else {
+        PrintInt(0);
+    }
+}

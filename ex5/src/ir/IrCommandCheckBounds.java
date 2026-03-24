@@ -26,8 +26,8 @@ public class IrCommandCheckBounds extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		gen.emitInstruction("lw", "$t0", "0(" + regMap.get(array) + ")");
-		gen.emitInstruction("bge", regMap.get(index), "$t0", "Label_access_violation");
+		gen.emitInstruction("lw", "$v1", "0(" + regMap.get(array) + ")");
+		gen.emitInstruction("bge", regMap.get(index), "$v1", "Label_access_violation");
 		gen.emitInstruction("blt", regMap.get(index), "$zero", "Label_access_violation");
 	}
 }

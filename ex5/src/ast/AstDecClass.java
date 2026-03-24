@@ -125,7 +125,7 @@ public class AstDecClass extends AstNode{
 					throw new SemanticException("field cannot have void type", fieldVar.lineNumber);
 				}
 
-				classMembers = new TypeList(new TypeField(fieldType, fieldVar.id), classMembers);
+				classMembers = new TypeList(new TypeField(fieldType, fieldVar.id, fieldVar.exp), classMembers);
 			}
 			else if (it.head.decFunc != null)
 			{
@@ -219,7 +219,7 @@ public class AstDecClass extends AstNode{
 				// Field - add to scope (type already validated above)
 				AstDecVar fieldVar = it.head.decVar;
 				Type fieldType = SymbolTable.getInstance().find(fieldVar.type.typeName);
-				SymbolTable.getInstance().enter(fieldVar.id, new TypeField(fieldType, fieldVar.id));
+				SymbolTable.getInstance().enter(fieldVar.id, new TypeField(fieldType, fieldVar.id, fieldVar.exp));
 			}
 			else if (it.head.decFunc != null)
 			{
@@ -338,6 +338,7 @@ public class AstDecClass extends AstNode{
 
 		for (AstFieldList it = fields; it != null; it = it.tail) {
 			if (it.head.decFunc != null) {
+			    it.head.decFunc.className = id;
 				it.head.decFunc.irMe();
 			}
 		}
