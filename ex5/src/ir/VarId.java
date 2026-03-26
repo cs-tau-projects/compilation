@@ -14,19 +14,27 @@ import java.util.Objects;
 
 /**
  * VarId uniquely identifies a variable by its name and scope offset.
- * This is necessary to distinguish between shadowed variables with the same name
- * in different scopes (e.g., global x vs local x in main).
- * 
- * The offset is the index in the symbol table when the variable was entered,
- * which uniquely identifies the variable declaration.
+ * Also carries addressing information for MIPS code generation:
+ * whether the variable is global, a parameter, or a local.
  */
 public class VarId
 {
+	/****************/
+	/* VARIABLE KIND */
+	/****************/
+	public enum Kind {
+		GLOBAL,  // in .data section, addressed by label
+		PARAM,   // on stack at positive $fp offset
+		LOCAL    // on stack at negative $fp offset
+	}
+
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
 	public final String name;
 	public final int scopeOffset;
+	public Kind kind;
+	public int fpOffset; // offset from $fp in bytes
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -35,6 +43,16 @@ public class VarId
 	{
 		this.name = name;
 		this.scopeOffset = scopeOffset;
+		this.kind = Kind.GLOBAL;
+		this.fpOffset = 0;
+	}
+
+	public VarId(String name, int scopeOffset, Kind kind, int fpOffset)
+	{
+		this.name = name;
+		this.scopeOffset = scopeOffset;
+		this.kind = kind;
+		this.fpOffset = fpOffset;
 	}
 
 	/****************************************/

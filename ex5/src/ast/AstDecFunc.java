@@ -139,6 +139,32 @@ public class AstDecFunc extends AstNode
 		return null;
 	}
 
+	/****************************************/
+	/* Count local variable declarations   */
+	/* in the function body                */
+	/****************************************/
+	private int countLocals(AstStmtList stmts) {
+		int count = 0;
+		for (AstStmtList it = stmts; it != null; it = it.tail) {
+			if (it.head instanceof AstStmtVarDec) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/****************************************/
+	/* Count the number of parameters      */
+	/****************************************/
+	private int countParams() {
+		int count = 0;
+		if (className != null) count++; // 'this' pointer for methods
+		for (AstParametersList it = params; it != null; it = it.tail) {
+			count++;
+		}
+		return count;
+	}
+
 	public Temp irMe()
 	{
 	    String emitName = funcName;
@@ -147,28 +173,56 @@ public class AstDecFunc extends AstNode
 	    } else if (className != null) {
 	        emitName = "Method_" + className + "_" + funcName;
 	    }
+
+	    int numParams = countParams();
+	    int numLocals = countLocals(body);
+
+	    /****************************************/
+	    /* [1] Emit function label             */
+	    /****************************************/
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
-		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());
-		
-		int numArgs = 0;
-		AstParametersList p = params;
-		while (p != null) { numArgs++; p = p.tail; }
-		
-		p = params;
-		int i = 0;
-		while (p != null) {
-		    int paramScopeOffset = SymbolTable.getInstance().getScopeOffset(p.head.id);
-		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(p.head.id, paramScopeOffset, i, numArgs));
-		    i++;
-		    p = p.tail;
+
+	    /****************************************/
+	    /* [2] Set up function context          */
+	    /****************************************/
+		FunctionContext.enterFunction(emitName, numParams);
+
+	    /****************************************/
+	    /* [3] Register parameters in context   */
+	    /* Params at +8, +12, +16... from $fp   */
+	    /****************************************/
+		int paramIndex = 0;
+		if (className != null) {
+			FunctionContext.getCurrent().addParam("this", paramIndex);
+			paramIndex++;
+		}
+		for (AstParametersList it = params; it != null; it = it.tail) {
+			FunctionContext.getCurrent().addParam(it.head.id, paramIndex);
+			paramIndex++;
 		}
 
+	    /****************************************/
+	    /* [4] Emit prologue with local count   */
+	    /****************************************/
+		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue(numLocals));
+
+	    /****************************************/
+	    /* [5] Emit body                       */
+	    /****************************************/
 		if (body != null) body.irMe();
 
-        // Ensure functions always have a return just in case
+	    /****************************************/
+	    /* [6] Emit fallthrough return          */
+	    /* (for void functions without return)  */
+	    /****************************************/
         Temp dst = TempFactory.getInstance().getFreshTemp();
         Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
         Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));
+
+	    /****************************************/
+	    /* [7] Exit function context            */
+	    /****************************************/
+		FunctionContext.exitFunction();
 
 		return null;
 	}

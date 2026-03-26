@@ -6,6 +6,7 @@ public class AstVarField extends AstVar
 {
 	public AstVar var;
 	public String fieldName;
+	TypeClass varClassType = null; // saved from semantMe for irMe
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -90,6 +91,7 @@ public class AstVarField extends AstVar
 		}
 
 		tc = (TypeClass) t;
+		varClassType = tc; // save for irMe()
 
 		/**************************************************************/
 		/* [4] Look for fieldName in class and parent class hierarchy */
@@ -115,12 +117,16 @@ public class AstVarField extends AstVar
 
 	public temp.Temp irMe()
 	{
+		// Load the object base address
+		temp.Temp base = var.irMe();
+
+		// Compute field byte offset from ClassLayout
+		int offset = ir.ClassLayout.getFieldOffset(varClassType, fieldName);
+
+		// Load field value
 		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
-		temp.Temp objAddr = var.irMe();
-		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandCheckNull(objAddr));
-		TypeClass tc = null;
-		try { tc = (TypeClass) var.semantMe(); } catch (SemanticException e) {}
-		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldGet(dst, objAddr, tc.name, fieldName));
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldGet(dst, base, offset));
+
 		return dst;
 	}
 }

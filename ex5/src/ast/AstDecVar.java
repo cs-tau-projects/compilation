@@ -120,11 +120,28 @@ public class AstDecVar extends AstNode {
 			scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
 		}
 
-		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset, isGlobal));
+		if (FunctionContext.isInFunction()) {
+			/****************************************/
+			/* Inside a function: allocate as a    */
+			/* local variable on the stack          */
+			/****************************************/
+			int fpOffset = FunctionContext.getCurrent().addLocal(id);
+			Ir.getInstance().AddIrCommand(
+				new IrCommandAllocate(id, scopeOffset, VarId.Kind.LOCAL, fpOffset));
 
-		if (exp != null)
-		{
-			Ir.getInstance().AddIrCommand(new IrCommandStore(id, scopeOffset, exp.irMe(), isGlobal));
+			if (exp != null) {
+				Ir.getInstance().AddIrCommand(
+					new IrCommandStore(id, scopeOffset, VarId.Kind.LOCAL, fpOffset, exp.irMe()));
+			}
+		} else {
+			/****************************************/
+			/* Global scope: allocate in .data     */
+			/****************************************/
+			Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scopeOffset, true));
+
+			if (exp != null) {
+				Ir.getInstance().AddIrCommand(new IrCommandStore(id, scopeOffset, exp.irMe(), true));
+			}
 		}
 		return null;
 	}

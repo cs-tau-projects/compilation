@@ -107,19 +107,34 @@ public class AstStmtAssign extends AstStmt
 		Temp src = exp.irMe();
 		if (var instanceof AstVarSimple)
 		{
-			String varName = ((AstVarSimple) var).name;
-			int scopeOffset = ((AstVarSimple) var).getScopeOffset();
-			boolean isGlobal = ((AstVarSimple) var).isGlobal;
-			Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
+			AstVarSimple simpleVar = (AstVarSimple) var;
+			String varName = simpleVar.name;
+			int scopeOffset = simpleVar.getScopeOffset();
+
+			if (simpleVar.isImplicitField && simpleVar.enclosingClass != null) {
+				// Implicit field write: this.field := exp
+				Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+				ir.VarId.Kind kind = ir.FunctionContext.getCurrent().getKind("this");
+				int fpOffset = ir.FunctionContext.getCurrent().getFpOffset("this");
+				Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", -1, kind, fpOffset));
+
+				int fieldOffset = ir.ClassLayout.getFieldOffset(simpleVar.enclosingClass, varName);
+				Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
+			} else if (ir.FunctionContext.isInFunction()) {
+				ir.VarId.Kind kind = ir.FunctionContext.getCurrent().getKind(varName);
+				int fpOffset = ir.FunctionContext.getCurrent().getFpOffset(varName);
+				Ir.getInstance().AddIrCommand(
+					new IrCommandStore(varName, scopeOffset, kind, fpOffset, src));
+			} else {
+				Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, true));
+			}
 		}
 		else if (var instanceof AstVarField)
 		{
 			AstVarField f = (AstVarField) var;
 			Temp objAddr = f.var.irMe();
-			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
-			TypeClass tc = null;
-			try { tc = (TypeClass) f.var.semantMe(); } catch (SemanticException e) {}
-			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, tc.name, f.fieldName, src));
+			int offset = ir.ClassLayout.getFieldOffset(f.varClassType, f.fieldName);
+			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, offset, src));
 		}
 		else if (var instanceof AstVarSubscript)
 		{

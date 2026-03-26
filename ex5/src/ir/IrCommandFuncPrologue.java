@@ -1,7 +1,16 @@
 package ir;
 
 public class IrCommandFuncPrologue extends IrCommand {
-    public IrCommandFuncPrologue() {}
+    public int numLocals;
+
+    public IrCommandFuncPrologue(int numLocals) {
+        this.numLocals = numLocals;
+    }
+
+    // Keep backward-compatible default
+    public IrCommandFuncPrologue() {
+        this.numLocals = 0;
+    }
 
     @Override
     public java.util.List<temp.Temp> getUsedTemps() {
@@ -15,11 +24,18 @@ public class IrCommandFuncPrologue extends IrCommand {
 
     @Override
     public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-        gen.resetLocals(); // Reset the MipsGenerator local offset tracking for the new function
-        gen.emitInstruction("sw", "$fp", "0($sp)");
-        gen.emitInstruction("sub", "$sp", "$sp", "4");
+        gen.resetLocals();
+        // Push return address
+        gen.emitInstruction("subu", "$sp", "$sp", "4");
         gen.emitInstruction("sw", "$ra", "0($sp)");
-        gen.emitInstruction("sub", "$sp", "$sp", "4");
+        // Push old frame pointer
+        gen.emitInstruction("subu", "$sp", "$sp", "4");
+        gen.emitInstruction("sw", "$fp", "0($sp)");
+        // Set frame pointer to current stack pointer
         gen.emitInstruction("move", "$fp", "$sp");
+        // Allocate space for local variables
+        if (numLocals > 0) {
+            gen.emitInstruction("subu", "$sp", "$sp", String.valueOf(numLocals * 4));
+        }
     }
 }
