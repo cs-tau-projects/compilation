@@ -13,6 +13,9 @@ public class AstDecFunc extends AstNode
     public AstStmtList body;           
     public String className = null;           
 
+    // Param scope offsets captured during semantMe() (while scope is open)
+    private java.util.List<Integer> paramScopeOffsets = new java.util.ArrayList<>();
+
     public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body, int lineNumber)
     {
         serialNumber = AstNode.getFreshSerialNumber();
@@ -98,7 +101,8 @@ public class AstDecFunc extends AstNode
 		/*******************************************************/
 		SymbolTable.getInstance().setCurrentFunctionReturnType(retType);
 
-		// Enter parameters into symbol table
+		// Enter parameters into symbol table and capture their scope offsets
+		paramScopeOffsets.clear();
 		for (AstParametersList it = params; it != null; it = it.tail)
 		{
 			// Check for reserved keyword in parameter name
@@ -113,6 +117,8 @@ public class AstDecFunc extends AstNode
 			}
 
 			SymbolTable.getInstance().enter(it.head.id, paramType);
+			// Capture the scope offset now while the symbol table entry exists
+			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset(it.head.id));
 		}
 
 		/*******************/
@@ -154,13 +160,13 @@ public class AstDecFunc extends AstNode
 		AstParametersList p = params;
 		while (p != null) { numArgs++; p = p.tail; }
 		
-		p = params;
-		int i = 0;
-		while (p != null) {
-		    int paramScopeOffset = SymbolTable.getInstance().getScopeOffset(p.head.id);
+		// Use the scope offsets captured during semantMe() (scope is closed now)
+		for (int i = 0; i < paramScopeOffsets.size(); i++) {
+		    p = params;
+		    // Advance to the i-th param
+		    for (int k = 0; k < i; k++) p = p.tail;
+		    int paramScopeOffset = paramScopeOffsets.get(i);
 		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(p.head.id, paramScopeOffset, i, numArgs));
-		    i++;
-		    p = p.tail;
 		}
 
 		if (body != null) body.irMe();
