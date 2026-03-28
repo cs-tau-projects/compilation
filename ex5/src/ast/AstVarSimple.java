@@ -20,6 +20,7 @@ public class AstVarSimple extends AstVar
 	public boolean isGlobal = false;
 	public boolean isField = false;
 	public TypeClass fieldOwnerClass = null;
+	public int thisScopeOffset = -1;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -99,6 +100,7 @@ public class AstVarSimple extends AstVar
 			Type thisType = SymbolTable.getInstance().find("this");
 			if (thisType instanceof TypeClass) {
 			    this.fieldOwnerClass = (TypeClass) thisType;
+			    this.thisScopeOffset = SymbolTable.getInstance().getScopeOffset("this");
 			}
 		}
 
@@ -114,8 +116,7 @@ public class AstVarSimple extends AstVar
 		Temp dst = TempFactory.getInstance().getFreshTemp();
 		if (isField) {
 		    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
-		    int thisOffset = SymbolTable.getInstance().getScopeOffset("this");
-		    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisOffset, false));
+		    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisScopeOffset, false));
 		    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
 		    int fieldOffset = types.TypeUtils.getFieldOffset(fieldOwnerClass, name);
 		    Ir.getInstance().AddIrCommand(new IrCommandFieldGet(dst, thisTemp, fieldOffset));

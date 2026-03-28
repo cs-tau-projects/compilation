@@ -111,8 +111,7 @@ public class AstStmtAssign extends AstStmt
 			AstVarSimple v = (AstVarSimple) var;
 			if (v.isField) {
 			    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
-			    int thisOffset = SymbolTable.getInstance().getScopeOffset("this");
-			    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisOffset, false));
+			    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", v.thisScopeOffset, false));
 			    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
 			    int fieldOffset = types.TypeUtils.getFieldOffset(v.fieldOwnerClass, v.name);
 			    Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
