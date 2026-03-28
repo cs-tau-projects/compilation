@@ -105,7 +105,6 @@ public class AstStmtAssign extends AstStmt
 
 	public Temp irMe()
 	{
-		Temp src = exp.irMe();
 		if (var instanceof AstVarSimple)
 		{
 			AstVarSimple v = (AstVarSimple) var;
@@ -114,8 +113,10 @@ public class AstStmtAssign extends AstStmt
 			    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", v.thisScopeOffset, false));
 			    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
 			    int fieldOffset = types.TypeUtils.getFieldOffset(v.fieldOwnerClass, v.name);
+			    Temp src = exp.irMe();
 			    Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
 			} else {
+			    Temp src = exp.irMe();
 			    String varName = v.name;
 			    int scopeOffset = v.getScopeOffset();
 			    boolean isGlobal = v.isGlobal;
@@ -128,6 +129,7 @@ public class AstStmtAssign extends AstStmt
 			Temp objAddr = f.var.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
 			int offset = types.TypeUtils.getFieldOffset(f.ownerClass, f.fieldName);
+			Temp src = exp.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, offset, src));
 		}
 		else if (var instanceof AstVarSubscript)
@@ -137,6 +139,7 @@ public class AstStmtAssign extends AstStmt
 			Temp indexTemp = sub.subscript.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(arrayAddr));
 			Ir.getInstance().AddIrCommand(new IrCommandCheckBounds(arrayAddr, indexTemp));
+			Temp src = exp.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandArraySet(arrayAddr, indexTemp, src));
 		}
 		return null;

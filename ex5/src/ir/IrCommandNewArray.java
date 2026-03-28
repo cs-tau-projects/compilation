@@ -29,12 +29,16 @@ public class IrCommandNewArray extends IrCommand {
 		gen.emitInstruction("move", "$a0", regMap.get(sizeTemp));
 		gen.emitInstruction("sll", "$a0", "$a0", "2");
 		gen.emitInstruction("addiu", "$a0", "$a0", "4");
-		gen.emitInstruction("move", "$t7", "$a0"); // Save total size in protected $t7
 		gen.emitInstruction("li", "$v0", "9");
 		gen.emitInstruction("syscall");
 		
 		// Move pointer to $t8 immediately to protect it
 		gen.emitInstruction("move", "$t8", "$v0");
+
+		// Recalculate total size in $t7 after syscall (regMap.get(sizeTemp) is callee-saved and safe)
+		gen.emitInstruction("move", "$t7", regMap.get(sizeTemp));
+		gen.emitInstruction("sll", "$t7", "$t7", "2");
+		gen.emitInstruction("addiu", "$t7", "$t7", "4");
 
 		// Zero-initialize memory (skip size at offset 0)
 		String labelStart = IrCommand.getFreshLabel("zero_start_array");

@@ -13,7 +13,6 @@ public class MipsGenerator {
     private int currentFpOffset = -4; // after $ra, $fp? Wait, standard is to allocate below
     
     public void resetLocals() {
-        localOffsets.clear();
         currentFpOffset = 0; // The prologue has already allocated locals according to some scheme, or we just allocate downwards
     }
     
