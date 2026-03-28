@@ -4,14 +4,12 @@ import temp.Temp;
 
 public class IrCommandFieldSet extends IrCommand {
     public Temp obj;
-    public String className;
-    public String fieldName;
+    public int offset;
     public Temp src;
 
-    public IrCommandFieldSet(Temp obj, String className, String fieldName, Temp src) {
+    public IrCommandFieldSet(Temp obj, int offset, Temp src) {
         this.obj = obj;
-        this.className = className;
-        this.fieldName = fieldName;
+        this.offset = offset;
         this.src = src;
     }
 
@@ -30,6 +28,6 @@ public class IrCommandFieldSet extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		gen.emitInstruction("sw", regMap.get(src), "4(" + regMap.get(obj) + ")");
+		gen.emitInstruction("sw", regMap.get(src), offset + "(" + regMap.get(obj) + ")");
 	}
 }

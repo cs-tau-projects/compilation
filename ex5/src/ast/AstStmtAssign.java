@@ -117,9 +117,8 @@ public class AstStmtAssign extends AstStmt
 			AstVarField f = (AstVarField) var;
 			Temp objAddr = f.var.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
-			TypeClass tc = null;
-			try { tc = (TypeClass) f.var.semantMe(); } catch (SemanticException e) {}
-			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, tc.name, f.fieldName, src));
+			int offset = types.TypeUtils.getFieldOffset(f.ownerClass, f.fieldName);
+			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, offset, src));
 		}
 		else if (var instanceof AstVarSubscript)
 		{

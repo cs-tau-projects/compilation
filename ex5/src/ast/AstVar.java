@@ -4,6 +4,7 @@ import types.*;
 
 public abstract class AstVar extends AstNode
 {
+	public Type type;
 	/***********************************************/
 	/* Abstract method for semantic analysis      */
 	/* Must be implemented by all subclasses      */

@@ -90,10 +90,14 @@ public class AstDecFunc extends AstNode
 			SymbolTable.getInstance().enter(funcName, funcType);
 		}
 
-		/****************************/
-		/* [3] Begin Function Scope */
-		/****************************/
 		SymbolTable.getInstance().beginScope();
+		paramScopeOffsets.clear();
+
+		if (isMethod) {
+			Type classType = SymbolTable.getInstance().find(this.className);
+			SymbolTable.getInstance().enter("this", classType);
+			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset("this"));
+		}
 
 		/*******************************************************/
 		/* [3.5] Set current function return type for return  */
@@ -102,7 +106,6 @@ public class AstDecFunc extends AstNode
 		SymbolTable.getInstance().setCurrentFunctionReturnType(retType);
 
 		// Enter parameters into symbol table and capture their scope offsets
-		paramScopeOffsets.clear();
 		for (AstParametersList it = params; it != null; it = it.tail)
 		{
 			// Check for reserved keyword in parameter name
@@ -156,17 +159,19 @@ public class AstDecFunc extends AstNode
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
 		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());
 		
-		int numArgs = 0;
-		AstParametersList p = params;
-		while (p != null) { numArgs++; p = p.tail; }
+		int numArgs = paramScopeOffsets.size();
 		
 		// Use the scope offsets captured during semantMe() (scope is closed now)
 		for (int i = 0; i < paramScopeOffsets.size(); i++) {
-		    p = params;
-		    // Advance to the i-th param
-		    for (int k = 0; k < i; k++) p = p.tail;
 		    int paramScopeOffset = paramScopeOffsets.get(i);
-		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(p.head.id, paramScopeOffset, i, numArgs));
+		    String paramName = (className != null && i == 0) ? "this" : null;
+		    if (paramName == null) {
+		        AstParametersList p = params;
+		        int pIdx = (className != null) ? i - 1 : i;
+		        for (int k = 0; k < pIdx; k++) p = p.tail;
+		        paramName = p.head.id;
+		    }
+		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(paramName, paramScopeOffset, i, numArgs));
 		}
 
 		if (body != null) body.irMe();

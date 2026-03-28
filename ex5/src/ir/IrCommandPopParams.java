@@ -20,6 +20,6 @@ public class IrCommandPopParams extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		gen.emitInstruction("add", "$sp", "$sp", Integer.toString(numParams * 4));
+		gen.emitInstruction("addiu", "$sp", "$sp", Integer.toString(numParams * 4));
 	}
 }

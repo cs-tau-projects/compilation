@@ -131,8 +131,14 @@ public class AstExpCall extends AstExp
 		/************************************************/
 		/* [4] Return the function's return type        */
 		/************************************************/
-		return func.returnType;
+		this.type = func.returnType;
+		if (var != null) {
+		    this.ownerClass = (TypeClass) var.semantMe();
+		}
+		return this.type;
 	}
+
+	public TypeClass ownerClass = null;
 
 	/******************************************************************/
 	/* Helper: Check that actual parameters match expected types     */
@@ -189,22 +195,21 @@ public class AstExpCall extends AstExp
 			}
 		}
 
-		for (Temp p : paramTemps) {
-			Ir.getInstance().AddIrCommand(new IrCommandPushParam(p));
+		Temp methodObjAddr = null;
+		if (var != null) {
+			methodObjAddr = var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(methodObjAddr));
+			paramTemps.add(0, methodObjAddr); // 'this' is the first parameter
+		}
+
+		for (int i = paramTemps.size() - 1; i >= 0; i--) {
+			Ir.getInstance().AddIrCommand(new IrCommandPushParam(paramTemps.get(i)));
 		}
 
 		if (var != null) {
-			Temp objAddr = var.irMe();
-			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
-			
-			TypeClass classType = null;
-			try {
-			    classType = (TypeClass) var.semantMe();
-			} catch (SemanticException e) {}
-			
 			int vtableOffset = 0;
-			if (classType != null) {
-			    java.util.List<String> methods = AstDecClass.buildVtable(classType);
+			if (ownerClass != null) {
+			    java.util.List<String> methods = AstDecClass.buildVtable(ownerClass);
 			    for (int i = 0; i < methods.size(); i++) {
 			        if (methods.get(i).endsWith("_" + funcName)) {
 			            vtableOffset = i * 4;
@@ -212,7 +217,7 @@ public class AstExpCall extends AstExp
 			        }
 			    }
 			}
-			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, objAddr, vtableOffset));
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, methodObjAddr, vtableOffset));
 		} else {
 			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
 		}

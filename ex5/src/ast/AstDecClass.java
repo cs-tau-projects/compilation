@@ -225,6 +225,7 @@ public class AstDecClass extends AstNode{
 			{
 				// Method - process body, then add to scope
 				AstDecFunc method = methodsToProcess.get(methodIndex++);
+				method.className = id;
 				method.semantMe(true);
 
 				// Add method to scope after processing (for later methods to reference)

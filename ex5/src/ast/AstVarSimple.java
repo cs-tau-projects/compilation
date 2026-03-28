@@ -89,13 +89,13 @@ public class AstVarSimple extends AstVar
 			this.isGlobal = global;
 		}
 
-		// If it's a field, return the field's type, not the TypeField wrapper
+		this.type = t;
 		if (t instanceof TypeField)
 		{
-			return ((TypeField) t).fieldType;
+			this.type = ((TypeField) t).fieldType;
 		}
 
-		return t;
+		return this.type;
 	}
 
 	/********************************************************/
