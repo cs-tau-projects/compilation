@@ -3,6 +3,7 @@ package ast;
 import ir.*;
 import temp.*;
 import types.*;
+import symboltable.*;
 
 public class AstStmtAssign extends AstStmt
 {
@@ -107,10 +108,20 @@ public class AstStmtAssign extends AstStmt
 		Temp src = exp.irMe();
 		if (var instanceof AstVarSimple)
 		{
-			String varName = ((AstVarSimple) var).name;
-			int scopeOffset = ((AstVarSimple) var).getScopeOffset();
-			boolean isGlobal = ((AstVarSimple) var).isGlobal;
-			Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
+			AstVarSimple v = (AstVarSimple) var;
+			if (v.isField) {
+			    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+			    int thisOffset = SymbolTable.getInstance().getScopeOffset("this");
+			    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisOffset, false));
+			    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
+			    int fieldOffset = types.TypeUtils.getFieldOffset(v.fieldOwnerClass, v.name);
+			    Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
+			} else {
+			    String varName = v.name;
+			    int scopeOffset = v.getScopeOffset();
+			    boolean isGlobal = v.isGlobal;
+			    Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
+			}
 		}
 		else if (var instanceof AstVarField)
 		{

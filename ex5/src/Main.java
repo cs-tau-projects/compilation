@@ -79,7 +79,7 @@ public class Main {
 				allocator.allocate(graph);
 			} catch (RuntimeException e) {
 				if ("Register Allocation Failed".equals(e.getMessage())) {
-					fileWriter.print("Register Allocation Failed\n");
+					fileWriter.print("Register Allocation Failed");
 					fileWriter.close();
 					return;
 				}

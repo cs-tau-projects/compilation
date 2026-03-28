@@ -18,6 +18,8 @@ public class AstVarSimple extends AstVar
 	/*************************************************/
 	private int scopeOffset = -1;
 	public boolean isGlobal = false;
+	public boolean isField = false;
+	public TypeClass fieldOwnerClass = null;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -92,7 +94,12 @@ public class AstVarSimple extends AstVar
 		this.type = t;
 		if (t instanceof TypeField)
 		{
+			this.isField = true;
 			this.type = ((TypeField) t).fieldType;
+			Type thisType = SymbolTable.getInstance().find("this");
+			if (thisType instanceof TypeClass) {
+			    this.fieldOwnerClass = (TypeClass) thisType;
+			}
 		}
 
 		return this.type;
@@ -105,16 +112,25 @@ public class AstVarSimple extends AstVar
 	public Temp irMe()
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();
-		/****************************************/
-		/* Use the captured scope offset       */
-		/****************************************/
-		if (scopeOffset == -1)
-		{
-			// Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
-			scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		if (isField) {
+		    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+		    int thisOffset = SymbolTable.getInstance().getScopeOffset("this");
+		    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisOffset, false));
+		    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
+		    int fieldOffset = types.TypeUtils.getFieldOffset(fieldOwnerClass, name);
+		    Ir.getInstance().AddIrCommand(new IrCommandFieldGet(dst, thisTemp, fieldOffset));
+		} else {
+		    /****************************************/
+		    /* Use the captured scope offset       */
+		    /****************************************/
+		    if (scopeOffset == -1)
+		    {
+		        // Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
+		        scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		    }
+		    
+		    Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset, isGlobal));
 		}
-		
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset, isGlobal));
 		return dst;
 	}
 	
