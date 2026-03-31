@@ -90,6 +90,7 @@ public class AstVarField extends AstVar
 		}
 
 		tc = (TypeClass) t;
+		this.ownerClass = tc;
 
 		/**************************************************************/
 		/* [4] Look for fieldName in class and parent class hierarchy */
@@ -107,9 +108,23 @@ public class AstVarField extends AstVar
 		// If it's a field, return the field type
 		if (member instanceof TypeField)
 		{
-			return ((TypeField) member).fieldType;
+			this.type = ((TypeField) member).fieldType;
+			return this.type;
 		}
 		// If it's a method, return the function type
-		return member;
+		this.type = member;
+		return this.type;
+	}
+
+	public TypeClass ownerClass = null;
+
+	public temp.Temp irMe()
+	{
+		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+		temp.Temp objAddr = var.irMe();
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandCheckNull(objAddr));
+		int offset = types.TypeUtils.getFieldOffset(ownerClass, fieldName);
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldGet(dst, objAddr, offset));
+		return dst;
 	}
 }

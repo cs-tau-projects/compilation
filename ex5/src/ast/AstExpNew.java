@@ -108,4 +108,43 @@ public class AstExpNew extends AstExp
             return t;
         }
     }
+
+    public temp.Temp irMe()
+    {
+        temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+        if (exp != null)
+        {
+            temp.Temp sizeTemp = exp.irMe();
+            ir.Ir.getInstance().AddIrCommand(new ir.IrCommandNewArray(dst, sizeTemp));
+        }
+        else
+        {
+            Type t = SymbolTable.getInstance().find(type.typeName);
+            int size = 8; // Default
+            if (t instanceof TypeClass) {
+                size = types.TypeUtils.getClassSize((TypeClass) t);
+            }
+            ir.Ir.getInstance().AddIrCommand(new ir.IrCommandNewObject(dst, type.typeName, size));
+            if (t instanceof TypeClass) {
+                initializeFields((TypeClass) t, dst);
+            }
+        }
+        return dst;
+    }
+
+    private void initializeFields(TypeClass tc, temp.Temp objAddr) {
+        if (tc.father != null) {
+            initializeFields(tc.father, objAddr);
+        }
+        for (types.TypeList it = tc.dataMembers; it != null; it = it.tail) {
+            if (it.head instanceof types.TypeField) {
+                types.TypeField field = (types.TypeField) it.head;
+                if (field.initExp != null) {
+                    temp.Temp valTemp = field.initExp.irMe();
+                    int offset = types.TypeUtils.getFieldOffset(tc, field.name);
+                    ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldSet(objAddr, offset, valTemp));
+                }
+            }
+        }
+    }
 }

@@ -131,8 +131,14 @@ public class AstExpCall extends AstExp
 		/************************************************/
 		/* [4] Return the function's return type        */
 		/************************************************/
-		return func.returnType;
+		this.type = func.returnType;
+		if (var != null) {
+		    this.ownerClass = (TypeClass) var.semantMe();
+		}
+		return this.type;
 	}
+
+	public TypeClass ownerClass = null;
 
 	/******************************************************************/
 	/* Helper: Check that actual parameters match expected types     */
@@ -166,13 +172,61 @@ public class AstExpCall extends AstExp
 
 	public Temp irMe()
 	{
-		Temp t = null;
+		Temp dst = TempFactory.getInstance().getFreshTemp();
 
-		if (params != null) { t = params.head.irMe(); }
+		if (var == null) {
+			if (funcName.equals("PrintInt")) {
+				Temp t = null;
+				if (params != null) t = params.head.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+				return dst;
+			} else if (funcName.equals("PrintString")) {
+				Temp t = null;
+				if (params != null) t = params.head.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandPrintString(t));
+				return dst;
+			}
+		}
 
-		Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+		java.util.List<Temp> paramTemps = new java.util.ArrayList<>();
+		if (params != null) {
+			for (AstExpList it = params; it != null; it = it.tail) {
+				paramTemps.add(it.head.irMe());
+			}
+		}
 
-		return null;
+		Temp methodObjAddr = null;
+		if (var != null) {
+			methodObjAddr = var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(methodObjAddr));
+			paramTemps.add(0, methodObjAddr); // 'this' is the first parameter
+		}
+
+		for (int i = paramTemps.size() - 1; i >= 0; i--) {
+			Ir.getInstance().AddIrCommand(new IrCommandPushParam(paramTemps.get(i)));
+		}
+
+		if (var != null) {
+			int vtableOffset = 0;
+			if (ownerClass != null) {
+			    java.util.List<String> methods = AstDecClass.buildVtable(ownerClass);
+			    for (int i = 0; i < methods.size(); i++) {
+			        if (methods.get(i).endsWith("_" + funcName)) {
+			            vtableOffset = i * 4;
+			            break;
+			        }
+			    }
+			}
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, methodObjAddr, vtableOffset));
+		} else {
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
+		}
+
+		if (paramTemps.size() > 0) {
+			Ir.getInstance().AddIrCommand(new IrCommandPopParams(paramTemps.size()));
+		}
+
+		return dst;
 	}
 }
 

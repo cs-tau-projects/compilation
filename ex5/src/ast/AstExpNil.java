@@ -30,5 +30,12 @@ public class AstExpNil extends AstExp
 	{
 		return TypeNil.getInstance();
 	}
+
+	public temp.Temp irMe()
+	{
+		temp.Temp dst = temp.TempFactory.getInstance().getFreshTemp();
+		ir.Ir.getInstance().AddIrCommand(new ir.IRcommandConstInt(dst, 0));
+		return dst;
+	}
 }
 

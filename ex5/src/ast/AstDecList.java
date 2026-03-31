@@ -52,11 +52,7 @@ public class AstDecList extends AstNode
 
 	public Temp irMe()
 	{
-		/****************************************/
-		/* IR generation with reordering:      */
-		/* 1. Global variables first           */
-		/* 2. Functions and classes second     */
-		/****************************************/
+		Ir.getInstance().AddIrCommand(new IrCommandLabel("main"));
 		
 		// Pass 1: Global variable declarations
 		AstDecList current = this;
@@ -68,6 +64,11 @@ public class AstDecList extends AstNode
 			}
 			current = current.tail;
 		}
+
+        // Call user_main and exit
+        Temp dst = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, "user_main"));
+        Ir.getInstance().AddIrCommand(new IrCommandExit());
 
 		// Pass 2: Function declarations (and anything else)
 		current = this;

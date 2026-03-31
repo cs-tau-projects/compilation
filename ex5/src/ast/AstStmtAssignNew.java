@@ -116,14 +116,42 @@ public class AstStmtAssignNew extends AstStmt
 	{
 		if (newExp != null)
 		{
-			Temp src = newExp.irMe();
 			if (var instanceof AstVarSimple)
 			{
-				String varName = ((AstVarSimple) var).name;
-				int scopeOffset = ((AstVarSimple) var).getScopeOffset();
-				Ir.
-						getInstance().
-						AddIrCommand(new IrCommandStore(varName, scopeOffset, src));
+				AstVarSimple v = (AstVarSimple) var;
+				if (v.isField) {
+				    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+				    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", v.thisScopeOffset, false));
+				    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
+				    int fieldOffset = types.TypeUtils.getFieldOffset(v.fieldOwnerClass, v.name);
+				    Temp src = newExp.irMe();
+				    Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
+				} else {
+				    Temp src = newExp.irMe();
+				    String varName = v.name;
+				    int scopeOffset = v.getScopeOffset();
+				    boolean isGlobal = v.isGlobal;
+				    Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
+				}
+			}
+			else if (var instanceof AstVarField)
+			{
+				AstVarField f = (AstVarField) var;
+				Temp objAddr = f.var.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
+				int offset = types.TypeUtils.getFieldOffset(f.ownerClass, f.fieldName);
+				Temp src = newExp.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, offset, src));
+			}
+			else if (var instanceof AstVarSubscript)
+			{
+				AstVarSubscript sub = (AstVarSubscript) var;
+				Temp arrayAddr = sub.var.irMe();
+				Temp indexTemp = sub.subscript.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandCheckNull(arrayAddr));
+				Ir.getInstance().AddIrCommand(new IrCommandCheckBounds(arrayAddr, indexTemp));
+				Temp src = newExp.irMe();
+				Ir.getInstance().AddIrCommand(new IrCommandArraySet(arrayAddr, indexTemp, src));
 			}
 		}
 		return null;

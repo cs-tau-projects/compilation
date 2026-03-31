@@ -125,7 +125,7 @@ public class AstDecClass extends AstNode{
 					throw new SemanticException("field cannot have void type", fieldVar.lineNumber);
 				}
 
-				classMembers = new TypeList(new TypeField(fieldType, fieldVar.id), classMembers);
+				classMembers = new TypeList(new TypeField(fieldType, fieldVar.id, fieldVar.exp), classMembers);
 			}
 			else if (it.head.decFunc != null)
 			{
@@ -219,12 +219,13 @@ public class AstDecClass extends AstNode{
 				// Field - add to scope (type already validated above)
 				AstDecVar fieldVar = it.head.decVar;
 				Type fieldType = SymbolTable.getInstance().find(fieldVar.type.typeName);
-				SymbolTable.getInstance().enter(fieldVar.id, new TypeField(fieldType, fieldVar.id));
+				SymbolTable.getInstance().enter(fieldVar.id, new TypeField(fieldType, fieldVar.id, fieldVar.exp));
 			}
 			else if (it.head.decFunc != null)
 			{
 				// Method - process body, then add to scope
 				AstDecFunc method = methodsToProcess.get(methodIndex++);
+				method.className = id;
 				method.semantMe(true);
 
 				// Add method to scope after processing (for later methods to reference)
@@ -326,5 +327,60 @@ public class AstDecClass extends AstNode{
 		{
 			SymbolTable.getInstance().enter(it.head.name, it.head);
 		}
+	}
+
+	public temp.Temp irMe()
+	{
+		TypeClass classType = (TypeClass) SymbolTable.getInstance().find(id);
+		if (classType == null) return null;
+		
+		java.util.List<String> methods = buildVtable(classType);
+		ir.Ir.getInstance().AddIrCommand(new ir.IrCommandVtable(id, methods));
+
+		for (AstFieldList it = fields; it != null; it = it.tail) {
+			if (it.head.decFunc != null) {
+			    it.head.decFunc.className = id;
+				it.head.decFunc.irMe();
+			}
+		}
+
+		return null;
+	}
+
+	public static java.util.List<String> buildVtable(TypeClass classType) {
+		java.util.List<String> methods = new java.util.ArrayList<>();
+		if (classType == null) return methods;
+
+		if (classType.father != null) {
+			methods.addAll(buildVtable(classType.father));
+		}
+
+		java.util.List<Type> ownMembers = new java.util.ArrayList<>();
+		for (TypeList it = classType.dataMembers; it != null; it = it.tail) {
+			ownMembers.add(it.head);
+		}
+		// Members are in reverse declaration order in dataMembers list,
+		// so we reverse them back to original declaration order.
+		java.util.Collections.reverse(ownMembers);
+
+		for (Type member : ownMembers) {
+			if (member instanceof TypeFunction) {
+				String funcName = member.name;
+				String methodLabel = "Method_" + classType.name + "_" + funcName;
+				
+				boolean overridden = false;
+				for (int i = 0; i < methods.size(); i++) {
+					if (methods.get(i).endsWith("_" + funcName)) {
+						methods.set(i, methodLabel);
+						overridden = true;
+						break;
+					}
+				}
+				if (!overridden) {
+					methods.add(methodLabel);
+				}
+			}
+		}
+		return methods;
 	}
 }

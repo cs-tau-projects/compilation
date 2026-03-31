@@ -44,62 +44,78 @@ public class Main {
 			/***********************************/
 			ast = (AstDecList) p.parse().value;
 
-			/*************************/
-			/* [6] Print the AST ... */
-			/*************************/
-			ast.printMe();
-
 			/**************************/
-			/* [7] Semant the AST ... */
+			/* [6] Semant the AST ... */
 			/**************************/
 			ast.semantMe();
 
 			/**********************/
-			/* [8] IR the AST ... */
+			/* [7] IR the AST ... */
 			/**********************/
 			ast.irMe();
 
 			/****************************/
-			/* [9] Build the CFG ... */
+			/* [8] Build the CFG ... */
 			/****************************/
 			CFG cfg = new CFG(Ir.getInstance().getCommands());
 
 			/****************************************/
-			/* [10] Run uninitialized var analysis */
+			/* [9] Run Liveness Analysis           */
 			/****************************************/
-			UninitializedVarAnalysis analysis = new UninitializedVarAnalysis(cfg);
-			analysis.analyze();
+			regalloc.LivenessAnalysis liveness = new regalloc.LivenessAnalysis(cfg);
+			liveness.analyze();
 
 			/****************************************/
-			/* [11] Write results to output file */
+			/* [10] Build Interference Graph        */
 			/****************************************/
-			Set<String> uninitVars = analysis.getUninitializedUses();
-			if (uninitVars.isEmpty()) {
-				fileWriter.print("!OK");
-			} else {
-				boolean first = true;
-				for (String varName : uninitVars) {
-					if (!first) {
-						fileWriter.println();
-					}
-					fileWriter.print(varName);
-					first = false;
+			regalloc.InterferenceGraph graph = new regalloc.InterferenceGraph();
+			graph.build(liveness, cfg);
+
+			/****************************************/
+			/* [11] Register Allocation             */
+			/****************************************/
+			regalloc.RegisterAllocator allocator = new regalloc.RegisterAllocator();
+			try {
+				allocator.allocate(graph);
+			} catch (RuntimeException e) {
+				if ("Register Allocation Failed".equals(e.getMessage())) {
+					fileWriter.print("Register Allocation Failed");
+					fileWriter.close();
+					return;
 				}
+				throw e;
 			}
 
-			/**************************/
-			/* [12] Close output file */
-			/**************************/
+			/****************************************/
+			/* [13] Generate MIPS Assembly          */
+			/****************************************/
+			mips.MipsGenerator mipsGen = new mips.MipsGenerator();
+			for (IrCommand cmd : Ir.getInstance().getCommands()) {
+				cmd.mipsMe(mipsGen, allocator.getRegisterMap());
+			}
+
+			/****************************************/
+			/* [14] Write MIPS Assembly to Output   */
+			/****************************************/
 			fileWriter.close();
-
-			/*************************************/
-			/* [13] Finalize AST GRAPHIZ DOT file */
-			/*************************************/
+			mipsGen.writeToFile(outputFileName);
+			
 			AstGraphviz.getInstance().finalizeFile();
-		}
-
-		catch (Exception e) {
-			e.printStackTrace();
+		} catch (SemanticException e) {
+			try (PrintWriter pw = new PrintWriter(outputFileName)) {
+				pw.printf("ERROR(%d)\n", e.getLineNumber());
+				e.printStackTrace();
+			} catch (Exception ex) {}
+		} catch (Exception e) {
+			try (PrintWriter pw = new PrintWriter(outputFileName)) {
+				pw.print("ERROR\n");
+				e.printStackTrace();
+			} catch (Exception ex) {}
+		} catch (Error e) {
+			try (PrintWriter pw = new PrintWriter(outputFileName)) {
+				pw.print("ERROR\n");
+				e.printStackTrace();
+			} catch (Exception ex) {}
 		}
 	}
 }

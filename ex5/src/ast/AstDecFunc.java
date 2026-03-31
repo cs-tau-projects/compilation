@@ -11,6 +11,11 @@ public class AstDecFunc extends AstNode
     public String funcName;
     public AstParametersList params;   
     public AstStmtList body;           
+    public String className = null;           
+
+    // Param scope offsets captured during semantMe() (while scope is open)
+    private java.util.List<Integer> paramScopeOffsets = new java.util.ArrayList<>();
+
     public AstDecFunc(AstType returnType, String funcName, AstParametersList params, AstStmtList body, int lineNumber)
     {
         serialNumber = AstNode.getFreshSerialNumber();
@@ -85,10 +90,14 @@ public class AstDecFunc extends AstNode
 			SymbolTable.getInstance().enter(funcName, funcType);
 		}
 
-		/****************************/
-		/* [3] Begin Function Scope */
-		/****************************/
 		SymbolTable.getInstance().beginScope();
+		paramScopeOffsets.clear();
+
+		if (isMethod) {
+			Type classType = SymbolTable.getInstance().find(this.className);
+			SymbolTable.getInstance().enter("this", classType);
+			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset("this"));
+		}
 
 		/*******************************************************/
 		/* [3.5] Set current function return type for return  */
@@ -96,7 +105,7 @@ public class AstDecFunc extends AstNode
 		/*******************************************************/
 		SymbolTable.getInstance().setCurrentFunctionReturnType(retType);
 
-		// Enter parameters into symbol table
+		// Enter parameters into symbol table and capture their scope offsets
 		for (AstParametersList it = params; it != null; it = it.tail)
 		{
 			// Check for reserved keyword in parameter name
@@ -111,6 +120,8 @@ public class AstDecFunc extends AstNode
 			}
 
 			SymbolTable.getInstance().enter(it.head.id, paramType);
+			// Capture the scope offset now while the symbol table entry exists
+			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset(it.head.id));
 		}
 
 		/*******************/
@@ -139,10 +150,36 @@ public class AstDecFunc extends AstNode
 
 	public Temp irMe()
 	{
-		Ir.
-				getInstance().
-				AddIrCommand(new IrCommandLabel(funcName));
+	    String emitName = funcName;
+	    if (funcName.equals("main")) {
+	        emitName = "user_main";
+	    } else if (className != null) {
+	        emitName = "Method_" + className + "_" + funcName;
+	    }
+		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
+		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());
+		
+		int numArgs = paramScopeOffsets.size();
+		
+		// Use the scope offsets captured during semantMe() (scope is closed now)
+		for (int i = 0; i < paramScopeOffsets.size(); i++) {
+		    int paramScopeOffset = paramScopeOffsets.get(i);
+		    String paramName = (className != null && i == 0) ? "this" : null;
+		    if (paramName == null) {
+		        AstParametersList p = params;
+		        int pIdx = (className != null) ? i - 1 : i;
+		        for (int k = 0; k < pIdx; k++) p = p.tail;
+		        paramName = p.head.id;
+		    }
+		    Ir.getInstance().AddIrCommand(new IrCommandAllocateParam(paramName, paramScopeOffset, i, numArgs));
+		}
+
 		if (body != null) body.irMe();
+
+        // Ensure functions always have a return just in case
+        Temp dst = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
+        Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));
 
 		return null;
 	}

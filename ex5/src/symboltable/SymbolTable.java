@@ -197,14 +197,12 @@ public class SymbolTable
 		while (top.name != "SCOPE-BOUNDARY")
 		{
 			table[top.index] = top.next;
-			topIndex = topIndex -1;
 			top = top.prevtop;
 		}
 		/**************************************/
 		/* Pop the SCOPE-BOUNDARY sign itself */		
 		/**************************************/
 		table[top.index] = top.next;
-		topIndex = topIndex -1;
 		top = top.prevtop;
 
 		/*********************************************/
@@ -366,5 +364,14 @@ public class SymbolTable
 	public Type getCurrentFunctionReturnType()
 	{
 		return this.currentFunctionReturnType;
+	}
+
+	public boolean isGlobalScope() {
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop) {
+			if ("SCOPE-BOUNDARY".equals(e.name)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

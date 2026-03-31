@@ -21,4 +21,8 @@ public class IrCommandList
 		this.head = head;
 		this.tail = tail;
 	}
+
+	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
+		// TODO: implement
+	}
 }

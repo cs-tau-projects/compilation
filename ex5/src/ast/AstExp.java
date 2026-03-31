@@ -4,6 +4,7 @@ import types.*;
 
 public abstract class AstExp extends AstNode
 {
+	public types.Type type;
 	/***********************************************/
 	/* The default semantic action for an AST node */
 	/***********************************************/

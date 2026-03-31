@@ -144,6 +144,42 @@ public class TypeUtils {
         return null;
     }
 
+    public static int getFieldOffset(TypeClass classType, String fieldName) {
+        java.util.List<TypeField> fields = getFullFieldList(classType);
+        for (int i = 0; i < fields.size(); i++) {
+            if (fields.get(i).name.equals(fieldName)) {
+                return (i + 1) * 4; // +1 for vtable at offset 0
+            }
+        }
+        return -1;
+    }
+
+    public static int getClassSize(TypeClass classType) {
+        java.util.List<TypeField> fields = getFullFieldList(classType);
+        return (fields.size() + 1) * 4; // +1 for vtable at offset 0
+    }
+
+    private static java.util.List<TypeField> getFullFieldList(TypeClass classType) {
+        java.util.List<TypeField> fields = new java.util.ArrayList<>();
+        if (classType.father != null) {
+            fields.addAll(getFullFieldList(classType.father));
+        }
+        
+        // Members are stored in reverse order in TypeList (newest first)
+        java.util.List<Type> ownMembers = new java.util.ArrayList<>();
+        for (TypeList it = classType.dataMembers; it != null; it = it.tail) {
+            ownMembers.add(it.head);
+        }
+        java.util.Collections.reverse(ownMembers);
+
+        for (Type member : ownMembers) {
+            if (member instanceof TypeField) {
+                fields.add((TypeField) member);
+            }
+        }
+        return fields;
+    }
+
     /******************************************************************/
     /* Build parameter type list in correct order                    */
     /* Recursively processes parameters to maintain proper order     */

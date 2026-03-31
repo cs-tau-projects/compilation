@@ -110,6 +110,10 @@ public class CFG
                     addEdge(i, i + 1);
                 }
             }
+            else if (cmd instanceof IrCommandReturn || cmd instanceof IrCommandExit)
+            {
+                // Terminal commands: no fall-through edge
+            }
             else
             {
                 // Sequential command: edge to next command

@@ -17,6 +17,10 @@ public class AstVarSimple extends AstVar
 	/* analysis for use in IR generation             */
 	/*************************************************/
 	private int scopeOffset = -1;
+	public boolean isGlobal = false;
+	public boolean isField = false;
+	public TypeClass fieldOwnerClass = null;
+	public int thisScopeOffset = -1;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -75,14 +79,32 @@ public class AstVarSimple extends AstVar
 		/* Capture the scope offset while scope is active */
 		/*************************************************/
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
-
-		// If it's a field, return the field's type, not the TypeField wrapper
-		if (t instanceof TypeField)
-		{
-			return ((TypeField) t).fieldType;
+		
+		SymbolTableEntry entry = SymbolTable.getInstance().findEntry(name);
+		if (entry != null) { // If it has no SCOPE-BOUNDARY below it, it's global
+			boolean global = true;
+			for (SymbolTableEntry e = entry; e != null; e = e.prevtop) {
+				if ("SCOPE-BOUNDARY".equals(e.name)) {
+					global = false;
+					break;
+				}
+			}
+			this.isGlobal = global;
 		}
 
-		return t;
+		this.type = t;
+		if (t instanceof TypeField)
+		{
+			this.isField = true;
+			this.type = ((TypeField) t).fieldType;
+			Type thisType = SymbolTable.getInstance().find("this");
+			if (thisType instanceof TypeClass) {
+			    this.fieldOwnerClass = (TypeClass) thisType;
+			    this.thisScopeOffset = SymbolTable.getInstance().getScopeOffset("this");
+			}
+		}
+
+		return this.type;
 	}
 
 	/********************************************************/
@@ -92,16 +114,24 @@ public class AstVarSimple extends AstVar
 	public Temp irMe()
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();
-		/****************************************/
-		/* Use the captured scope offset       */
-		/****************************************/
-		if (scopeOffset == -1)
-		{
-			// Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
-			scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		if (isField) {
+		    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+		    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", thisScopeOffset, false));
+		    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
+		    int fieldOffset = types.TypeUtils.getFieldOffset(fieldOwnerClass, name);
+		    Ir.getInstance().AddIrCommand(new IrCommandFieldGet(dst, thisTemp, fieldOffset));
+		} else {
+		    /****************************************/
+		    /* Use the captured scope offset       */
+		    /****************************************/
+		    if (scopeOffset == -1)
+		    {
+		        // Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
+		        scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
+		    }
+		    
+		    Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset, isGlobal));
 		}
-		
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(dst, name, scopeOffset));
 		return dst;
 	}
 	
