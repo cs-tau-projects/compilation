@@ -148,14 +148,15 @@ public class AstDecFunc extends AstNode
 		return null;
 	}
 
+	public static String getFuncLabel(String funcName, String className) {
+	    if (funcName.equals("main")) return "user_main";
+	    if (className != null) return "Method_" + className + "_" + funcName;
+	    return "func_" + funcName;
+	}
+
 	public Temp irMe()
 	{
-	    String emitName = funcName;
-	    if (funcName.equals("main")) {
-	        emitName = "user_main";
-	    } else if (className != null) {
-	        emitName = "Method_" + className + "_" + funcName;
-	    }
+	    String emitName = getFuncLabel(funcName, className);
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(emitName));
 		Ir.getInstance().AddIrCommand(new IrCommandFuncPrologue());
 		
