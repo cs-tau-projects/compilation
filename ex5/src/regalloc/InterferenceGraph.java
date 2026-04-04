@@ -44,17 +44,18 @@ public class InterferenceGraph {
 
         // Build edges
         for (int i = 0; i < n; i++) {
-            IrCommand cmd = cfg.getCommand(i);
-            Set<Temp> liveOut = liveness.liveOut.get(i);
-            List<Temp> defs = cmd.getDefinedTemps();
+            Set<Temp> active = new HashSet<>();
+            active.addAll(liveness.liveIn.get(i));
+            active.addAll(liveness.liveOut.get(i));
             
-            if (defs != null && !defs.isEmpty() && liveOut != null) {
-                for (Temp d : defs) {
-                    for (Temp l : liveOut) {
-                        if (!d.equals(l)) {
-                            addEdge(d, l);
-                        }
-                    }
+            IrCommand cmd = cfg.getCommand(i);
+            if (cmd.getDefinedTemps() != null) active.addAll(cmd.getDefinedTemps());
+            if (cmd.getUsedTemps() != null) active.addAll(cmd.getUsedTemps());
+            
+            List<Temp> activeList = new ArrayList<>(active);
+            for (int j = 0; j < activeList.size(); j++) {
+                for (int k = j + 1; k < activeList.size(); k++) {
+                    addEdge(activeList.get(j), activeList.get(k));
                 }
             }
         }

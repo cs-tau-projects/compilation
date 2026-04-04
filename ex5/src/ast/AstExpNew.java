@@ -120,12 +120,11 @@ public class AstExpNew extends AstExp
         else
         {
             Type t = SymbolTable.getInstance().find(type.typeName);
-            int size = 8;
+            int size = 8; // Default
             if (t instanceof TypeClass) {
-                size = ir.ClassLayout.getObjectSize((TypeClass) t);
+                size = types.TypeUtils.getClassSize((TypeClass) t);
             }
             ir.Ir.getInstance().AddIrCommand(new ir.IrCommandNewObject(dst, type.typeName, size));
-            
             if (t instanceof TypeClass) {
                 initializeFields((TypeClass) t, dst);
             }
@@ -142,7 +141,7 @@ public class AstExpNew extends AstExp
                 types.TypeField field = (types.TypeField) it.head;
                 if (field.initExp != null) {
                     temp.Temp valTemp = field.initExp.irMe();
-                    int offset = ir.ClassLayout.getFieldOffset(tc, field.name);
+                    int offset = types.TypeUtils.getFieldOffset(tc, field.name);
                     ir.Ir.getInstance().AddIrCommand(new ir.IrCommandFieldSet(objAddr, offset, valTemp));
                 }
             }

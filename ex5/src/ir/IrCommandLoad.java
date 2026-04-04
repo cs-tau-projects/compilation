@@ -24,7 +24,8 @@ public class IrCommandLoad extends IrCommand
 	}
 
 	/****************************************/
-	/* Convenience constructors            */
+	/* Convenience constructor for backward */
+	/* compatibility during transition      */
 	/****************************************/
 	public boolean isGlobal;
 	public IrCommandLoad(Temp dst, String varName, int scopeOffset, boolean isGlobal)
@@ -38,13 +39,6 @@ public class IrCommandLoad extends IrCommand
 	{
 		this.dst   = dst;
 		this.varId = new VarId(varName, scopeOffset);
-	}
-
-	public IrCommandLoad(Temp dst, String varName, int scopeOffset, VarId.Kind kind, int fpOffset)
-	{
-		this.dst   = dst;
-		this.varId = new VarId(varName, scopeOffset, kind, fpOffset);
-		this.isGlobal = (kind == VarId.Kind.GLOBAL);
 	}
 
 	@Override
@@ -61,11 +55,10 @@ public class IrCommandLoad extends IrCommand
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		if (varId.kind == VarId.Kind.GLOBAL || this.isGlobal) {
+		if (this.isGlobal) {
 		    gen.emitInstruction("lw", regMap.get(dst), "global_" + varId.name);
 		} else {
-		    // PARAM or LOCAL — use fp-relative offset
-		    gen.emitInstruction("lw", regMap.get(dst), varId.fpOffset + "($fp)");
+		    gen.emitInstruction("lw", regMap.get(dst), gen.getLocalOffset(varId.scopeOffset) + "($fp)");
 		}
 	}
 }

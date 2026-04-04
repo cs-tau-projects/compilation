@@ -55,13 +55,6 @@ public class AstExpCall extends AstExp
 		if (params != null) AstGraphviz.getInstance().logEdge(serialNumber, params.serialNumber);
 	}
 
-	/*************************************************/
-	/* Saved from semantMe for irMe                 */
-	/*************************************************/
-	private TypeClass calleeClassType = null;  // non-null for virtual calls
-	private boolean isVirtualCall = false;
-	private boolean isImplicitThis = false;    // true for unqualified method calls inside a class
-
 	/********************************************************/
 	/* Semantic analysis for function/method call          */
 	/* Handles: funcName(params) - function call           */
@@ -92,8 +85,6 @@ public class AstExpCall extends AstExp
 			}
 
 			TypeClass classType = (TypeClass) varType;
-			calleeClassType = classType;
-			isVirtualCall = true;
 
 			// Look for method in class hierarchy
 			funcType = TypeUtils.findMemberInClassHierarchy(classType, funcName);
@@ -130,20 +121,6 @@ public class AstExpCall extends AstExp
 			}
 
 			func = (TypeFunction) funcType;
-
-			// Check if this is actually a method call inside the same class (implicit this)
-			// We detect this by checking if 'this' is in scope
-			Type thisType = SymbolTable.getInstance().find("this");
-			if (thisType instanceof TypeClass) {
-				TypeClass currentClass = (TypeClass) thisType;
-				// Check if the function exists in the current class hierarchy
-				Type member = TypeUtils.findMemberInClassHierarchy(currentClass, funcName);
-				if (member instanceof TypeFunction) {
-					isVirtualCall = true;
-					isImplicitThis = true;
-					calleeClassType = currentClass;
-				}
-			}
 		}
 
 		/************************************************/
@@ -154,8 +131,14 @@ public class AstExpCall extends AstExp
 		/************************************************/
 		/* [4] Return the function's return type        */
 		/************************************************/
-		return func.returnType;
+		this.type = func.returnType;
+		if (var != null) {
+		    this.ownerClass = (TypeClass) var.semantMe();
+		}
+		return this.type;
 	}
+
+	public TypeClass ownerClass = null;
 
 	/******************************************************************/
 	/* Helper: Check that actual parameters match expected types     */
@@ -191,7 +174,7 @@ public class AstExpCall extends AstExp
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();
 
-		if (var == null && !isVirtualCall) {
+		if (var == null) {
 			if (funcName.equals("PrintInt")) {
 				Temp t = null;
 				if (params != null) t = params.head.irMe();
@@ -205,7 +188,6 @@ public class AstExpCall extends AstExp
 			}
 		}
 
-		// Evaluate arguments
 		java.util.List<Temp> paramTemps = new java.util.ArrayList<>();
 		if (params != null) {
 			for (AstExpList it = params; it != null; it = it.tail) {
@@ -213,52 +195,38 @@ public class AstExpCall extends AstExp
 			}
 		}
 
-		if (isVirtualCall) {
-			// Get the object address ('this')
-			Temp objAddr;
-			if (var != null) {
-				objAddr = var.irMe();
-			} else {
-				// Implicit 'this' — load from stack
-				objAddr = TempFactory.getInstance().getFreshTemp();
-				ir.VarId.Kind kind = FunctionContext.getCurrent().getKind("this");
-				int fpOffset = FunctionContext.getCurrent().getFpOffset("this");
-				Ir.getInstance().AddIrCommand(new IrCommandLoad(objAddr, "this", -1, kind, fpOffset));
-			}
+		Temp methodObjAddr = null;
+		if (var != null) {
+			methodObjAddr = var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(methodObjAddr));
+			paramTemps.add(0, methodObjAddr); // 'this' is the first parameter
+		}
 
-			// Push arguments in REVERSE order (right-to-left)
-			// (MIPS convention: first arg at lowest stack address)
-			for (int i = paramTemps.size() - 1; i >= 0; i--) {
-				Ir.getInstance().AddIrCommand(new IrCommandPushParam(paramTemps.get(i)));
-			}
-			// Push 'this' as the LAST push (will be at lowest address/top of stack)
-			Ir.getInstance().AddIrCommand(new IrCommandPushParam(objAddr));
+		for (int i = paramTemps.size() - 1; i >= 0; i--) {
+			Ir.getInstance().AddIrCommand(new IrCommandPushParam(paramTemps.get(i)));
+		}
 
-			// Null check on object
-			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
-
-			// Compute vtable offset using ClassLayout
+		if (var != null) {
 			int vtableOffset = 0;
-			if (calleeClassType != null) {
-				vtableOffset = ClassLayout.getMethodOffset(calleeClassType, funcName);
-				if (vtableOffset < 0) vtableOffset = 0; // fallback
+			if (ownerClass != null) {
+			    java.util.List<String> methods = AstDecClass.buildVtable(ownerClass);
+			    for (int i = 0; i < methods.size(); i++) {
+			        if (methods.get(i).endsWith("_" + funcName)) {
+			            vtableOffset = i * 4;
+			            break;
+			        }
+			    }
 			}
-
-			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, objAddr, vtableOffset));
-			Ir.getInstance().AddIrCommand(new IrCommandPopParams(paramTemps.size() + 1)); // +1 for 'this'
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, methodObjAddr, vtableOffset));
 		} else {
-			// Non-virtual function call - push args in REVERSE order
-			for (int i = paramTemps.size() - 1; i >= 0; i--) {
-				Ir.getInstance().AddIrCommand(new IrCommandPushParam(paramTemps.get(i)));
-			}
-
 			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
+		}
 
-			if (paramTemps.size() > 0) {
-				Ir.getInstance().AddIrCommand(new IrCommandPopParams(paramTemps.size()));
-			}
+		if (paramTemps.size() > 0) {
+			Ir.getInstance().AddIrCommand(new IrCommandPopParams(paramTemps.size()));
 		}
 
 		return dst;
 	}
 }
+

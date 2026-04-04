@@ -29,8 +29,8 @@ public class IrCommandArraySet extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		gen.emitInstruction("mul", "$v1", regMap.get(index), "4");
-		gen.emitInstruction("add", "$v1", "$v1", regMap.get(array));
+		gen.emitInstruction("sll", "$v1", regMap.get(index), "2");
+		gen.emitInstruction("addu", "$v1", "$v1", regMap.get(array));
 		gen.emitInstruction("sw", regMap.get(src), "4($v1)");
 	}
 }

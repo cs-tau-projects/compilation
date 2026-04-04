@@ -13,7 +13,6 @@ public class MipsGenerator {
     private int currentFpOffset = -4; // after $ra, $fp? Wait, standard is to allocate below
     
     public void resetLocals() {
-        localOffsets.clear();
         currentFpOffset = 0; // The prologue has already allocated locals according to some scheme, or we just allocate downwards
     }
     
@@ -113,6 +112,10 @@ public class MipsGenerator {
         // Total Length + 1 ($t6)
         textSection.add("\tadd $t6, $t4, $t5");
         textSection.add("\taddiu $t6, $t6, 1");
+        // Align to 4 bytes
+        textSection.add("\taddiu $t6, $t6, 3");
+        textSection.add("\tsrl $t6, $t6, 2");
+        textSection.add("\tsll $t6, $t6, 2");
 
         // Save $a0 and $a1 before syscall overrides them
         textSection.add("\tmove $t8, $a0");
@@ -169,10 +172,12 @@ public class MipsGenerator {
     }
     
     public void emitGlobalWord(String label, int value) {
+        dataSection.add("\t.align 2");
         dataSection.add(label + ": .word " + value); // reserve space for global variables
     }
 
     public void emitVtable(String className, List<String> methodLabels) {
+        dataSection.add("\t.align 2");
         dataSection.add("vtable_" + className + ":");
         for (String m : methodLabels) {
             dataSection.add("\t.word " + m);
@@ -181,14 +186,14 @@ public class MipsGenerator {
 
     public void addSaturation(String reg) {
         // Clamp to max
-        emitInstruction("li", "$s0", "32767");
-        emitInstruction("slt", "$s1", "$s0", reg);
-        emitInstruction("movn", reg, "$s0", "$s1");
+        emitInstruction("li", "$t0", "32767");
+        emitInstruction("slt", "$t1", "$t0", reg);
+        emitInstruction("movn", reg, "$t0", "$t1");
         
         // Clamp to min
-        emitInstruction("li", "$s0", "-32768");
-        emitInstruction("slt", "$s1", reg, "$s0");
-        emitInstruction("movn", reg, "$s0", "$s1");
+        emitInstruction("li", "$t0", "-32768");
+        emitInstruction("slt", "$t1", reg, "$t0");
+        emitInstruction("movn", reg, "$t0", "$t1");
     }
 
     public void writeToFile(String filename) throws IOException {

@@ -27,11 +27,34 @@ public class IrCommandNewArray extends IrCommand {
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		gen.emitInstruction("move", "$a0", regMap.get(sizeTemp));
-		gen.emitInstruction("mul", "$a0", "$a0", "4");
-		gen.emitInstruction("add", "$a0", "$a0", "4");
+		gen.emitInstruction("sll", "$a0", "$a0", "2");
+		gen.emitInstruction("addiu", "$a0", "$a0", "4");
 		gen.emitInstruction("li", "$v0", "9");
 		gen.emitInstruction("syscall");
-		gen.emitInstruction("sw", regMap.get(sizeTemp), "0($v0)");
-		gen.emitInstruction("move", regMap.get(dst), "$v0");
+		
+		// Move pointer to $t8 immediately to protect it
+		gen.emitInstruction("move", "$t8", "$v0");
+
+		// Recalculate total size in $t7 after syscall (regMap.get(sizeTemp) is callee-saved and safe)
+		gen.emitInstruction("move", "$t7", regMap.get(sizeTemp));
+		gen.emitInstruction("sll", "$t7", "$t7", "2");
+		gen.emitInstruction("addiu", "$t7", "$t7", "4");
+
+		// Zero-initialize memory (skip size at offset 0)
+		String labelStart = IrCommand.getFreshLabel("zero_start_array");
+		String labelEnd = IrCommand.getFreshLabel("zero_end_array");
+
+		gen.emitInstruction("li", "$t9", "4"); // Progress counter (offset) in protected $t9
+		gen.emitLabel(labelStart);
+		// Check against saved $t7 bound
+		gen.emitInstruction("bge", "$t9", "$t7", labelEnd);
+		gen.emitInstruction("addu", "$v1", "$t8", "$t9"); // Element address in $v1
+		gen.emitInstruction("sw", "$zero", "0($v1)");
+		gen.emitInstruction("addiu", "$t9", "$t9", "4");
+		gen.emitInstruction("j", labelStart);
+		gen.emitLabel(labelEnd);
+
+		gen.emitInstruction("sw", regMap.get(sizeTemp), "0($t8)");
+		gen.emitInstruction("move", regMap.get(dst), "$t8");
 	}
 }

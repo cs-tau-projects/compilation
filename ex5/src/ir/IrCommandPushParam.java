@@ -23,7 +23,7 @@ public class IrCommandPushParam extends IrCommand {
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
+		gen.emitInstruction("subu", "$sp", "$sp", "4");
 		gen.emitInstruction("sw", regMap.get(param), "0($sp)");
-		gen.emitInstruction("sub", "$sp", "$sp", "4");
 	}
 }

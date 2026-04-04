@@ -44,47 +44,42 @@ public class Main {
 			/***********************************/
 			ast = (AstDecList) p.parse().value;
 
-			/*************************/
-			/* [6] Print the AST ... */
-			/*************************/
-			ast.printMe();
-
 			/**************************/
-			/* [7] Semant the AST ... */
+			/* [6] Semant the AST ... */
 			/**************************/
 			ast.semantMe();
 
 			/**********************/
-			/* [8] IR the AST ... */
+			/* [7] IR the AST ... */
 			/**********************/
 			ast.irMe();
 
 			/****************************/
-			/* [9] Build the CFG ... */
+			/* [8] Build the CFG ... */
 			/****************************/
 			CFG cfg = new CFG(Ir.getInstance().getCommands());
 
 			/****************************************/
-			/* [10] Run Liveness Analysis           */
+			/* [9] Run Liveness Analysis           */
 			/****************************************/
 			regalloc.LivenessAnalysis liveness = new regalloc.LivenessAnalysis(cfg);
 			liveness.analyze();
 
 			/****************************************/
-			/* [11] Build Interference Graph        */
+			/* [10] Build Interference Graph        */
 			/****************************************/
 			regalloc.InterferenceGraph graph = new regalloc.InterferenceGraph();
 			graph.build(liveness, cfg);
 
 			/****************************************/
-			/* [12] Register Allocation             */
+			/* [11] Register Allocation             */
 			/****************************************/
 			regalloc.RegisterAllocator allocator = new regalloc.RegisterAllocator();
 			try {
 				allocator.allocate(graph);
 			} catch (RuntimeException e) {
 				if ("Register Allocation Failed".equals(e.getMessage())) {
-					fileWriter.print("Register Allocation Failed\n");
+					fileWriter.print("Register Allocation Failed");
 					fileWriter.close();
 					return;
 				}

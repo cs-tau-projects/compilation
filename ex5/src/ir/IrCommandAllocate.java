@@ -21,7 +21,8 @@ public class IrCommandAllocate extends IrCommand
 	}
 
 	/****************************************/
-	/* Convenience constructors            */
+	/* Convenience constructor for backward */
+	/* compatibility during transition      */
 	/****************************************/
 	public boolean isGlobal;
 	public IrCommandAllocate(String varName, int scopeOffset, boolean isGlobal)
@@ -33,12 +34,6 @@ public class IrCommandAllocate extends IrCommand
 	public IrCommandAllocate(String varName, int scopeOffset)
 	{
 		this.varId = new VarId(varName, scopeOffset);
-	}
-
-	public IrCommandAllocate(String varName, int scopeOffset, VarId.Kind kind, int fpOffset)
-	{
-		this.varId = new VarId(varName, scopeOffset, kind, fpOffset);
-		this.isGlobal = (kind == VarId.Kind.GLOBAL);
 	}
 
 	@Override
@@ -54,10 +49,10 @@ public class IrCommandAllocate extends IrCommand
 	}
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-		if (varId.kind == VarId.Kind.GLOBAL || this.isGlobal) {
+		if (this.isGlobal) {
 		    gen.emitGlobalWord("global_" + varId.name, 0);
+		} else {
+		    gen.allocateLocal(varId.scopeOffset);
 		}
-		// For PARAM and LOCAL, the prologue already allocated the space.
-		// No MIPS code needed here — offset is tracked in the VarId.
 	}
 }

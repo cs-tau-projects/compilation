@@ -24,15 +24,13 @@ public class IrCommandReturn extends IrCommand {
 
 	public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
 		if (src != null) gen.emitInstruction("move", "$v0", regMap.get(src));
-		// Restore stack pointer to frame pointer
 		gen.emitInstruction("move", "$sp", "$fp");
-		// Restore old frame pointer (saved at 0($fp))
-		gen.emitInstruction("lw", "$fp", "0($sp)");
-		// Restore return address (saved at 4($fp), which is now 4($sp))
-		gen.emitInstruction("lw", "$ra", "4($sp)");
-		// Pop saved $fp and $ra
-		gen.emitInstruction("addu", "$sp", "$sp", "8");
-		// Return to caller
+		for (int i = 0; i < 8; i++) {
+		    gen.emitInstruction("lw", "$s" + i, (i*4) + "($sp)");
+		}
+		gen.emitInstruction("lw", "$ra", "32($sp)");
+		gen.emitInstruction("lw", "$fp", "36($sp)");
+		gen.emitInstruction("addiu", "$sp", "$sp", "40");
 		gen.emitInstruction("jr", "$ra");
 	}
 }

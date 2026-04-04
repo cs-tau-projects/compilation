@@ -225,6 +225,7 @@ public class AstDecClass extends AstNode{
 			{
 				// Method - process body, then add to scope
 				AstDecFunc method = methodsToProcess.get(methodIndex++);
+				method.className = id;
 				method.semantMe(true);
 
 				// Add method to scope after processing (for later methods to reference)
@@ -358,6 +359,8 @@ public class AstDecClass extends AstNode{
 		for (TypeList it = classType.dataMembers; it != null; it = it.tail) {
 			ownMembers.add(it.head);
 		}
+		// Members are in reverse declaration order in dataMembers list,
+		// so we reverse them back to original declaration order.
 		java.util.Collections.reverse(ownMembers);
 
 		for (Type member : ownMembers) {

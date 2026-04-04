@@ -3,6 +3,7 @@ package ast;
 import ir.*;
 import temp.*;
 import types.*;
+import symboltable.*;
 
 public class AstStmtAssign extends AstStmt
 {
@@ -104,36 +105,31 @@ public class AstStmtAssign extends AstStmt
 
 	public Temp irMe()
 	{
-		Temp src = exp.irMe();
 		if (var instanceof AstVarSimple)
 		{
-			AstVarSimple simpleVar = (AstVarSimple) var;
-			String varName = simpleVar.name;
-			int scopeOffset = simpleVar.getScopeOffset();
-
-			if (simpleVar.isImplicitField && simpleVar.enclosingClass != null) {
-				// Implicit field write: this.field := exp
-				Temp thisTemp = TempFactory.getInstance().getFreshTemp();
-				ir.VarId.Kind kind = ir.FunctionContext.getCurrent().getKind("this");
-				int fpOffset = ir.FunctionContext.getCurrent().getFpOffset("this");
-				Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", -1, kind, fpOffset));
-
-				int fieldOffset = ir.ClassLayout.getFieldOffset(simpleVar.enclosingClass, varName);
-				Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
-			} else if (ir.FunctionContext.isInFunction()) {
-				ir.VarId.Kind kind = ir.FunctionContext.getCurrent().getKind(varName);
-				int fpOffset = ir.FunctionContext.getCurrent().getFpOffset(varName);
-				Ir.getInstance().AddIrCommand(
-					new IrCommandStore(varName, scopeOffset, kind, fpOffset, src));
+			AstVarSimple v = (AstVarSimple) var;
+			if (v.isField) {
+			    Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+			    Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this", v.thisScopeOffset, false));
+			    Ir.getInstance().AddIrCommand(new IrCommandCheckNull(thisTemp));
+			    int fieldOffset = types.TypeUtils.getFieldOffset(v.fieldOwnerClass, v.name);
+			    Temp src = exp.irMe();
+			    Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
 			} else {
-				Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, true));
+			    Temp src = exp.irMe();
+			    String varName = v.name;
+			    int scopeOffset = v.getScopeOffset();
+			    boolean isGlobal = v.isGlobal;
+			    Ir.getInstance().AddIrCommand(new IrCommandStore(varName, scopeOffset, src, isGlobal));
 			}
 		}
 		else if (var instanceof AstVarField)
 		{
 			AstVarField f = (AstVarField) var;
 			Temp objAddr = f.var.irMe();
-			int offset = ir.ClassLayout.getFieldOffset(f.varClassType, f.fieldName);
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(objAddr));
+			int offset = types.TypeUtils.getFieldOffset(f.ownerClass, f.fieldName);
+			Temp src = exp.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objAddr, offset, src));
 		}
 		else if (var instanceof AstVarSubscript)
@@ -143,6 +139,7 @@ public class AstStmtAssign extends AstStmt
 			Temp indexTemp = sub.subscript.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandCheckNull(arrayAddr));
 			Ir.getInstance().AddIrCommand(new IrCommandCheckBounds(arrayAddr, indexTemp));
+			Temp src = exp.irMe();
 			Ir.getInstance().AddIrCommand(new IrCommandArraySet(arrayAddr, indexTemp, src));
 		}
 		return null;
