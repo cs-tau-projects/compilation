@@ -7,24 +7,25 @@ import temp.Temp;
 public class MipsGenerator {
     private List<String> textSection = new ArrayList<>();
     private List<String> dataSection = new ArrayList<>();
-    
+
     // For local variable stack offsets
     private Map<Integer, Integer> localOffsets = new HashMap<>();
     private int currentFpOffset = -4; // after $ra, $fp? Wait, standard is to allocate below
-    
+
     public void resetLocals() {
-        currentFpOffset = 0; // The prologue has already allocated locals according to some scheme, or we just allocate downwards
+        currentFpOffset = 0; // The prologue has already allocated locals according to some scheme, or we
+                             // just allocate downwards
     }
-    
+
     public void allocateLocal(int scopeOffset) {
         currentFpOffset -= 4;
         localOffsets.put(scopeOffset, currentFpOffset);
     }
-    
+
     public void allocateParam(int scopeOffset, int frameOffset) {
         localOffsets.put(scopeOffset, frameOffset);
     }
-    
+
     public int getLocalOffset(int scopeOffset) {
         return localOffsets.getOrDefault(scopeOffset, 0);
     }
@@ -35,27 +36,27 @@ public class MipsGenerator {
         addRuntimeErrorHandlers();
         addRuntimeStringHandlers();
     }
-    
+
     private void addRuntimeErrorHandlers() {
         dataSection.add("msg_div_zero: .asciiz \"Illegal Division By Zero\"");
         dataSection.add("msg_invalid_ptr: .asciiz \"Invalid Pointer Dereference\"");
         dataSection.add("msg_access_violation: .asciiz \"Access Violation\"");
         dataSection.add("msg_space: .asciiz \" \"");
-        
+
         textSection.add("Label_division_by_zero:");
         textSection.add("\tla $a0, msg_div_zero");
         textSection.add("\tli $v0, 4");
         textSection.add("\tsyscall");
         textSection.add("\tli $v0, 10");
         textSection.add("\tsyscall");
-        
+
         textSection.add("Label_invalid_ptr_deref:");
         textSection.add("\tla $a0, msg_invalid_ptr");
         textSection.add("\tli $v0, 4");
         textSection.add("\tsyscall");
         textSection.add("\tli $v0, 10");
         textSection.add("\tsyscall");
-        
+
         textSection.add("Label_access_violation:");
         textSection.add("\tla $a0, msg_access_violation");
         textSection.add("\tli $v0, 4");
@@ -64,10 +65,15 @@ public class MipsGenerator {
         textSection.add("\tsyscall");
         textSection.add("");
     }
-    
+
     private void addRuntimeStringHandlers() {
         // --- String Equality (Runtime_StrEq) ---
         textSection.add("Runtime_StrEq:");
+        textSection.add("\tsubu $sp, $sp, 16");
+        textSection.add("\tsw $t0, 0($sp)");
+        textSection.add("\tsw $t1, 4($sp)");
+        textSection.add("\tsw $t2, 8($sp)");
+        textSection.add("\tsw $t3, 12($sp)");
         textSection.add("\tmove $t0, $a0");
         textSection.add("\tmove $t1, $a1");
         textSection.add("StrEq_Loop:");
@@ -80,13 +86,26 @@ public class MipsGenerator {
         textSection.add("\tj StrEq_Loop");
         textSection.add("StrEq_False:");
         textSection.add("\tli $v0, 0");
+        textSection.add("\tlw $t0, 0($sp)");
+        textSection.add("\tlw $t1, 4($sp)");
+        textSection.add("\tlw $t2, 8($sp)");
+        textSection.add("\tlw $t3, 12($sp)");
+        textSection.add("\taddiu $sp, $sp, 16");
         textSection.add("\tjr $ra");
         textSection.add("StrEq_True:");
         textSection.add("\tli $v0, 1");
+        textSection.add("\tlw $t0, 0($sp)");
+        textSection.add("\tlw $t1, 4($sp)");
+        textSection.add("\tlw $t2, 8($sp)");
+        textSection.add("\tlw $t3, 12($sp)");
+        textSection.add("\taddiu $sp, $sp, 16");
         textSection.add("\tjr $ra");
 
         // --- String Concatenation (Runtime_StrConcat) ---
         textSection.add("Runtime_StrConcat:");
+        textSection.add("\tsubu $sp, $sp, 40");
+        for (int i = 0; i < 10; i++)
+            textSection.add("\tsw $t" + i + ", " + (i * 4) + "($sp)");
         // Find length of string 1
         textSection.add("\tmove $t0, $a0");
         textSection.add("\tli $t4, 0");
@@ -97,7 +116,7 @@ public class MipsGenerator {
         textSection.add("\taddiu $t4, $t4, 1");
         textSection.add("\tj StrConcat_Len1");
         textSection.add("StrConcat_Len1_End:");
-        
+
         // Find length of string 2
         textSection.add("\tmove $t1, $a1");
         textSection.add("\tli $t5, 0");
@@ -151,14 +170,17 @@ public class MipsGenerator {
 
         // Null terminator and return (result base is already preserved in $v0)
         textSection.add("\tsb $zero, 0($t7)");
+        for (int i = 0; i < 10; i++)
+            textSection.add("\tlw $t" + i + ", " + (i * 4) + "($sp)");
+        textSection.add("\taddiu $sp, $sp, 40");
         textSection.add("\tjr $ra");
         textSection.add("");
     }
-    
+
     public void emitLabel(String label) {
         textSection.add(label + ":");
     }
-    
+
     public void emitInstruction(String op, String... args) {
         if (args.length > 0) {
             textSection.add("\t" + op + " " + String.join(", ", args));
@@ -166,11 +188,11 @@ public class MipsGenerator {
             textSection.add("\t" + op);
         }
     }
-    
+
     public void emitDataString(String label, String value) {
         dataSection.add(label + ": .asciiz " + value);
     }
-    
+
     public void emitGlobalWord(String label, int value) {
         dataSection.add("\t.align 2");
         dataSection.add(label + ": .word " + value); // reserve space for global variables
@@ -186,21 +208,23 @@ public class MipsGenerator {
 
     public void addSaturation(String reg) {
         // Clamp to max
-        emitInstruction("li", "$t0", "32767");
-        emitInstruction("slt", "$t1", "$t0", reg);
-        emitInstruction("movn", reg, "$t0", "$t1");
-        
+        emitInstruction("li", "$s0", "32767");
+        emitInstruction("slt", "$s1", "$s0", reg);
+        emitInstruction("movn", reg, "$s0", "$s1");
+
         // Clamp to min
-        emitInstruction("li", "$t0", "-32768");
-        emitInstruction("slt", "$t1", reg, "$t0");
-        emitInstruction("movn", reg, "$t0", "$t1");
+        emitInstruction("li", "$s0", "-32768");
+        emitInstruction("slt", "$s1", reg, "$s0");
+        emitInstruction("movn", reg, "$s0", "$s1");
     }
 
     public void writeToFile(String filename) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            for (String s : dataSection) writer.println(s);
+            for (String s : dataSection)
+                writer.println(s);
             writer.println();
-            for (String s : textSection) writer.println(s);
+            for (String s : textSection)
+                writer.println(s);
         }
     }
 }

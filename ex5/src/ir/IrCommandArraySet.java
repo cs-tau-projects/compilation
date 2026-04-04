@@ -3,22 +3,25 @@ package ir;
 import temp.Temp;
 
 public class IrCommandArraySet extends IrCommand {
-    public Temp array;
-    public Temp index;
-    public Temp src;
+	public Temp array;
+	public Temp index;
+	public Temp src;
 
-    public IrCommandArraySet(Temp array, Temp index, Temp src) {
-        this.array = array;
-        this.index = index;
-        this.src = src;
-    }
+	public IrCommandArraySet(Temp array, Temp index, Temp src) {
+		this.array = array;
+		this.index = index;
+		this.src = src;
+	}
 
 	@Override
 	public java.util.List<temp.Temp> getUsedTemps() {
 		java.util.List<temp.Temp> list = new java.util.ArrayList<>();
-		if (array != null) list.add(array);
-		if (index != null) list.add(index);
-		if (src != null) list.add(src);
+		if (array != null)
+			list.add(array);
+		if (index != null)
+			list.add(index);
+		if (src != null)
+			list.add(src);
 		return list;
 	}
 
