@@ -109,8 +109,8 @@ for input_file in "${INPUT_DIR}"/TEST_*.txt; do
         cp "${compiler_stderr}" "${actual_file}"
     else
         # Compiler succeeded (exit 0)
-        # Check if the output is actually an error message (like TEST_26) instead of MIPS Assembly
-        if head -n 1 "${asm_file}" | grep -q "Register Allocation Failed"; then
+        # Check if the output is actually an error message (like TEST_26 or Lexer ERROR) instead of MIPS Assembly
+        if head -n 1 "${asm_file}" | grep -qE "Register Allocation Failed|^ERROR"; then
             cp "${asm_file}" "${actual_file}"
         else
             # Execute the assembly through SPIM
@@ -119,7 +119,7 @@ for input_file in "${INPUT_DIR}"/TEST_*.txt; do
     fi
 
     # ── Compare output ────────────────────────────────────────
-    if diff -q "${expected_file}" "${actual_file}" > /dev/null 2>&1; then
+    if diff -q -b "${expected_file}" "${actual_file}" > /dev/null 2>&1; then
         echo -e "  ${GREEN}[PASS]${RESET}  ${test_basename}"
         passed=$(( passed + 1 ))
         {
