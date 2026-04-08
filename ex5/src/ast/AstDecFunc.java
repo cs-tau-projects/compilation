@@ -176,11 +176,19 @@ public class AstDecFunc extends AstNode
 		}
 
 		if (body != null) body.irMe();
-
-        // Ensure functions always have a return just in case
-        Temp dst = TempFactory.getInstance().getFreshTemp();
-        Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
-        Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));
+		
+		// Finalize function with a return if not already present
+		java.util.List<IrCommand> commands = Ir.getInstance().getCommands();
+		if (commands.isEmpty() || !(commands.get(commands.size() - 1) instanceof IrCommandReturn)) {
+		    Type retType = SymbolTable.getInstance().find(this.returnType.typeName);
+		    if (retType instanceof TypeVoid) {
+		        Ir.getInstance().AddIrCommand(new IrCommandReturn(null));
+		    } else {
+		        Temp dst = TempFactory.getInstance().getFreshTemp();
+		        Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
+		        Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));
+		    }
+		}
 
 		return null;
 	}
