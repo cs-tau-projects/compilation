@@ -39,9 +39,9 @@ public class IrCommandFuncPrologue extends IrCommand {
         // 2. Save RA
         gen.emitInstruction("subu", "$sp", "$sp", "4");
         gen.emitInstruction("sw", "$ra", "0($sp)");
-        // 3. Save S0-S7 (32 bytes)
-        gen.emitInstruction("subu", "$sp", "$sp", "32");
-        for (int i = 0; i < 8; i++) {
+        // 3. Save S0-S9 (40 bytes)
+        gen.emitInstruction("subu", "$sp", "$sp", "40");
+        for (int i = 0; i < 10; i++) {
             gen.emitInstruction("sw", "$s" + i, (i*4) + "($sp)");
         }
         // 4. Set FP to current SP (top of frame overhead)
