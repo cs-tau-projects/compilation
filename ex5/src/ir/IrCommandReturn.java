@@ -28,7 +28,7 @@ public class IrCommandReturn extends IrCommand {
 			gen.emitInstruction("move", "$v0", regMap.get(src));
 		gen.emitInstruction("move", "$sp", "$fp");
 		for (int i = 0; i < 10; i++) {
-			gen.emitInstruction("lw", "$t" + i, (i * 4) + "($sp)");
+		    gen.emitInstruction("lw", "$s" + i, (i*4) + "($sp)");
 		}
 		gen.emitInstruction("lw", "$ra", "40($sp)");
 		gen.emitInstruction("lw", "$fp", "44($sp)");

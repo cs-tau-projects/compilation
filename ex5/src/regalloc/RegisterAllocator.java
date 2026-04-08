@@ -5,7 +5,7 @@ import temp.Temp;
 
 public class RegisterAllocator {
     private static final int K = 10;
-    public Map<Temp, Integer> allocation;
+    public Map<Temp, Integer> allocation; 
 
     public RegisterAllocator() {
         this.allocation = new HashMap<>();
