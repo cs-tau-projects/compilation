@@ -219,7 +219,8 @@ public class AstExpCall extends AstExp
 			}
 			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, methodObjAddr, vtableOffset));
 		} else {
-			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, funcName));
+			String callLabel = AstDecFunc.getFuncLabel(funcName, null);
+			Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, callLabel));
 		}
 
 		if (paramTemps.size() > 0) {

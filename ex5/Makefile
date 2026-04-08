@@ -55,7 +55,6 @@ OUTPUT   = ${OUTPUT_DIR}/Output.txt
 # TARGET #
 ##########
 compile:
-	clear
 	@echo "*******************************"
 	@echo "*                             *"
 	@echo "*                             *"

@@ -103,18 +103,15 @@ public class Main {
 			AstGraphviz.getInstance().finalizeFile();
 		} catch (SemanticException e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
-				pw.printf("ERROR(%d)\n", e.getLineNumber());
-				e.printStackTrace();
+				pw.printf("ERROR(%d)", e.getLineNumber());
 			} catch (Exception ex) {}
 		} catch (Exception e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
-				pw.print("ERROR\n");
-				e.printStackTrace();
+				pw.print("ERROR");
 			} catch (Exception ex) {}
 		} catch (Error e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
-				pw.print("ERROR\n");
-				e.printStackTrace();
+				pw.print("ERROR");
 			} catch (Exception ex) {}
 		}
 	}
