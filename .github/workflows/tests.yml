@@ -20,11 +20,11 @@ jobs:
       - name: Install JFlex
         run: |
           sudo apt-get update
-          sudo apt-get install -y jflex
+          sudo apt-get install -y jflex spim
 
       - name: Build Project
         run: |
-          cd ex3
+          cd ex5
           # Generate Lexer.java
           jflex -q -d src jflex/LEX_FILE.lex
           # Generate Parser.java and TokenNames.java
@@ -33,11 +33,11 @@ jobs:
           mkdir -p bin
           javac -cp external_jars/java-cup-11b-runtime.jar -d bin src/*.java src/*/*.java
           # Create JAR
-          jar cfm SEMANT manifest/MANIFEST.MF -C bin .
+          jar cfm COMPILER manifest/MANIFEST.MF -C bin .
 
       - name: Run Tests
         run: |
-          cd ex3
+          cd ex5
           chmod +x run_tests.sh
           TERM=dumb ./run_tests.sh
 

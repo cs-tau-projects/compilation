@@ -37,3 +37,8 @@ LEXER
 .DS_Store
 COMPILER
 diff_report.txt
+checkstyle.jar
+checkstyle_results.txt
+ex5/src/Lexer.java~
+sources.txt
+tools/

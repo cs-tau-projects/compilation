@@ -8,12 +8,12 @@ EP_JAR="tools/error_prone_core-$EP_VERSION-with-dependencies.jar"
 DF_JAR="tools/dataflow-errorprone-$DATAFLOW_VERSION.jar"
 
 # External jars needed for compilation
-EXT_JARS="ex3/external_jars/java-cup-11b-runtime.jar"
+EXT_JARS="ex5/external_jars/java-cup-11b-runtime.jar"
 
-mkdir -p ex3/bin
+mkdir -p ex5/bin
 
 # Find all Java source files and write to a file
-find ex3/src -name "*.java" > sources.txt
+find ex5/src -name "*.java" > sources.txt
 
 echo "Found $(wc -l < sources.txt) Java files to compile"
 
@@ -33,7 +33,7 @@ javac \
   -processorpath "$EP_JAR:$DF_JAR" \
   "-Xplugin:ErrorProne" \
   -cp "$EXT_JARS" \
-  -d ex3/bin \
+  -d ex5/bin \
   @sources.txt
 
 echo "Error Prone compilation completed successfully"
