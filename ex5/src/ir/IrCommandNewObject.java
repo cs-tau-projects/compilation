@@ -31,23 +31,23 @@ public class IrCommandNewObject extends IrCommand {
 		gen.emitInstruction("li", "$v0", "9");
 		gen.emitInstruction("syscall");
 		
-		// Move pointer to $t8 immediately to protect it
-		gen.emitInstruction("move", "$t8", "$v0");
+		// Move pointer to $s0 immediately to protect it
+		gen.emitInstruction("move", "$s0", "$v0");
 
 		// Zero-initialize memory (skip vtable at offset 0)
 		String labelStart = IrCommand.getFreshLabel("zero_start");
 		String labelEnd = IrCommand.getFreshLabel("zero_end");
-		gen.emitInstruction("li", "$t9", "4"); // Progress counter (offset)
+		gen.emitInstruction("li", "$s1", "4"); // Progress counter (offset)
 		gen.emitLabel(labelStart);
-		gen.emitInstruction("bge", "$t9", String.valueOf(size), labelEnd);
-		gen.emitInstruction("addu", "$v1", "$t8", "$t9"); // Element address
+		gen.emitInstruction("bge", "$s1", String.valueOf(size), labelEnd);
+		gen.emitInstruction("addu", "$v1", "$s0", "$s1"); // Element address
 		gen.emitInstruction("sw", "$zero", "0($v1)");
-		gen.emitInstruction("addiu", "$t9", "$t9", "4");
+		gen.emitInstruction("addiu", "$s1", "$s1", "4");
 		gen.emitInstruction("j", labelStart);
 		gen.emitLabel(labelEnd);
 
 		gen.emitInstruction("la", "$v1", "vtable_" + className);
-		gen.emitInstruction("sw", "$v1", "0($t8)");
-		gen.emitInstruction("move", regMap.get(dst), "$t8");
+		gen.emitInstruction("sw", "$v1", "0($s0)");
+		gen.emitInstruction("move", regMap.get(dst), "$s0");
 	}
 }

@@ -14,7 +14,7 @@ public class IrCommandAllocateParam extends IrCommand {
     }
 
     public void mipsMe(mips.MipsGenerator gen, java.util.Map<temp.Temp, String> regMap) {
-        int offset = 40 + 4 * paramIndex;
+        int offset = 80 + 4 * paramIndex;
         gen.allocateParam(scopeOffset, offset);
     }
 }

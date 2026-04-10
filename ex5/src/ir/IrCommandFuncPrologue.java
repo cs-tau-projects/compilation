@@ -44,7 +44,12 @@ public class IrCommandFuncPrologue extends IrCommand {
         for (int i = 0; i < 8; i++) {
             gen.emitInstruction("sw", "$s" + i, (i*4) + "($sp)");
         }
-        // 4. Set FP to current SP (top of frame overhead)
+        // 4. Save T0-T9 (40 bytes)
+        gen.emitInstruction("subu", "$sp", "$sp", "40");
+        for (int i = 0; i < 10; i++) {
+            gen.emitInstruction("sw", "$t" + i, (i*4) + "($sp)");
+        }
+        // 5. Set FP to current SP (top of frame overhead)
         gen.emitInstruction("move", "$fp", "$sp");
 
         // 5. Pre-allocate space for all local variables

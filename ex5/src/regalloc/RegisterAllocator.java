@@ -4,7 +4,7 @@ import java.util.*;
 import temp.Temp;
 
 public class RegisterAllocator {
-    private static final int K = 8;
+    private static final int K = 10;
     public Map<Temp, Integer> allocation; 
 
     public RegisterAllocator() {
@@ -82,7 +82,7 @@ public class RegisterAllocator {
     public Map<Temp, String> getRegisterMap() {
         Map<Temp, String> result = new HashMap<>();
         for (Map.Entry<Temp, Integer> entry : allocation.entrySet()) {
-            result.put(entry.getKey(), "$s" + entry.getValue());
+            result.put(entry.getKey(), "$t" + entry.getValue());
         }
         return result;
     }
