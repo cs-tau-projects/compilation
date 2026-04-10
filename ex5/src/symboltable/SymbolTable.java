@@ -1,41 +1,25 @@
-/***********/
-/* PACKAGE */
-/***********/
 package symboltable;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.io.PrintWriter;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import types.*;
 
-/****************/
-/* SYMBOL TABLE */
-/****************/
+/**
+ * Symbol Table implementation using a hash table with chaining and a 
+ * history stack (top/prevtop) to support lexical scoping.
+ */
 public class SymbolTable
 {
 	private int hashArraySize = 13;
 
-	/**********************************************/
-	/* The actual symbol table data structure ... */
-	/**********************************************/
+	// Hash table array and history stack top
 	private SymbolTableEntry[] table = new SymbolTableEntry[hashArraySize];
 	private SymbolTableEntry top;
 	private int topIndex = 0;
 
-	/************************************************************/
-	/* Track the current function's return type for validation */
-	/* of return statements                                     */
-	/************************************************************/
+	// Track the current function's return type for validation of return statements
 	private Type currentFunctionReturnType = null;
 	
-	/**************************************************************/
-	/* A very primitive hash function for exposition purposes ... */
-	/**************************************************************/
+	// Hash function for symbol table entries
 	private int hash(String s)
 	{
 		if (s.charAt(0) == 'l') {return 1;}
@@ -49,40 +33,24 @@ public class SymbolTable
 		return 12;
 	}
 
-	/****************************************************************************/
-	/* Enter a variable, function, class type or array type to the symbol table */
-	/****************************************************************************/
 	public void enter(String name, Type t)
 	{
-		/*************************************************/
-		/* [1] Compute the hash value for this new entry */
-		/*************************************************/
+		// 1. Compute the hash value for this new entry
 		int hashValue = hash(name);
 
-		/******************************************************************************/
-		/* [2] Extract what will eventually be the next entry in the hashed position  */
-		/*     NOTE: this entry can very well be null, but the behaviour is identical */
-		/******************************************************************************/
+		// 2. Extract the current head of the bucket
 		SymbolTableEntry next = table[hashValue];
 	
-		/**************************************************************************/
-		/* [3] Prepare a new symbol table entry with name, type, next and prevtop */
-		/**************************************************************************/
+		// 3. Prepare a new symbol table entry
 		SymbolTableEntry e = new SymbolTableEntry(name,t,hashValue,next,top, topIndex++);
 
-		/**********************************************/
-		/* [4] Update the top of the symbol table ... */
-		/**********************************************/
+		// 4. Update the top of the symbol table stack
 		top = e;
 		
-		/****************************************/
-		/* [5] Enter the new entry to the table */
-		/****************************************/
+		// 5. Insert the new entry at the head of the bucket
 		table[hashValue] = e;
 		
-		/**************************/
-		/* [6] Print Symbol Table */
-		/**************************/
+		// 6. Print status for debugging
 		printMe();
 	}
 
@@ -189,25 +157,20 @@ public class SymbolTable
 	/* end scope = Keep popping elements out of the data structure,                 */
 	/* from most recent element entered, until a <NEW-SCOPE> element is encountered */
 	/********************************************************************************/
+	/**
+	 * End current scope by popping elements until SCOPE-BOUNDARY is reached.
+	 */
 	public void endScope()
 	{
-		/**************************************************************************/
-		/* Pop elements from the symbol table stack until a SCOPE-BOUNDARY is hit */		
-		/**************************************************************************/
-		while (top.name != "SCOPE-BOUNDARY")
+		while (!top.name.equals("SCOPE-BOUNDARY"))
 		{
 			table[top.index] = top.next;
 			top = top.prevtop;
 		}
-		/**************************************/
-		/* Pop the SCOPE-BOUNDARY sign itself */		
-		/**************************************/
+		// Pop the SCOPE-BOUNDARY entry itself
 		table[top.index] = top.next;
 		top = top.prevtop;
 
-		/*********************************************/
-		/* Print the symbol table after every change */		
-		/*********************************************/
 		printMe();
 	}
 	
@@ -222,43 +185,31 @@ public class SymbolTable
 
 		try
 		{
-			/*******************************************/
-			/* [1] Open Graphviz text file for writing */
-			/*******************************************/
+			// 1. Open Graphviz text file for writing
 			PrintWriter fileWriter = new PrintWriter(dirname+filename);
 
-			/*********************************/
-			/* [2] Write Graphviz dot prolog */
-			/*********************************/
+			// 2. Write Graphviz dot prolog
 			fileWriter.print("digraph structs {\n");
 			fileWriter.print("rankdir = LR\n");
 			fileWriter.print("node [shape=record];\n");
 
-			/*******************************/
-			/* [3] Write Hash Table Itself */
-			/*******************************/
+			// 3. Write Hash Table structure
 			fileWriter.print("hashTable [label=\"");
 			for (i=0;i<hashArraySize-1;i++) { fileWriter.format("<f%d>\n%d\n|",i,i); }
 			fileWriter.format("<f%d>\n%d\n\"];\n",hashArraySize-1,hashArraySize-1);
 		
-			/****************************************************************************/
-			/* [4] Loop over hash table array and print all linked lists per array cell */
-			/****************************************************************************/
+			// 4. Loop over hash table array and print all linked lists per array cell
 			for (i=0;i<hashArraySize;i++)
 			{
 				if (table[i] != null)
 				{
-					/*****************************************************/
-					/* [4a] Print hash table array[i] -> entry(i,0) edge */
-					/*****************************************************/
+					// 4a. Print hash table array[i] -> entry(i,0) edge
 					fileWriter.format("hashTable:f%d -> node_%d_0:f0;\n",i,i);
 				}
 				j=0;
 				for (SymbolTableEntry it = table[i]; it!=null; it=it.next)
 				{
-					/*******************************/
-					/* [4b] Print entry(i,it) node */
-					/*******************************/
+					// 4b. Print entry(i,it) node
 					fileWriter.format("node_%d_%d ",i,j);
 					fileWriter.format("[label=\"<f0>%s|<f1>%s|<f2>prevtop=%d|<f3>next\"];\n",
 						it.name,
@@ -267,9 +218,7 @@ public class SymbolTable
 
 					if (it.next != null)
 					{
-						/***************************************************/
-						/* [4c] Print entry(i,it) -> entry(i,it.next) edge */
-						/***************************************************/
+						// 4c. Print entry(i,it) -> entry(i,it.next) edge
 						fileWriter.format(
 							"node_%d_%d -> node_%d_%d [style=invis,weight=10];\n",
 							i,j,i,j+1);
@@ -289,42 +238,23 @@ public class SymbolTable
 		}		
 	}
 	
-	/**************************************/
-	/* USUAL SINGLETON IMPLEMENTATION ... */
-	/**************************************/
+	// --- Singleton Implementation ---
 	private static SymbolTable instance = null;
 
-	/*****************************/
-	/* PREVENT INSTANTIATION ... */
-	/*****************************/
 	protected SymbolTable() {}
 
-	/******************************/
-	/* GET SINGLETON INSTANCE ... */
-	/******************************/
 	public static SymbolTable getInstance()
 	{
 		if (instance == null)
 		{
-			/*******************************/
-			/* [0] The instance itself ... */
-			/*******************************/
 			instance = new SymbolTable();
 
-			/*****************************************/
-			/* [1] Enter primitive types int, string */
-			/*****************************************/
+			// Initialize with primitive types
 			instance.enter("int",   TypeInt.getInstance());
 			instance.enter("string", TypeString.getInstance());
-
-			/*************************************/
-			/* [2] Enter void type               */
-			/*************************************/
 			instance.enter("void", TypeVoid.getInstance());
 
-			/***************************************/
-			/* [3] Enter library function PrintInt */
-			/***************************************/
+			// Initialize library functions
 			instance.enter(
 				"PrintInt",
 				new TypeFunction(
@@ -334,9 +264,6 @@ public class SymbolTable
 						TypeInt.getInstance(),
 						null)));
 
-			/******************************************/
-			/* [4] Enter library function PrintString */
-			/******************************************/
 			instance.enter(
 				"PrintString",
 				new TypeFunction(
@@ -350,17 +277,13 @@ public class SymbolTable
 		return instance;
 	}
 
-	/****************************************************************/
-	/* Set the current function return type (when entering a func) */
-	/****************************************************************/
+	// Set the current function return type (when entering a func)
 	public void setCurrentFunctionReturnType(Type returnType)
 	{
 		this.currentFunctionReturnType = returnType;
 	}
 
-	/****************************************************************/
-	/* Get the current function return type (for return statements)*/
-	/****************************************************************/
+	// Get the current function return type (for return statements)
 	public Type getCurrentFunctionReturnType()
 	{
 		return this.currentFunctionReturnType;

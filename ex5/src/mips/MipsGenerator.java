@@ -10,10 +10,10 @@ public class MipsGenerator {
     
     // For local variable stack offsets
     private Map<Integer, Integer> localOffsets = new HashMap<>();
-    private int currentFpOffset = -4; // after $ra, $fp? Wait, standard is to allocate below
+    private int currentFpOffset = -4; 
     
     public void resetLocals() {
-        currentFpOffset = 0; // The prologue has already allocated locals according to some scheme, or we just allocate downwards
+        currentFpOffset = 0; 
     }
     
     public void allocateLocal(int scopeOffset) {

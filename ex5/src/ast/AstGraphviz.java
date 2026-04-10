@@ -11,19 +11,11 @@ public class AstGraphviz
 	/***********************/
 	private PrintWriter fileWriter;
 	
-	/**************************************/
-	/* USUAL SINGLETON IMPLEMENTATION ... */
-	/**************************************/
+	// --- Singleton Implementation ---
 	private static AstGraphviz instance = null;
 
-	/*****************************/
-	/* PREVENT INSTANTIATION ... */
-	/*****************************/
 	private AstGraphviz() {}
 
-	/******************************/
-	/* GET SINGLETON INSTANCE ... */
-	/******************************/
 	public static AstGraphviz getInstance()
 	{
 		if (instance == null)

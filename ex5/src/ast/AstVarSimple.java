@@ -12,10 +12,7 @@ public class AstVarSimple extends AstVar
 	/************************/
 	public String name;
 	
-	/*************************************************/
-	/* The scope offset captured during semantic     */
-	/* analysis for use in IR generation             */
-	/*************************************************/
+	// The scope offset captured during semantic analysis for use in IR generation
 	private int scopeOffset = -1;
 	public boolean isGlobal = false;
 	public boolean isField = false;
@@ -27,19 +24,9 @@ public class AstVarSimple extends AstVar
 	/******************/
 	public AstVarSimple(String name, int lineNumber)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+		// SET A UNIQUE SERIAL NUMBER
 		serialNumber = AstNodeSerialNumber.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.format("====================== var -> ID( %s )\n",name);
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.name = name;
 		this.lineNumber = lineNumber;
 	}
@@ -49,14 +36,8 @@ public class AstVarSimple extends AstVar
 	/**************************************************/
 	public void printMe()
 	{
-		/**********************************/
-		/* AST NODE TYPE = AST SIMPLE VAR */
-		/**********************************/
 		System.out.format("AST NODE SIMPLE VAR( %s )\n",name);
 
-		/*********************************/
-		/* Print to AST GRAPHVIZ DOT file */
-		/*********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
 			String.format("SIMPLE\nVAR\n(%s)",name));
@@ -68,6 +49,7 @@ public class AstVarSimple extends AstVar
 	/********************************************************/
 	public Type semantMe() throws SemanticException
 	{
+		// Lookup the variable and capture its scope offset
 		Type t = SymbolTable.getInstance().find(name);
 
 		if (t == null)
@@ -75,9 +57,6 @@ public class AstVarSimple extends AstVar
 			throw new SemanticException("undefined variable " + name, lineNumber);
 		}
 		
-		/*************************************************/
-		/* Capture the scope offset while scope is active */
-		/*************************************************/
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
 		
 		SymbolTableEntry entry = SymbolTable.getInstance().findEntry(name);
@@ -121,12 +100,9 @@ public class AstVarSimple extends AstVar
 		    int fieldOffset = types.TypeUtils.getFieldOffset(fieldOwnerClass, name);
 		    Ir.getInstance().AddIrCommand(new IrCommandFieldGet(dst, thisTemp, fieldOffset));
 		} else {
-		    /****************************************/
-		    /* Use the captured scope offset       */
-		    /****************************************/
+		    // Use the captured scope offset (fallback to lookup if necessary)
 		    if (scopeOffset == -1)
 		    {
-		        // Fallback if semantMe wasn't called or failed (shouldn't happen in valid flow)
 		        scopeOffset = SymbolTable.getInstance().getScopeOffset(name);
 		    }
 		    

@@ -17,19 +17,7 @@ public class AstExpBinop extends AstExp
 	/******************/
 	public AstExpBinop(AstExp left, AstExp right, BinOp op, int lineNumber)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
-
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.print("====================== exp -> exp BINOP exp\n");
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.left = left;
 		this.right = right;
 		this.op = op;
@@ -41,27 +29,12 @@ public class AstExpBinop extends AstExp
 	/*************************************************/
 	public void printMe()
 	{
-		/*************************************/
-		/* AST NODE TYPE = AST BINOP EXP */
-		/*************************************/
 		System.out.print("AST NODE BINOP EXP\n");
-
-		/**************************************/
-		/* RECURSIVELY PRINT left + right ... */
-		/**************************************/
 		if (left != null) left.printMe();
 		if (right != null) right.printMe();
 		
-		/***************************************/
-		/* PRINT Node to AST GRAPHVIZ DOT file */
-		/***************************************/
-		AstGraphviz.getInstance().logNode(
-				serialNumber,
-			String.format("BINOP(%s)", op.toString()));
+		AstGraphviz.getInstance().logNode(serialNumber, String.format("BINOP(%s)", op.toString()));
 		
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
 		if (left  != null) AstGraphviz.getInstance().logEdge(serialNumber,left.serialNumber);
 		if (right != null) AstGraphviz.getInstance().logEdge(serialNumber,right.serialNumber);
 	}
@@ -71,23 +44,17 @@ public class AstExpBinop extends AstExp
 		Type t1 = null;
 		Type t2 = null;
 
-		/****************************/
-		/* [1] Semant both operands */
-		/****************************/
+		// 1. Semantic analysis for both operands
 		if (left  != null) t1 = leftType = left.semantMe();
 		if (right != null) t2 = rightType = right.semantMe();
 
-		/****************************/
-		/* [2] Check for null types */
-		/****************************/
+		// 2. Validate types existence
 		if (t1 == null || t2 == null)
 		{
 			throw new SemanticException("operand has no type", lineNumber);
 		}
 
-		/******************************************/
-		/* [3] Handle different operator types    */
-		/******************************************/
+		// 3. Handle operator-specific type checking and result type evaluation
 
 		switch (op)
 		{

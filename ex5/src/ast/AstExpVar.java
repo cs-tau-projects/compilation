@@ -12,19 +12,7 @@ public class AstExpVar extends AstExp
 	/******************/
 	public AstExpVar(AstVar var, int lineNumber)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
-
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.print("====================== exp -> var\n");
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.var = var;
 		this.lineNumber = lineNumber;
 	}
@@ -34,34 +22,14 @@ public class AstExpVar extends AstExp
 	/***********************************************/
 	public void printMe()
 	{
-		/************************************/
-		/* AST NODE TYPE = EXP VAR AST NODE */
-		/************************************/
 		System.out.print("AST NODE EXP VAR\n");
-
-		/*****************************/
-		/* RECURSIVELY PRINT var ... */
-		/*****************************/
 		if (var != null) var.printMe();
 		
-		/*********************************/
-		/* Print to AST GRAPHVIZ DOT file */
-		/*********************************/
-		AstGraphviz.getInstance().logNode(
-				serialNumber,
-			"EXP\nVAR");
-
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
-		AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
-
+		AstGraphviz.getInstance().logNode(serialNumber, "EXP\nVAR");
+		if (var != null) AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for variable expression           */
-	/* Simply delegates to the variable's semantMe method  */
-	/********************************************************/
+	// Delegates cleanup during semantic analysis and IR generation
 	public Type semantMe() throws SemanticException
 	{
 		if (var == null)

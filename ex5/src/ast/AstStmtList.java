@@ -17,20 +17,7 @@ public class AstStmtList extends AstNode
 	/******************/
 	public AstStmtList(AstStmt head, AstStmtList tail, int lineNumber)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
-
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// if (tail != null) System.out.print("====================== stmts -> stmt stmts\n");
-		// if (tail == null) System.out.print("====================== stmts -> stmt      \n");
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.head = head;
 		this.tail = tail;
 		this.lineNumber = lineNumber;
@@ -41,27 +28,12 @@ public class AstStmtList extends AstNode
 	/******************************************************/
 	public void printMe()
 	{
-		/**************************************/
-		/* AST NODE TYPE = AST STATEMENT LIST */
-		/**************************************/
 		System.out.print("AST NODE STMT LIST\n");
-
-		/*************************************/
-		/* RECURSIVELY PRINT HEAD + TAIL ... */
-		/*************************************/
 		if (head != null) head.printMe();
 		if (tail != null) tail.printMe();
 
-		/**********************************/
-		/* PRINT to AST GRAPHVIZ DOT file */
-		/**********************************/
-		AstGraphviz.getInstance().logNode(
-				serialNumber,
-			"STMT\nLIST\n");
+		AstGraphviz.getInstance().logNode(serialNumber, "STMT\nLIST\n");
 		
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
 		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber,head.serialNumber);
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
 	}
