@@ -7,9 +7,7 @@ public class AstVarSubscript extends AstVar
 	public AstVar var;
 	public AstExp subscript;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstVarSubscript(AstVar var, AstExp subscript, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -18,9 +16,7 @@ public class AstVarSubscript extends AstVar
 		this.lineNumber = lineNumber;
 	}
 
-	/*****************************************************/
-	/* The printing message for a subscript var AST node */
-	/*****************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.print("AST NODE SUBSCRIPT VAR\n");
@@ -38,7 +34,7 @@ public class AstVarSubscript extends AstVar
 		Type t = null;
 		Type subscriptType = null;
 
-		// 1. Validate variable type and ensure it is an array
+		// check array type
 		if (var != null) t = var.semantMe();
 
 		if (t == null)
@@ -51,7 +47,7 @@ public class AstVarSubscript extends AstVar
 			throw new SemanticException("cannot subscript non-array variable", lineNumber);
 		}
 
-		// 2. Validate subscript expression type (must be int)
+		// check subscript
 		if (subscript != null)
 		{
 			subscriptType = subscript.semantMe();
@@ -62,14 +58,14 @@ public class AstVarSubscript extends AstVar
 			throw new SemanticException("array subscript must be of type int", lineNumber);
 		}
 
-		// 3. Check for negative constant subscripts
+		// negative check
 		Integer constantSubscript = subscript.tryEvaluateConstant();
 		if (constantSubscript != null && constantSubscript < 0)
 		{
 			throw new SemanticException("array subscript must be >= 0", lineNumber);
 		}
 
-		// 4. Return the element type of the array
+		// return type
 		TypeArray arrayType = (TypeArray) t;
 		return arrayType.elementType;
 	}

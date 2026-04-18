@@ -1,70 +1,46 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.ArrayList;
 import java.util.List;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
-public class Ir
-{
-	/****************************************/
-	/* Store IR commands in an ArrayList   */
-	/* for easy iteration during analysis  */
-	/****************************************/
+public class Ir {
+	// IR commands list
 	private List<IrCommand> commands = new ArrayList<>();
 
-	/******************/
-	/* Add Ir command */
-	/******************/
-	public void AddIrCommand(IrCommand cmd)
-	{
+	// add command
+	public void AddIrCommand(IrCommand cmd) {
 		commands.add(cmd);
 	}
 
 	/****************************************/
-	/* Get all IR commands for analysis    */
+	/* Get all IR commands for analysis */
 	/****************************************/
-	public List<IrCommand> getCommands()
-	{
+	public List<IrCommand> getCommands() {
 		return commands;
 	}
 
 	/****************************************/
-	/* Get the number of IR commands       */
+	/* Get the number of IR commands */
 	/****************************************/
-	public int size()
-	{
+	public int size() {
 		return commands.size();
 	}
 
 	/****************************************/
 	/* Reset the IR (for testing purposes) */
 	/****************************************/
-	public void reset()
-	{
+	public void reset() {
 		commands.clear();
 	}
 
 	// --- Singleton Implementation ---
 	private static Ir instance = null;
 
-	protected Ir() {}
+	protected Ir() {
+	}
 
-	public static Ir getInstance()
-	{
-		if (instance == null)
-		{
-			/*******************************/
-			/* [0] The instance itself ... */
-			/*******************************/
+	public static Ir getInstance() {
+		if (instance == null) {
 			instance = new Ir();
 		}
 		return instance;

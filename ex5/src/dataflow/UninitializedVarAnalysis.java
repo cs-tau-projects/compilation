@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import cfg.*;
 import ir.*;
 
@@ -24,25 +14,19 @@ import ir.*;
  */
 public class UninitializedVarAnalysis extends DataflowAnalysis<UninitializedVarState>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
+    // data members
     
     /** Set of variable names that were used while possibly uninitialized */
     private Set<String> uninitializedUses;
     
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
     public UninitializedVarAnalysis(CFG cfg)
     {
         super(cfg);
         this.uninitializedUses = new TreeSet<>(); // TreeSet for alphabetical order
     }
     
-    /****************************************/
-    /* ABSTRACT METHOD IMPLEMENTATIONS     */
-    /****************************************/
+    // implementation
     
     /**
      * Create the initial (bottom) state: empty set.
@@ -167,9 +151,7 @@ public class UninitializedVarAnalysis extends DataflowAnalysis<UninitializedVarS
         }
     }
     
-    /****************************************/
-    /* GET RESULTS                         */
-    /****************************************/
+    // results
     
     /**
      * Get the set of variable names that were used while possibly uninitialized.

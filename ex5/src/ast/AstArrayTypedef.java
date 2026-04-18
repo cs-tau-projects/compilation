@@ -28,47 +28,34 @@ public class AstArrayTypedef extends AstNode{
         }
     }
 
-    /********************************************************/
-    /* Semantic analysis for array type definition         */
-    /* Validates element type and registers array type     */
-    /********************************************************/
+    // semantic analysis
     public Type semantMe() throws SemanticException
     {
         Type elementType = null;
 
-        /************************************/
-        /* [0] Check for reserved keyword   */
-        /************************************/
+        // check keyword
         TypeUtils.checkNotReservedKeyword(id, lineNumber);
 
-        /**************************************/
-        /* [1] Check if array name already exists */
-        /**************************************/
+        // check duplicates
         if (SymbolTable.getInstance().find(id) != null)
         {
             throw new SemanticException("array type " + id + " already exists", lineNumber);
         }
 
-        /****************************/
-        /* [2] Check if element type exists */
-        /****************************/
+        // check element type
         elementType = SymbolTable.getInstance().find(type.typeName);
         if (elementType == null)
         {
             throw new SemanticException("non existing type " + type.typeName, lineNumber);
         }
 
-        /******************************************/
-        /* [3] Check that element type is not void */
-        /******************************************/
+        // void check
         if (elementType instanceof TypeVoid)
         {
             throw new SemanticException("array cannot have void element type", lineNumber);
         }
 
-        /************************************************/
-        /* [4] Create and register the array type      */
-        /************************************************/
+        // create and register
         TypeArray arrayType = new TypeArray(id, elementType);
         SymbolTable.getInstance().enter(id, arrayType);
 

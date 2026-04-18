@@ -2,15 +2,10 @@ package types;
 
 public class TypeList
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
 	public Type head;
 	public TypeList tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public TypeList(Type head, TypeList tail)
 	{
 		this.head = head;

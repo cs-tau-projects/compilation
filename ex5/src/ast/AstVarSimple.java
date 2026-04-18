@@ -7,9 +7,7 @@ import symboltable.*;
 
 public class AstVarSimple extends AstVar
 {
-	/************************/
-	/* simple variable name */
-	/************************/
+	// var name
 	public String name;
 	
 	// The scope offset captured during semantic analysis for use in IR generation
@@ -19,9 +17,7 @@ public class AstVarSimple extends AstVar
 	public TypeClass fieldOwnerClass = null;
 	public int thisScopeOffset = -1;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstVarSimple(String name, int lineNumber)
 	{
 		// SET A UNIQUE SERIAL NUMBER
@@ -31,9 +27,7 @@ public class AstVarSimple extends AstVar
 		this.lineNumber = lineNumber;
 	}
 
-	/**************************************************/
-	/* The printing message for a simple var AST node */
-	/**************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.format("AST NODE SIMPLE VAR( %s )\n",name);
@@ -43,10 +37,7 @@ public class AstVarSimple extends AstVar
 			String.format("SIMPLE\nVAR\n(%s)",name));
 	}
 
-	/********************************************************/
-	/* Semantic analysis for simple variable               */
-	/* Looks up the variable name in the symbol table      */
-	/********************************************************/
+	// semantic analysis
 	public Type semantMe() throws SemanticException
 	{
 		// Lookup the variable and capture its scope offset
@@ -86,10 +77,7 @@ public class AstVarSimple extends AstVar
 		return this.type;
 	}
 
-	/********************************************************/
-	/* IR generation for simple variable                   */
-	/* Loads the variable value into a fresh temp          */
-	/********************************************************/
+	// ir generation
 	public Temp irMe()
 	{
 		Temp dst = TempFactory.getInstance().getFreshTemp();

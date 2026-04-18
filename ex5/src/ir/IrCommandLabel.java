@@ -1,15 +1,4 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 
 public class IrCommandLabel extends IrCommand
 {

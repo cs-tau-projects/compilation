@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import ir.VarId;
 import temp.Temp;
 
@@ -23,9 +13,7 @@ import temp.Temp;
  */
 public class UninitializedVarState implements DataflowState<UninitializedVarState>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
+    // data members
 
     /** Set of variables that may be uninitialized */
     private Set<VarId> uninitializedVars;
@@ -33,9 +21,7 @@ public class UninitializedVarState implements DataflowState<UninitializedVarStat
     /** Set of temporaries that hold values from uninitialized sources */
     private Set<Integer> taintedTemps;
 
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
 
     /** Create an empty state (bottom element) */
     public UninitializedVarState()
@@ -51,9 +37,7 @@ public class UninitializedVarState implements DataflowState<UninitializedVarStat
         this.taintedTemps = new HashSet<>(taintedTemps);
     }
     
-    /****************************************/
-    /* DataflowState INTERFACE METHODS     */
-    /****************************************/
+    // implementation
     
     /**
      * Join this state with another (set union for "may" analysis).
@@ -95,9 +79,7 @@ public class UninitializedVarState implements DataflowState<UninitializedVarStat
         return 31 * uninitializedVars.hashCode() + taintedTemps.hashCode();
     }
     
-    /****************************************/
-    /* STATE MANIPULATION METHODS          */
-    /****************************************/
+    // state logic
     
     /** Add a variable to the uninitialized set (gen) */
     public void addUninitialized(VarId var)
@@ -123,9 +105,7 @@ public class UninitializedVarState implements DataflowState<UninitializedVarStat
         return Collections.unmodifiableSet(uninitializedVars);
     }
 
-    /****************************************/
-    /* TAINTED TEMP MANIPULATION METHODS   */
-    /****************************************/
+    // taint logic
 
     /** Mark a temporary as tainted (holds uninitialized value) */
     public void addTainted(Temp t)

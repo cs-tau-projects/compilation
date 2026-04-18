@@ -6,15 +6,11 @@ import types.*;
 
 public class AstExpList extends AstNode
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// data members
 	public AstExp head;
 	public AstExpList tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpList(AstExp head, AstExpList tail, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -23,9 +19,7 @@ public class AstExpList extends AstNode
 		this.lineNumber = lineNumber;
 	}
 
-	/****************************************************/
-	/* The printing message for an exp list AST node */
-	/****************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.print("AST NODE EXP LIST\n");
@@ -39,35 +33,25 @@ public class AstExpList extends AstNode
 		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for expression list                */
-	/* Returns a TypeList containing the types of all       */
-	/* expressions in the list                              */
-	/********************************************************/
+	// semantic analysis
 	public TypeList semantMeTypeList() throws SemanticException
 	{
 		Type headType = null;
 		TypeList tailTypeList = null;
 
-		/****************************/
-		/* [1] Analyze head expression */
-		/****************************/
+		// head
 		if (head != null)
 		{
 			headType = head.semantMe();
 		}
 
-		/****************************/
-		/* [2] Recursively analyze tail */
-		/****************************/
+		// tail
 		if (tail != null)
 		{
 			tailTypeList = tail.semantMeTypeList();
 		}
 
-		/****************************/
-		/* [3] Build and return TypeList */
-		/****************************/
+		// result
 		return new TypeList(headType, tailTypeList);
 	}
 

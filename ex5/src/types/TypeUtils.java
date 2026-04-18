@@ -11,9 +11,7 @@ import java.util.Set;
  */
 public class TypeUtils {
 
-    /******************************************************************/
-    /* Set of reserved keywords that cannot be used as identifiers    */
-    /******************************************************************/
+    // Reserved keywords list
     private static final Set<String> RESERVED_KEYWORDS = new HashSet<>();
     static {
         RESERVED_KEYWORDS.add("int");
@@ -32,17 +30,13 @@ public class TypeUtils {
         RESERVED_KEYWORDS.add("PrintString");
     }
 
-    /******************************************************************/
-    /* Check if a name is a reserved keyword                          */
-    /******************************************************************/
+    // check if keyword
     public static boolean isReservedKeyword(String name)
     {
         return RESERVED_KEYWORDS.contains(name);
     }
 
-    /******************************************************************/
-    /* Check identifier and throw exception if it's a reserved keyword*/
-    /******************************************************************/
+    // throw exception if it's a keyword
     public static void checkNotReservedKeyword(String name, int lineNumber) throws SemanticException
     {
         if (isReservedKeyword(name))
@@ -51,14 +45,7 @@ public class TypeUtils {
         }
     }
     
-    /******************************************************************/
-    /* Check if sourceType can be assigned to targetType             */
-    /* According to L language semantics:                            */
-    /* - Exact type match                                            */
-    /* - Subclass can be assigned to superclass                      */
-    /* - nil can be assigned to class or array types                 */
-    /* - For arrays: element types must match (for new T[] case)     */
-    /******************************************************************/
+    // check if types are compatible for assignment
     public static boolean canAssignType(Type targetType, Type sourceType)
     {
         // Exact match
@@ -103,11 +90,7 @@ public class TypeUtils {
         return false;
     }
 
-    /******************************************************************/
-    /* Check if child is a subclass of parent                        */
-    /* Walks up the inheritance chain to find if child derives from  */
-    /* parent                                                         */
-    /******************************************************************/
+    // check subclassing
     public static boolean isSubclassOf(TypeClass child, TypeClass parent)
     {
         TypeClass current = child.father;
@@ -122,11 +105,7 @@ public class TypeUtils {
         return false;
     }
 
-    /******************************************************************/
-    /* Find a member (field or method) in class hierarchy            */
-    /* Searches the class and all parent classes for a member with   */
-    /* the given name                                                 */
-    /******************************************************************/
+    // find member in class or ancestors
     public static Type findMemberInClassHierarchy(TypeClass classType, String memberName)
     {
         TypeClass currentClass = classType;
@@ -180,11 +159,7 @@ public class TypeUtils {
         return fields;
     }
 
-    /******************************************************************/
-    /* Build parameter type list in correct order                    */
-    /* Recursively processes parameters to maintain proper order     */
-    /* Used by both function and method declarations                 */
-    /******************************************************************/
+    // build param list in order
     public static TypeList buildParameterTypeList(AstParametersList params, int lineNumber) throws SemanticException
     {
         if (params == null)

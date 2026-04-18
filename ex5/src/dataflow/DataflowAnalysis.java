@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import cfg.*;
 import ir.*;
 
@@ -26,9 +16,7 @@ import ir.*;
  */
 public abstract class DataflowAnalysis<T extends DataflowState<T>>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
+    // data members
     
     /** The control flow graph */
     protected CFG cfg;
@@ -39,9 +27,7 @@ public abstract class DataflowAnalysis<T extends DataflowState<T>>
     /** OUT state for each node (state at exit of node) */
     protected List<T> outStates;
     
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
     public DataflowAnalysis(CFG cfg)
     {
         this.cfg = cfg;
@@ -49,9 +35,7 @@ public abstract class DataflowAnalysis<T extends DataflowState<T>>
         this.outStates = new ArrayList<>();
     }
     
-    /****************************************/
-    /* ABSTRACT METHODS - must be overridden */
-    /****************************************/
+    // abstract methods
     
     /**
      * Create the initial (bottom) state for the lattice.
@@ -74,9 +58,7 @@ public abstract class DataflowAnalysis<T extends DataflowState<T>>
      */
     protected abstract void transfer(IrCommand cmd, T state);
     
-    /****************************************/
-    /* RUN THE ANALYSIS                    */
-    /****************************************/
+    // analysis engine
     
     /**
      * Run the dataflow analysis using chaotic iteration (worklist algorithm).
@@ -146,9 +128,7 @@ public abstract class DataflowAnalysis<T extends DataflowState<T>>
         }
     }
     
-    /****************************************/
-    /* ACCESSORS                           */
-    /****************************************/
+    // accessors
     
     /** Get the IN state for a node */
     public T getInState(int nodeIdx)

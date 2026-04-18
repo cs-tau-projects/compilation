@@ -33,26 +33,24 @@ public class IrCommandFuncPrologue extends IrCommand {
             }
         }
 
-        // 1. Save FP
+        // save FP
         gen.emitInstruction("subu", "$sp", "$sp", "4");
         gen.emitInstruction("sw", "$fp", "0($sp)");
-        // 2. Save RA
+        // save RA
         gen.emitInstruction("subu", "$sp", "$sp", "4");
         gen.emitInstruction("sw", "$ra", "0($sp)");
-        // 3. Save S0-S7 (32 bytes)
-        gen.emitInstruction("subu", "$sp", "$sp", "32");
+        // save S-registers
         for (int i = 0; i < 8; i++) {
             gen.emitInstruction("sw", "$s" + i, (i*4) + "($sp)");
         }
-        // 4. Save T0-T9 (40 bytes)
-        gen.emitInstruction("subu", "$sp", "$sp", "40");
+        // save T-registers
         for (int i = 0; i < 10; i++) {
             gen.emitInstruction("sw", "$t" + i, (i*4) + "($sp)");
         }
-        // 5. Set FP to current SP (top of frame overhead)
+        // set FP
         gen.emitInstruction("move", "$fp", "$sp");
 
-        // 5. Pre-allocate space for all local variables
+        // allocate locals
         if (numLocals > 0) {
             gen.emitInstruction("subu", "$sp", "$sp", String.valueOf(numLocals * 4));
         }

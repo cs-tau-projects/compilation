@@ -45,7 +45,7 @@ public class AstDecVar extends AstNode {
 	{
 		Type t;
 
-		// 1. Check for reserved keyword and validate type existence
+		// check keyword and type
 		TypeUtils.checkNotReservedKeyword(id, lineNumber);
 
 		t = SymbolTable.getInstance().find(type.typeName);
@@ -54,7 +54,7 @@ public class AstDecVar extends AstNode {
 			throw new SemanticException("non existing type " + type.typeName, lineNumber);
 		}
 
-		// 2. Ensure type is not void and check for name collision in current scope
+		// ensure not void and check for collisions
 		if (t instanceof TypeVoid)
 		{
 			throw new SemanticException("variable cannot have void type", lineNumber);
@@ -65,7 +65,7 @@ public class AstDecVar extends AstNode {
 			throw new SemanticException("variable " + id + " already exists in scope", lineNumber);
 		}
 
-		// 3. If there's initialization, check type compatibility
+		// check initialization
 		if (exp != null)
 		{
 			Type expType = exp.semantMe();
@@ -76,7 +76,7 @@ public class AstDecVar extends AstNode {
 			}
 		}
 
-		// 4. Register the identifier and capture its scope metadata
+		// register variable
 		SymbolTable.getInstance().enter(id, t);
 		
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(id);

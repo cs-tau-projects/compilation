@@ -1,15 +1,4 @@
-/***********/
-/* PACKAGE */
-/***********/
 package temp;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 
 public class TempFactory
 {
@@ -29,9 +18,6 @@ public class TempFactory
 	{
 		if (instance == null)
 		{
-			/*******************************/
-			/* [0] The instance itself ... */
-			/*******************************/
 			instance = new TempFactory();
 		}
 		return instance;

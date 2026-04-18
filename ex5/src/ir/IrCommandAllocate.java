@@ -1,15 +1,4 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 
 public class IrCommandAllocate extends IrCommand
 {
@@ -20,10 +9,7 @@ public class IrCommandAllocate extends IrCommand
 		this.varId = varId;
 	}
 
-	/****************************************/
-	/* Convenience constructor for backward */
-	/* compatibility during transition      */
-	/****************************************/
+	// convenience constructor
 	public boolean isGlobal;
 	public IrCommandAllocate(String varName, int scopeOffset, boolean isGlobal)
 	{

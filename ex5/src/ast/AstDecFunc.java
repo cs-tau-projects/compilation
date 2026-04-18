@@ -39,11 +39,7 @@ public class AstDecFunc extends AstNode
 		return semantMe(false);
 	}
 
-	/******************************************************************/
-	/* Semantic analysis with option to skip registration            */
-	/* isMethod = true when called from AstDecClass for methods      */
-	/* isMethod = false for standalone functions                     */
-	/******************************************************************/
+	// semantic analysis
 	public Type semantMe(boolean isMethod) throws SemanticException
 	{
 		Type paramType;

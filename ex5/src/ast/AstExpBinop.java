@@ -12,9 +12,7 @@ public class AstExpBinop extends AstExp
 	public Type leftType;
 	public Type rightType;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpBinop(AstExp left, AstExp right, BinOp op, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -24,9 +22,7 @@ public class AstExpBinop extends AstExp
 		this.lineNumber = lineNumber;
 	}
 	
-	/*************************************************/
-	/* The printing message for a binop exp AST node */
-	/*************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.print("AST NODE BINOP EXP\n");
@@ -44,17 +40,17 @@ public class AstExpBinop extends AstExp
 		Type t1 = null;
 		Type t2 = null;
 
-		// 1. Semantic analysis for both operands
+		// semant operands
 		if (left  != null) t1 = leftType = left.semantMe();
 		if (right != null) t2 = rightType = right.semantMe();
 
-		// 2. Validate types existence
+		// type check
 		if (t1 == null || t2 == null)
 		{
 			throw new SemanticException("operand has no type", lineNumber);
 		}
 
-		// 3. Handle operator-specific type checking and result type evaluation
+		// operator logic
 
 		switch (op)
 		{
@@ -151,11 +147,7 @@ public class AstExpBinop extends AstExp
 		}
 	}
 
-	/********************************************************/
-	/* Try to evaluate this binary expression as a constant */
-	/* Returns the integer value if both operands are       */
-	/* constant, null otherwise                             */
-	/********************************************************/
+	// constant evaluation
 	@Override
 	public Integer tryEvaluateConstant()
 	{

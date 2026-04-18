@@ -7,23 +7,16 @@ package types;
  */
 public class TypeArray extends Type
 {
-	/********************************************/
-	/* The type of elements stored in the array */
-	/********************************************/
+	// the element type
 	public Type elementType;
 	
-	/****************/
-	/* CTROR(S) ... */
-	/****************/
+	// constructor
 	public TypeArray(String name, Type elementType)
 	{
 		this.name = name;
 		this.elementType = elementType;
 	}
 
-	/*************/
-	/* isArray() */
-	/*************/
 	@Override
 	public boolean isArray()
 	{

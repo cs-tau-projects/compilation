@@ -41,35 +41,25 @@ public class AstExpNew extends AstExp
         if (exp != null) AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
     }
 
-    /********************************************************/
-    /* Semantic analysis for new expression                */
-    /* Handles: new Type (for classes)                     */
-    /*          new Type[exp] (for arrays)                 */
-    /********************************************************/
+    // semantic analysis
     public Type semantMe() throws SemanticException
     {
         Type t = null;
 
-        /****************************/
-        /* [1] Check if type exists */
-        /****************************/
+        // type existence check
         t = SymbolTable.getInstance().find(type.typeName);
         if (t == null)
         {
             throw new SemanticException("non existing type " + type.typeName, lineNumber);
         }
 
-        /****************************/
-        /* [2] Check if type is void */
-        /****************************/
+        // void check
         if (t instanceof TypeVoid)
         {
             throw new SemanticException("cannot instantiate void type", lineNumber);
         }
 
-        /************************************************/
-        /* [3] Handle array allocation: new Type[exp]  */
-        /************************************************/
+        // array case
         if (exp != null)
         {
             // This is array allocation: new Type[exp]
@@ -93,9 +83,7 @@ public class AstExpNew extends AstExp
             return new TypeArray("array of " + t.name, t);
         }
 
-        /************************************************/
-        /* [4] Handle class allocation: new Type       */
-        /************************************************/
+        // class case
         else
         {
             // This is class allocation: new Type

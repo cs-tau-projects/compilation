@@ -6,15 +6,11 @@ import temp.*;
 
 public class AstStmtAssignNew extends AstStmt
 {
-	/*********************/
-	/*  var := newExp    */
-	/*********************/
+	// var := newExp
 	public AstVar var;
 	public AstExpNew newExp;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtAssignNew(AstVar var, AstExpNew newExp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -24,9 +20,7 @@ public class AstStmtAssignNew extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/***************************************************************/
-	/* The printing message for an assign new statement AST node */
-	/***************************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.print("AST NODE ASSIGN NEW STMT\n");
@@ -40,27 +34,17 @@ public class AstStmtAssignNew extends AstStmt
 		if (newExp != null) AstGraphviz.getInstance().logEdge(serialNumber, newExp.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for assignment with new           */
-	/* Special handling for array assignments:             */
-	/* - For arrays: if e = new T[], then x must be of     */
-	/*   type array defined over type T                    */
-	/* - For classes: normal assignment rules apply        */
-	/********************************************************/
+	// semantic analysis
 	public Type semantMe() throws SemanticException
 	{
 		Type varType = null;
 		Type newExpType = null;
 
-		/****************************/
-		/* [1] Semant var and newExp */
-		/****************************/
+		// semant both sides
 		if (var != null) varType = var.semantMe();
 		if (newExp != null) newExpType = newExp.semantMe();
 
-		/****************************/
-		/* [2] Check for null types */
-		/****************************/
+		// check for nulls
 		if (varType == null)
 		{
 			throw new SemanticException("variable has no type", lineNumber);
@@ -70,12 +54,7 @@ public class AstStmtAssignNew extends AstStmt
 			throw new SemanticException("new expression has no type", lineNumber);
 		}
 
-		/********************************************************/
-		/* [3] Special handling for array allocation           */
-		/* According to 2.4: if e = new T[], then x must be    */
-		/* of type array defined over type T                   */
-		/* Note: newExp.exp != null means it's new T[size]     */
-		/********************************************************/
+		// array allocation rules
 		if (newExp.exp != null && newExpType.isArray())
 		{
 			// This is array allocation: new T[size]
@@ -94,10 +73,7 @@ public class AstStmtAssignNew extends AstStmt
 				throw new SemanticException("array element type mismatch in assignment", lineNumber);
 			}
 		}
-		/********************************************************/
-		/* [4] For class allocation or other cases, use        */
-		/*     standard assignment compatibility rules         */
-		/********************************************************/
+		// class or other allocation
 		else
 		{
 			if (!TypeUtils.canAssignType(varType, newExpType))
@@ -106,9 +82,6 @@ public class AstStmtAssignNew extends AstStmt
 			}
 		}
 
-		/********************************************************/
-		/* [5] Return value is irrelevant for assign statement */
-		/********************************************************/
 		return null;
 	}
 

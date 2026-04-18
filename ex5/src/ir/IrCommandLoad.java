@@ -1,15 +1,4 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import temp.*;
 
 public class IrCommandLoad extends IrCommand
@@ -23,10 +12,7 @@ public class IrCommandLoad extends IrCommand
 		this.varId = varId;
 	}
 
-	/****************************************/
-	/* Convenience constructor for backward */
-	/* compatibility during transition      */
-	/****************************************/
+	// convenience constructor
 	public boolean isGlobal;
 	public IrCommandLoad(Temp dst, String varName, int scopeOffset, boolean isGlobal)
 	{

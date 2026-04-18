@@ -1,21 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 
 public abstract class IrCommand
 {
-	/*****************/
-	/* Label Factory */
-	/*****************/
+	// label factory
 	protected static int labelCounter = 0;
 	public    static String getFreshLabel(String msg)
 	{

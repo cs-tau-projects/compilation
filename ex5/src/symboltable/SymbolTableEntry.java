@@ -1,55 +1,32 @@
-/***********/
-/* PACKAGE */
-/***********/
 package symboltable;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import types.*;
 
-/**********************/
-/* SYMBOL TABLE ENTRY */
-/**********************/
-public class SymbolTableEntry
-{
-	/*********/
-	/* index */
-	/*********/
+public class SymbolTableEntry {
+	// index
 	int index;
-	
-	/********/
-	/* name */
-	/********/
+
+	// name
 	public String name;
 
-	/******************/
-	/* TYPE value ... */
-	/******************/
+	// type
 	public Type type;
 
-	/*********************************************/
-	/* prevtop and next symbol table entries ... */
-	/*********************************************/
+	// linked list pointers
 	public SymbolTableEntry prevtop;
 	public SymbolTableEntry next;
 
-	/****************************************************/
-	/* The prevtopIndex is just for debug purposes ... */
-	/****************************************************/
+	// debug info
 	public int prevtopIndex;
-	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+
+	// constructor
 	public SymbolTableEntry(
-		String name,
-		Type type,
-		int index,
-		SymbolTableEntry next,
-		SymbolTableEntry prevtop,
-		int prevtopIndex)
-	{
+			String name,
+			Type type,
+			int index,
+			SymbolTableEntry next,
+			SymbolTableEntry prevtop,
+			int prevtopIndex) {
 		this.index = index;
 		this.name = name;
 		this.type = type;

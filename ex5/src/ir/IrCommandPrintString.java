@@ -3,16 +3,17 @@ package ir;
 import temp.Temp;
 
 public class IrCommandPrintString extends IrCommand {
-    public Temp strTemp;
+	public Temp strTemp;
 
-    public IrCommandPrintString(Temp strTemp) {
-        this.strTemp = strTemp;
-    }
+	public IrCommandPrintString(Temp strTemp) {
+		this.strTemp = strTemp;
+	}
 
 	@Override
 	public java.util.List<temp.Temp> getUsedTemps() {
 		java.util.List<temp.Temp> list = new java.util.ArrayList<>();
-		if (strTemp != null) list.add(strTemp);
+		if (strTemp != null)
+			list.add(strTemp);
 		return list;
 	}
 

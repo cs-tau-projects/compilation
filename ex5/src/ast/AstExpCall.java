@@ -11,9 +11,7 @@ public class AstExpCall extends AstExp
 	public String funcName;
 	public AstExpList params;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	// Constructor for simple function call: funcName(params)
 	public AstExpCall(String funcName, AstExpList params, int lineNumber)
 	{
@@ -34,9 +32,7 @@ public class AstExpCall extends AstExp
 		this.lineNumber = lineNumber;
 	}
 
-	/*************************************************/
-	/* The printing message for a call exp AST node */
-	/*************************************************/
+	// debug print
 	public void printMe()
 	{
 		System.out.print("AST NODE CALL EXP\n");
@@ -55,19 +51,13 @@ public class AstExpCall extends AstExp
 		if (params != null) AstGraphviz.getInstance().logEdge(serialNumber, params.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for function/method call          */
-	/* Handles: funcName(params) - function call           */
-	/*          var.funcName(params) - method call         */
-	/********************************************************/
+	// semantic analysis
 	public Type semantMe() throws SemanticException
 	{
 		Type funcType = null;
 		TypeFunction func = null;
 
-		/************************************************/
-		/* [1] Handle method call: var.funcName(params) */
-		/************************************************/
+		// method call case
 		if (var != null)
 		{
 			// Method call - get the type of var
@@ -102,9 +92,7 @@ public class AstExpCall extends AstExp
 
 			func = (TypeFunction) funcType;
 		}
-		/************************************************/
-		/* [2] Handle function call: funcName(params)   */
-		/************************************************/
+		// function call case
 		else
 		{
 			// Simple function call - look up in symbol table
@@ -123,14 +111,9 @@ public class AstExpCall extends AstExp
 			func = (TypeFunction) funcType;
 		}
 
-		/************************************************/
-		/* [3] Check parameter types match              */
-		/************************************************/
+		// check params
 		checkParameterTypes(func.params, params, funcName);
 
-		/************************************************/
-		/* [4] Return the function's return type        */
-		/************************************************/
 		this.type = func.returnType;
 		if (var != null) {
 		    this.ownerClass = (TypeClass) var.semantMe();
@@ -140,9 +123,7 @@ public class AstExpCall extends AstExp
 
 	public TypeClass ownerClass = null;
 
-	/******************************************************************/
-	/* Helper: Check that actual parameters match expected types     */
-	/******************************************************************/
+	// parameter check helper
 	private void checkParameterTypes(TypeList expectedParams, AstExpList actualParams, String functionName) throws SemanticException
 	{
 		TypeList expected = expectedParams;
