@@ -53,19 +53,11 @@ public class Ir
 		commands.clear();
 	}
 
-	/**************************************/
-	/* USUAL SINGLETON IMPLEMENTATION ... */
-	/**************************************/
+	// --- Singleton Implementation ---
 	private static Ir instance = null;
 
-	/*****************************/
-	/* PREVENT INSTANTIATION ... */
-	/*****************************/
 	protected Ir() {}
 
-	/******************************/
-	/* GET SINGLETON INSTANCE ... */
-	/******************************/
 	public static Ir getInstance()
 	{
 		if (instance == null)

@@ -50,40 +50,26 @@ public class AstDecFunc extends AstNode
 		Type retType = null;
 		TypeList paramTypeList = null;
 
-		/************************************/
-		/* [0a] Check for reserved keyword  */
-		/************************************/
+		// Check for reserved keywords
 		TypeUtils.checkNotReservedKeyword(funcName, lineNumber);
 
-		/*******************/
-		/* [0b] Check if return type exists */
-		/*******************/
+		// Validate return type
 		retType = SymbolTable.getInstance().find(this.returnType.typeName);
 		if (retType == null)
 		{
 			throw new SemanticException("non existing return type " + this.returnType.typeName, lineNumber);
 		}
 
-		/**************************************/
-		/* [1] Check if function name already exists */
-		/* (Skip this check for methods - already validated by AstDecClass) */
-		/**************************************/
+		// Check for function name collision (standalone functions only)
 		if (!isMethod && SymbolTable.getInstance().find(funcName) != null)
 		{
 			throw new SemanticException("function " + funcName + " already exists", lineNumber);
 		}
 
-		/***************************/
-		/* [2] Build parameter type list */
-		/***************************/
+		// Build parameter type list
 		paramTypeList = TypeUtils.buildParameterTypeList(params, lineNumber);
 
-		/***************************************************/
-		/* [2.5] Enter the Function Type to the Symbol Table */
-		/* BEFORE opening scope to allow recursive calls    */
-		/* and to make function visible to later declarations */
-		/* (Skip for methods - already entered by AstDecClass) */
-		/***************************************************/
+		// Register function type before opening scope to support recursion
 		TypeFunction funcType = new TypeFunction(retType, funcName, paramTypeList);
 		if (!isMethod)
 		{
@@ -99,10 +85,7 @@ public class AstDecFunc extends AstNode
 			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset("this"));
 		}
 
-		/*******************************************************/
-		/* [3.5] Set current function return type for return  */
-		/*       statement validation                         */
-		/*******************************************************/
+		// Set current function return type for return statement validation
 		SymbolTable.getInstance().setCurrentFunctionReturnType(retType);
 
 		// Enter parameters into symbol table and capture their scope offsets
@@ -124,27 +107,17 @@ public class AstDecFunc extends AstNode
 			paramScopeOffsets.add(SymbolTable.getInstance().getScopeOffset(it.head.id));
 		}
 
-		/*******************/
-		/* [4] Semant Body */
-		/*******************/
+		// Semantic analysis of the function body
 		if (body != null)
 		{
 			body.semantMe();
 		}
 
-		/*****************/
-		/* [5] End Scope */
-		/*****************/
+		// Finalize scope and clear return type focus
 		SymbolTable.getInstance().endScope();
-
-		/*******************************************************/
-		/* [5.5] Clear current function return type           */
-		/*******************************************************/
 		SymbolTable.getInstance().setCurrentFunctionReturnType(null);
 
-		/************************************************************/
-		/* [7] Return value is irrelevant for function declarations */
-		/************************************************************/
+		// Return null as function declarations don't have a value type in this context
 		return null;
 	}
 
@@ -177,7 +150,6 @@ public class AstDecFunc extends AstNode
 
 		if (body != null) body.irMe();
 
-        // Ensure functions always have a return just in case
         Temp dst = TempFactory.getInstance().getFreshTemp();
         Ir.getInstance().AddIrCommand(new IRcommandConstInt(dst, 0));
         Ir.getInstance().AddIrCommand(new IrCommandReturn(dst));

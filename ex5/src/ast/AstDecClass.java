@@ -37,22 +37,15 @@ public class AstDecClass extends AstNode{
 	{
 		TypeClass parentClass = null;
 
-		/************************************/
-		/* [0a] Check for reserved keyword  */
-		/************************************/
+		// 1. Validate class name and check for duplicates
 		TypeUtils.checkNotReservedKeyword(id, lineNumber);
 
-		/**************************************/
-		/* [0b] Check if class name already exists */
-		/**************************************/
 		if (SymbolTable.getInstance().find(id) != null)
 		{
 			throw new SemanticException("class " + id + " already exists", lineNumber);
 		}
 
-		/**************************************/
-		/* [1] Check if parent class exists   */
-		/**************************************/
+		// 2. Validate parent class and check for circular inheritance
 		if (parentId != null)
 		{
 			Type parentType = SymbolTable.getInstance().find(parentId);
@@ -66,26 +59,17 @@ public class AstDecClass extends AstNode{
 			}
 			parentClass = (TypeClass) parentType;
 
-			/**************************************/
-			/* [2] Check for circular inheritance */
-			/**************************************/
 			if (checkCircularInheritance(id, parentClass))
 			{
 				throw new SemanticException("circular inheritance detected for class " + id, lineNumber);
 			}
 		}
 
-		/********************************************************/
-		/* [3] Create a placeholder class type and register it */
-		/*     This allows self-referential fields (e.g., IntList tail) */
-		/********************************************************/
+		// 3. Register placeholder class to support self-referential members
 		TypeClass classType = new TypeClass(parentClass, id, null);
 		SymbolTable.getInstance().enter(id, classType);
 
-		/********************************************************/
-		/* [4] Build class members list (fields and methods)   */
-		/*     Check for overloading, overriding, shadowing    */
-		/********************************************************/
+		// 4. Collect and validate members (fields and methods)
 		TypeList classMembers = null;
 		Set<String> memberNames = new HashSet<>();
 		List<AstDecFunc> methodsToProcess = new ArrayList<>();
@@ -144,8 +128,7 @@ public class AstDecClass extends AstNode{
 				// Save method for processing later (after class is registered)
 				methodsToProcess.add(method);
 
-				// Build method type from signature
-				// We need to validate types exist here because we use them for overriding checks
+				// Validate method signature and handle overriding
 				Type retType = SymbolTable.getInstance().find(method.returnType.typeName);
 				if (retType == null)
 				{
@@ -192,15 +175,10 @@ public class AstDecClass extends AstNode{
 			}
 		}
 
-		/************************************************/
-		/* [5] Update the class type with members      */
-		/************************************************/
+		// 5. Update the class type with members
 		classType.dataMembers = classMembers;
 
-		/********************************************************/
-		/* [5] Now process method bodies in class context      */
-		/*     Members can only reference earlier-defined members */
-		/********************************************************/
+		// 6. Perform semantic analysis on method bodies within class context
 		SymbolTable.getInstance().beginScope();
 
 		// Add inherited members to scope (all inherited members are visible)
@@ -237,15 +215,11 @@ public class AstDecClass extends AstNode{
 
 		SymbolTable.getInstance().endScope();
 
-		/*********************************************************/
-		/* [6] Return value is irrelevant for class declarations */
-		/*********************************************************/
+		// Class declarations don't have a value type context
 		return null;
 	}
 
-	/******************************************************************/
-	/* Helper: Check for circular inheritance                        */
-	/******************************************************************/
+	// Helper: Check for circular inheritance by walking up the hierarchy
 	private boolean checkCircularInheritance(String className, TypeClass parent)
 	{
 		TypeClass current = parent;
@@ -260,9 +234,7 @@ public class AstDecClass extends AstNode{
 		return false;
 	}
 
-	/******************************************************************/
-	/* Helper: Find a member in parent class hierarchy               */
-	/******************************************************************/
+	// Helper: Look up member in parent classes
 	private Type findInParent(TypeClass parentClass, String memberName)
 	{
 		if (parentClass == null)
@@ -282,9 +254,7 @@ public class AstDecClass extends AstNode{
 		return findInParent(parentClass.father, memberName);
 	}
 
-	/******************************************************************/
-	/* Helper: Check if two parameter lists match exactly            */
-	/******************************************************************/
+	// Helper: Structural comparison of parameter lists
 	private boolean parameterListsMatch(TypeList list1, TypeList list2)
 	{
 		// Both null - match
@@ -309,9 +279,7 @@ public class AstDecClass extends AstNode{
 		return parameterListsMatch(list1.tail, list2.tail);
 	}
 
-	/******************************************************************/
-	/* Helper: Add all inherited members to scope recursively        */
-	/******************************************************************/
+	// Helper: Recursively load inherited members into scope
 	private void addInheritedMembersToScope(TypeClass parentClass)
 	{
 		if (parentClass == null)

@@ -41,9 +41,7 @@ public class AstDecList extends AstNode
 
 	public Type semantMe() throws SemanticException
 	{
-		/*************************************/
-		/* RECURSIVELY PRINT HEAD + TAIL ... */
-		/*************************************/
+		// Recursive semantic analysis of definitions
 		if (head != null) head.semantMe();
 		if (tail != null) tail.semantMe();
 

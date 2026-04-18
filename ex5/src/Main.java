@@ -9,7 +9,7 @@ import dataflow.*;
 
 public class Main {
 	static public void main(String argv[]) {
-		Lexer l;
+		Lexer l = null;
 		Parser p;
 		Symbol s;
 		AstDecList ast;
@@ -87,7 +87,7 @@ public class Main {
 			}
 
 			/****************************************/
-			/* [13] Generate MIPS Assembly          */
+			/* [12] Generate MIPS Assembly          */
 			/****************************************/
 			mips.MipsGenerator mipsGen = new mips.MipsGenerator();
 			for (IrCommand cmd : Ir.getInstance().getCommands()) {
@@ -95,7 +95,7 @@ public class Main {
 			}
 
 			/****************************************/
-			/* [14] Write MIPS Assembly to Output   */
+			/* [13] Write MIPS Assembly to Output   */
 			/****************************************/
 			fileWriter.close();
 			mipsGen.writeToFile(outputFileName);
@@ -108,6 +108,10 @@ public class Main {
 		} catch (Exception e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {
 				pw.print("ERROR");
+				if (l != null)
+				{
+					pw.printf("(%d)", l.getLine());
+				}
 			} catch (Exception ex) {}
 		} catch (Error e) {
 			try (PrintWriter pw = new PrintWriter(outputFileName)) {

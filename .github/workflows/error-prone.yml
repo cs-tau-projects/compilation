@@ -24,7 +24,7 @@ jobs:
 
       - name: Generate Lexer and Parser
         run: |
-          cd ex3
+          cd ex5
           # Generate Lexer.java from LEX_FILE.lex
           jflex -q -d src jflex/LEX_FILE.lex
           # Generate Parser.java and TokenNames.java from CUP_FILE.cup

@@ -1,0 +1,8 @@
+void main() {
+    PrintInt((0 - 3) / 2);
+    PrintInt(3 / (0 - 2));
+    PrintInt((0 - 3) / (0 - 2));
+    PrintInt((0 - 6) / 3);
+    PrintInt((0 - 4) / 2);
+    PrintInt(4 / (0 - 2));
+}

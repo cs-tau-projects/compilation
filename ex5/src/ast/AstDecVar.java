@@ -10,10 +10,7 @@ public class AstDecVar extends AstNode {
     public AstType type;
     public AstExp exp = null;
     
-    /*************************************************/
-    /* The scope offset captured during semantic     */
-    /* analysis for use in IR generation             */
-    /*************************************************/
+    // The scope offset captured during semantic analysis for use in IR generation
     private int scopeOffset = -1;
     public boolean isGlobal = false;
 
@@ -48,40 +45,27 @@ public class AstDecVar extends AstNode {
 	{
 		Type t;
 
-		/************************************/
-		/* [0] Check for reserved keyword   */
-		/************************************/
+		// 1. Check for reserved keyword and validate type existence
 		TypeUtils.checkNotReservedKeyword(id, lineNumber);
 
-		/****************************/
-		/* [1] Check If Type exists */
-		/****************************/
 		t = SymbolTable.getInstance().find(type.typeName);
 		if (t == null)
 		{
 			throw new SemanticException("non existing type " + type.typeName, lineNumber);
 		}
 
-		/******************************************/
-		/* [2] Check that type is not void        */
-		/******************************************/
+		// 2. Ensure type is not void and check for name collision in current scope
 		if (t instanceof TypeVoid)
 		{
 			throw new SemanticException("variable cannot have void type", lineNumber);
 		}
 
-		/**************************************/
-		/* [3] Check That Name does NOT exist */
-		/* in current scope                   */
-		/**************************************/
 		if (SymbolTable.getInstance().findInCurrentScope(id) != null)
 		{
 			throw new SemanticException("variable " + id + " already exists in scope", lineNumber);
 		}
 
-		/********************************************************/
-		/* [4] If there's initialization, check type compatibility */
-		/********************************************************/
+		// 3. If there's initialization, check type compatibility
 		if (exp != null)
 		{
 			Type expType = exp.semantMe();
@@ -92,31 +76,21 @@ public class AstDecVar extends AstNode {
 			}
 		}
 
-		/************************************************/
-		/* [5] Enter the Identifier to the Symbol Table */
-		/************************************************/
+		// 4. Register the identifier and capture its scope metadata
 		SymbolTable.getInstance().enter(id, t);
 		
-		/*************************************************/
-		/* [6] Capture the scope offset while scope is active */
-		/*************************************************/
 		this.scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
 		this.isGlobal = SymbolTable.getInstance().isGlobalScope();
 
-		/************************************************************/
-		/* [7] Return value is irrelevant for variable declarations */
-		/************************************************************/
+		// Return null as variable declarations don't have a value type in this context
 		return null;
 	}
 
 	public Temp irMe()
 	{
-		/****************************************/
-		/* Use the captured scope offset       */
-		/****************************************/
+		// Ensure scope offset is initialized before allocation
 		if (scopeOffset == -1)
 		{
-			// Fallback if semantMe wasn't called or failed
 			scopeOffset = SymbolTable.getInstance().getScopeOffset(id);
 		}
 

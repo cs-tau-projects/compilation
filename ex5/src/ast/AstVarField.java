@@ -12,19 +12,7 @@ public class AstVarField extends AstVar
 	/******************/
 	public AstVarField(AstVar var, String fieldName, int lineNumber)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
-
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
-		// System.out.format("====================== var -> var DOT ID( %s )\n",fieldName);
-
-		/*******************************/
-		/* COPY INPUT DATA MEMBERS ... */
-		/*******************************/
 		this.var = var;
 		this.fieldName = fieldName;
 		this.lineNumber = lineNumber;
@@ -35,27 +23,14 @@ public class AstVarField extends AstVar
 	/*************************************************/
 	public void printMe()
 	{
-		/*********************************/
-		/* AST NODE TYPE = AST FIELD VAR */
-		/*********************************/
 		System.out.print("AST NODE FIELD VAR\n");
-
-		/**********************************************/
-		/* RECURSIVELY PRINT VAR, then FIELD NAME ... */
-		/**********************************************/
 		if (var != null) var.printMe();
 		System.out.format("FIELD NAME( %s )\n",fieldName);
 
-		/***************************************/
-		/* PRINT Node to AST GRAPHVIZ DOT file */
-		/***************************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
 			String.format("FIELD\nVAR\n...->%s",fieldName));
 		
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
 		if (var != null) AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
 	}
 
@@ -68,22 +43,14 @@ public class AstVarField extends AstVar
 		Type t = null;
 		TypeClass tc = null;
 
-		/******************************/
-		/* [1] Recursively semant var */
-		/******************************/
+		// 1. Validate variable type and ensure it is a class
 		if (var != null) t = var.semantMe();
 
-		/****************************/
-		/* [2] Check for null type  */
-		/****************************/
 		if (t == null)
 		{
 			throw new SemanticException("variable has no type", lineNumber);
 		}
 
-		/*********************************/
-		/* [3] Make sure type is a class */
-		/*********************************/
 		if (!t.isClass())
 		{
 			throw new SemanticException("cannot access field " + fieldName + " of non-class variable", lineNumber);
@@ -92,9 +59,7 @@ public class AstVarField extends AstVar
 		tc = (TypeClass) t;
 		this.ownerClass = tc;
 
-		/**************************************************************/
-		/* [4] Look for fieldName in class and parent class hierarchy */
-		/**************************************************************/
+		// 2. Lookup field in class hierarchy and return its type
 		Type member = TypeUtils.findMemberInClassHierarchy(tc, fieldName);
 
 		if (member == null)
@@ -102,16 +67,11 @@ public class AstVarField extends AstVar
 			throw new SemanticException("field " + fieldName + " does not exist in class " + tc.name, lineNumber);
 		}
 
-		/*********************************************/
-		/* [5] Return the type of the member        */
-		/*********************************************/
-		// If it's a field, return the field type
 		if (member instanceof TypeField)
 		{
 			this.type = ((TypeField) member).fieldType;
 			return this.type;
 		}
-		// If it's a method, return the function type
 		this.type = member;
 		return this.type;
 	}

@@ -20,19 +20,11 @@ public class TempFactory
 		return new Temp(counter++);
 	}
 	
-	/**************************************/
-	/* USUAL SINGLETON IMPLEMENTATION ... */
-	/**************************************/
+	// --- Singleton Implementation ---
 	private static TempFactory instance = null;
 
-	/*****************************/
-	/* PREVENT INSTANTIATION ... */
-	/*****************************/
 	protected TempFactory() {}
 
-	/******************************/
-	/* GET SINGLETON INSTANCE ... */
-	/******************************/
 	public static TempFactory getInstance()
 	{
 		if (instance == null)

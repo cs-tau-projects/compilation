@@ -32,29 +32,28 @@ public class IrCommandNewArray extends IrCommand {
 		gen.emitInstruction("li", "$v0", "9");
 		gen.emitInstruction("syscall");
 		
-		// Move pointer to $t8 immediately to protect it
-		gen.emitInstruction("move", "$t8", "$v0");
+		// Move pointer to $s0 immediately to protect it
+		gen.emitInstruction("move", "$s0", "$v0");
 
-		// Recalculate total size in $t7 after syscall (regMap.get(sizeTemp) is callee-saved and safe)
-		gen.emitInstruction("move", "$t7", regMap.get(sizeTemp));
-		gen.emitInstruction("sll", "$t7", "$t7", "2");
-		gen.emitInstruction("addiu", "$t7", "$t7", "4");
+		gen.emitInstruction("move", "$s1", regMap.get(sizeTemp));
+		gen.emitInstruction("sll", "$s1", "$s1", "2");
+		gen.emitInstruction("addiu", "$s1", "$s1", "4");
 
 		// Zero-initialize memory (skip size at offset 0)
 		String labelStart = IrCommand.getFreshLabel("zero_start_array");
 		String labelEnd = IrCommand.getFreshLabel("zero_end_array");
 
-		gen.emitInstruction("li", "$t9", "4"); // Progress counter (offset) in protected $t9
+		gen.emitInstruction("li", "$s2", "4"); // Progress counter (offset) in protected $s2
 		gen.emitLabel(labelStart);
-		// Check against saved $t7 bound
-		gen.emitInstruction("bge", "$t9", "$t7", labelEnd);
-		gen.emitInstruction("addu", "$v1", "$t8", "$t9"); // Element address in $v1
+		// Check against saved $s1 bound
+		gen.emitInstruction("bge", "$s2", "$s1", labelEnd);
+		gen.emitInstruction("addu", "$v1", "$s0", "$s2"); // Element address in $v1
 		gen.emitInstruction("sw", "$zero", "0($v1)");
-		gen.emitInstruction("addiu", "$t9", "$t9", "4");
+		gen.emitInstruction("addiu", "$s2", "$s2", "4");
 		gen.emitInstruction("j", labelStart);
 		gen.emitLabel(labelEnd);
 
-		gen.emitInstruction("sw", regMap.get(sizeTemp), "0($t8)");
-		gen.emitInstruction("move", regMap.get(dst), "$t8");
+		gen.emitInstruction("sw", regMap.get(sizeTemp), "0($s0)");
+		gen.emitInstruction("move", regMap.get(dst), "$s0");
 	}
 }
