@@ -19,61 +19,39 @@ public class Main {
 		String outputFileName = argv[1];
 
 		try {
-			/********************************/
-			/* [1] Initialize a file reader */
-			/********************************/
+			// file reader
 			fileReader = new FileReader(inputFileName);
 
-			/********************************/
-			/* [2] Initialize a file writer */
-			/********************************/
+			// file writer
 			fileWriter = new PrintWriter(outputFileName);
 
-			/******************************/
-			/* [3] Initialize a new lexer */
-			/******************************/
+			// init lexer
 			l = new Lexer(fileReader);
 
-			/*******************************/
-			/* [4] Initialize a new parser */
-			/*******************************/
+			// init parser
 			p = new Parser(l);
 
-			/***********************************/
-			/* [5] 3 ... 2 ... 1 ... Parse !!! */
-			/***********************************/
+			// parse
 			ast = (AstDecList) p.parse().value;
 
-			/**************************/
-			/* [6] Semant the AST ... */
-			/**************************/
+			// semant
 			ast.semantMe();
 
-			/**********************/
-			/* [7] IR the AST ... */
-			/**********************/
+			// ir
 			ast.irMe();
 
-			/****************************/
-			/* [8] Build the CFG ... */
-			/****************************/
+			// build cfg
 			CFG cfg = new CFG(Ir.getInstance().getCommands());
 
-			/****************************************/
-			/* [9] Run Liveness Analysis           */
-			/****************************************/
+			// liveness analysis
 			regalloc.LivenessAnalysis liveness = new regalloc.LivenessAnalysis(cfg);
 			liveness.analyze();
 
-			/****************************************/
-			/* [10] Build Interference Graph        */
-			/****************************************/
+			// interference graph
 			regalloc.InterferenceGraph graph = new regalloc.InterferenceGraph();
 			graph.build(liveness, cfg);
 
-			/****************************************/
-			/* [11] Register Allocation             */
-			/****************************************/
+			// reg alloc
 			regalloc.RegisterAllocator allocator = new regalloc.RegisterAllocator();
 			try {
 				allocator.allocate(graph);
@@ -86,17 +64,13 @@ public class Main {
 				throw e;
 			}
 
-			/****************************************/
-			/* [12] Generate MIPS Assembly          */
-			/****************************************/
+			// generate mips
 			mips.MipsGenerator mipsGen = new mips.MipsGenerator();
 			for (IrCommand cmd : Ir.getInstance().getCommands()) {
 				cmd.mipsMe(mipsGen, allocator.getRegisterMap());
 			}
 
-			/****************************************/
-			/* [13] Write MIPS Assembly to Output   */
-			/****************************************/
+			// write to output
 			fileWriter.close();
 			mipsGen.writeToFile(outputFileName);
 			

@@ -2,9 +2,7 @@ package types;
 
 public class TypeForScopeBoundaries extends Type
 {
-	/****************/
-	/* CTROR(S) ... */
-	/****************/
+	// constructor
 	public TypeForScopeBoundaries(String name)
 	{
 		this.name = name;

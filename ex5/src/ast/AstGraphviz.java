@@ -6,12 +6,10 @@ import java.io.IOException;
 
 public class AstGraphviz
 {
-	/***********************/
-	/* The file writer ... */
-	/***********************/
+	// writer
 	private PrintWriter fileWriter;
 	
-	// --- Singleton Implementation ---
+	// singleton
 	private static AstGraphviz instance = null;
 
 	private AstGraphviz() {}
@@ -22,9 +20,7 @@ public class AstGraphviz
 		{
 			instance = new AstGraphviz();
 			
-			/****************************/
-			/* Initialize a file writer */
-			/****************************/
+			// initialize writer
 			try
 			{
 				String dirname="./output/";
@@ -40,9 +36,7 @@ public class AstGraphviz
 				e.printStackTrace();
 			}
 
-			/******************************************************/
-			/* Print Directed Graph header in Graphviz dot format */
-			/******************************************************/
+			// graph header
 			instance.fileWriter.print("digraph\n");
 			instance.fileWriter.print("{\n");
 			instance.fileWriter.print("graph [ordering = \"out\"]\n");
@@ -50,9 +44,7 @@ public class AstGraphviz
 		return instance;
 	}
 
-	/***********************************/
-	/* Log node in graphviz dot format */
-	/***********************************/
+	// log node
 	public void logNode(int nodeSerialNumber,String nodeName)
 	{
 		fileWriter.format(
@@ -61,9 +53,7 @@ public class AstGraphviz
 			nodeName);
 	}
 
-	/***********************************/
-	/* Log edge in graphviz dot format */
-	/***********************************/
+	// log edge
 	public void logEdge(
 		int fatherNodeSerialNumber,
 		int sonNodeSerialNumber)
@@ -74,9 +64,7 @@ public class AstGraphviz
 			sonNodeSerialNumber);
 	}
 	
-	/******************************/
-	/* Finalize graphviz dot file */
-	/******************************/
+	// finalize
 	public void finalizeFile()
 	{
 		fileWriter.print("}\n");

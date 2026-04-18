@@ -6,7 +6,7 @@ package types;
  */
 public class TypeNil extends Type
 {
-	// --- Singleton Implementation ---
+	// singleton
 	private static TypeNil instance = null;
 
 	protected TypeNil() {}

@@ -8,9 +8,7 @@ public class AstExpInt extends AstExp
 {
 	public int value;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpInt(int value, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -18,9 +16,7 @@ public class AstExpInt extends AstExp
 		this.lineNumber = lineNumber;
 	}
 
-	/************************************************/
-	/* The printing message for an int exp AST node */
-	/************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.format("AST NODE INT( %d )\n",value);
@@ -32,9 +28,7 @@ public class AstExpInt extends AstExp
 		return TypeInt.getInstance();
 	}
 
-	/********************************************************/
-	/* Return the constant integer value                    */
-	/********************************************************/
+	// constant value
 	@Override
 	public Integer tryEvaluateConstant()
 	{

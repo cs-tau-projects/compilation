@@ -2,7 +2,7 @@ package types;
 
 public class TypeInt extends Type
 {
-	// --- Singleton Implementation ---
+	// singleton
 	private static TypeInt instance = null;
 
 	protected TypeInt() {}

@@ -6,15 +6,11 @@ import types.*;
 
 public class AstDecList extends AstNode
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// members
 	public AstDec head;
 	public AstDecList tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstDecList(AstDec head, AstDecList tail, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -23,9 +19,7 @@ public class AstDecList extends AstNode
 		this.lineNumber = lineNumber;
 	}
 
-	/******************************************************/
-	/* The printing message for a declaration list node */
-	/******************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE DEC LIST\n");
@@ -41,7 +35,7 @@ public class AstDecList extends AstNode
 
 	public Type semantMe() throws SemanticException
 	{
-		// Recursive semantic analysis of definitions
+		// recursive semant
 		if (head != null) head.semantMe();
 		if (tail != null) tail.semantMe();
 
@@ -52,7 +46,7 @@ public class AstDecList extends AstNode
 	{
 		Ir.getInstance().AddIrCommand(new IrCommandLabel("main"));
 		
-		// Pass 1: Global variable declarations
+		// globals
 		AstDecList current = this;
 		while (current != null)
 		{
@@ -63,12 +57,12 @@ public class AstDecList extends AstNode
 			current = current.tail;
 		}
 
-        // Call user_main and exit
+        // user_main
         Temp dst = TempFactory.getInstance().getFreshTemp();
         Ir.getInstance().AddIrCommand(new IrCommandCallFunc(dst, "user_main"));
         Ir.getInstance().AddIrCommand(new IrCommandExit());
 
-		// Pass 2: Function declarations (and anything else)
+		// functions etc
 		current = this;
 		while (current != null)
 		{

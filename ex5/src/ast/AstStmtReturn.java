@@ -9,9 +9,7 @@ public class AstStmtReturn extends AstStmt
 {
 	public AstExp exp;  // can be null for void return
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtReturn(AstExp exp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -20,9 +18,7 @@ public class AstStmtReturn extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/*********************************************************/
-	/* The printing message for a return statement AST node */
-	/*********************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE RETURN STMT\n");
@@ -34,24 +30,18 @@ public class AstStmtReturn extends AstStmt
 		if (exp != null) AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
 	}
 
-	/*********************************************************/
-	/* Semantic analysis for return statement               */
-	/*********************************************************/
+	// semant
 	public Type semantMe() throws SemanticException
 	{
 		Type expectedReturnType = SymbolTable.getInstance().getCurrentFunctionReturnType();
 
-		/******************************************/
-		/* [1] Check if we're inside a function  */
-		/******************************************/
+		// scope check
 		if (expectedReturnType == null)
 		{
 			throw new SemanticException("return statement outside of function", lineNumber);
 		}
 
-		/******************************************/
-		/* [2] void function - must return empty */
-		/******************************************/
+		// void check
 		if (expectedReturnType instanceof TypeVoid)
 		{
 			if (exp != null)
@@ -61,17 +51,13 @@ public class AstStmtReturn extends AstStmt
 			return null;
 		}
 
-		/************************************************/
-		/* [3] non-void function - must return a value */
-		/************************************************/
+		// non-void check
 		if (exp == null)
 		{
 			throw new SemanticException("non-void function must return a value", lineNumber);
 		}
 
-		/************************************************/
-		/* [4] Check return expression type matches    */
-		/************************************************/
+		// type match
 		Type actualReturnType = exp.semantMe();
 
 		if (!TypeUtils.canAssignType(expectedReturnType, actualReturnType))

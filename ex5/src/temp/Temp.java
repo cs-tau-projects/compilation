@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package temp;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
+// temp
 public class Temp
 {
 	private int serial=0;

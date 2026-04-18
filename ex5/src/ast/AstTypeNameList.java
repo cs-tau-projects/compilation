@@ -4,15 +4,11 @@ import types.*;
 
 public class AstTypeNameList extends AstNode
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// members
 	public AstTypeName head;
 	public AstTypeNameList tail;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstTypeNameList(AstTypeName head, AstTypeNameList tail)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -21,9 +17,7 @@ public class AstTypeNameList extends AstNode
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a type name list AST node */
-	/******************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST TYPE NAME LIST\n");

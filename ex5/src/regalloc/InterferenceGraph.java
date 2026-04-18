@@ -31,7 +31,7 @@ public class InterferenceGraph {
     public void build(LivenessAnalysis liveness, cfg.CFG cfg) {
         int n = cfg.size();
         
-        // Add all temps to graph
+        // add nodes
         for (int i = 0; i < n; i++) {
             IrCommand cmd = cfg.getCommand(i);
             if (cmd.getDefinedTemps() != null) {
@@ -42,7 +42,7 @@ public class InterferenceGraph {
             }
         }
 
-        // Build edges
+        // build edges
         for (int i = 0; i < n; i++) {
             Set<Temp> active = new HashSet<>();
             active.addAll(liveness.liveIn.get(i));

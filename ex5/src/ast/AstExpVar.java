@@ -7,9 +7,7 @@ public class AstExpVar extends AstExp
 {
 	public AstVar var;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpVar(AstVar var, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -17,9 +15,7 @@ public class AstExpVar extends AstExp
 		this.lineNumber = lineNumber;
 	}
 	
-	/***********************************************/
-	/* The default message for an exp var AST node */
-	/***********************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE EXP VAR\n");
@@ -39,10 +35,7 @@ public class AstExpVar extends AstExp
 		return var.semantMe();
 	}
 
-	/********************************************************/
-	/* IR generation for variable expression               */
-	/* Simply delegates to the variable's irMe method      */
-	/********************************************************/
+	// ir generation - delegates to var
 	public Temp irMe()
 	{
 		if (var != null)

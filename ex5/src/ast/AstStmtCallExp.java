@@ -8,9 +8,7 @@ public class AstStmtCallExp extends AstStmt
 {
 	public AstExpCall callExp;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtCallExp(AstExpCall callExp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -19,9 +17,7 @@ public class AstStmtCallExp extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/**************************************************************/
-	/* The printing message for a call expression statement node */
-	/**************************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE CALL EXP STMT\n");
@@ -33,10 +29,7 @@ public class AstStmtCallExp extends AstStmt
 		if (callExp != null) AstGraphviz.getInstance().logEdge(serialNumber, callExp.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for call expression statement     */
-	/* Simply delegates to the call expression             */
-	/********************************************************/
+	// semant
 	public Type semantMe() throws SemanticException
 	{
 		if (callExp != null)
@@ -44,9 +37,6 @@ public class AstStmtCallExp extends AstStmt
 			callExp.semantMe();
 		}
 
-		/********************************************************/
-		/* Return value is irrelevant for call statement       */
-		/********************************************************/
 		return null;
 	}
 

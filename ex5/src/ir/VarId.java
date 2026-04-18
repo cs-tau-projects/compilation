@@ -1,16 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.Objects;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
+// variable id
 
 /**
  * VarId uniquely identifies a variable by its name and scope offset.
@@ -22,15 +14,11 @@ import java.util.Objects;
  */
 public class VarId
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// members
 	public final String name;
 	public final int scopeOffset;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public VarId(String name, int scopeOffset)
 	{
 		this.name = name;

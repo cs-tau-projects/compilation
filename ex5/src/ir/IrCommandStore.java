@@ -1,17 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import temp.*;
 
+// store var
 public class IrCommandStore extends IrCommand
 {
 	public VarId varId;
@@ -23,10 +14,7 @@ public class IrCommandStore extends IrCommand
 		this.varId = varId;
 	}
 
-	/****************************************/
-	/* Convenience constructor for backward */
-	/* compatibility during transition      */
-	/****************************************/
+	// compat constructor
 	public boolean isGlobal;
 	public IrCommandStore(String varName, int scopeOffset, Temp src, boolean isGlobal)
 	{

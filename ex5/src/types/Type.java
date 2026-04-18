@@ -2,18 +2,12 @@ package types;
 
 public abstract class Type
 {
-	/******************************/
-	/*  Every type has a name ... */
-	/******************************/
+	// type name
 	public String name;
 
-	/*************/
-	/* isClass() */
-	/*************/
+	// class check
 	public boolean isClass(){ return false;}
 
-	/*************/
-	/* isArray() */
-	/*************/
+	// array check
 	public boolean isArray(){ return false;}
 }

@@ -2,21 +2,13 @@ package types;
 
 public class TypeClass extends Type
 {
-	/*********************************************************************/
-	/* If this class does not extend a father class this should be null  */
-	/*********************************************************************/
+	// base class
 	public TypeClass father;
 
-	/**************************************************/
-	/* Gather up all data members in one place        */
-	/* Note that data members coming from the AST are */
-	/* packed together with the class methods         */
-	/**************************************************/
+	// members
 	public TypeList dataMembers;
 	
-	/****************/
-	/* CTROR(S) ... */
-	/****************/
+	// constructor
 	public TypeClass(TypeClass father, String name, TypeList dataMembers)
 	{
 		this.name = name;
@@ -24,9 +16,7 @@ public class TypeClass extends Type
 		this.dataMembers = dataMembers;
 	}
 
-	/*************/
-	/* isClass() */
-	/*************/
+	// class check
 	@Override
 	public boolean isClass()
 	{

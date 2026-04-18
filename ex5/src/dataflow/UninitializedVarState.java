@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import ir.VarId;
 import temp.Temp;
 
@@ -23,19 +13,11 @@ import temp.Temp;
  */
 public class UninitializedVarState implements DataflowState<UninitializedVarState>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
-
-    /** Set of variables that may be uninitialized */
+    // members
     private Set<VarId> uninitializedVars;
-
-    /** Set of temporaries that hold values from uninitialized sources */
     private Set<Integer> taintedTemps;
 
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructors
 
     /** Create an empty state (bottom element) */
     public UninitializedVarState()

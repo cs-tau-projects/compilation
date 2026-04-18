@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
+// label
 public class IrCommandLabel extends IrCommand
 {
 	public String labelName;

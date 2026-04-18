@@ -10,9 +10,7 @@ public class AstStmtIf extends AstStmt
 	public AstExp cond;
 	public AstStmtList body;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtIf(AstExp cond, AstStmtList body, int lineNumber)
 	{
 		serialNumber = AstNode.getFreshSerialNumber();
@@ -23,70 +21,47 @@ public class AstStmtIf extends AstStmt
 
 	public Type semantMe() throws SemanticException
 	{
-		/****************************/
-		/* [0] Semant the Condition */
-		/****************************/
+		// check condition
 		if (cond.semantMe() != TypeInt.getInstance())
 		{
 			throw new SemanticException("condition inside IF is not integral", lineNumber);
 		}
 		
-		/*************************/
-		/* [1] Begin If Scope */
-		/*************************/
+		// begin scope
 		SymbolTable.getInstance().beginScope();
 
-		/***************************/
-		/* [2] Semant Data Members */
-		/***************************/
+		// semant body
 		if (body != null) body.semantMe();
 
-		/*****************/
-		/* [3] End Scope */
-		/*****************/
+		// end scope
 		SymbolTable.getInstance().endScope();
 
-		/***************************************************/
-		/* [4] Return value is irrelevant for if statement */
-		/**************************************************/
+		// return nothing
 		return null;
 	}
 
 	public Temp irMe()
 	{
-		/*******************************/
-		/* [1] Allocate a fresh label  */
-		/*******************************/
+		// label for end
 		String labelEnd = IrCommand.getFreshLabel("end");
 
-		/********************/
-		/* [2] cond.irMe(); */
-		/********************/
+		// ir cond
 		Temp condTemp = cond.irMe();
 
-		/******************************************/
-		/* [3] Jump conditionally to the end      */
-		/*     (skip body if condition is false)  */
-		/******************************************/
+		// jump to end if false
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelEnd));
 
-		/*******************/
-		/* [4] body.irMe() */
-		/*******************/
+		// ir body
 		if (body != null) body.irMe();
 
-		/*********************/
-		/* [5] End label     */
-		/*********************/
+		// end label
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandLabel(labelEnd));
 
-		/*******************/
-		/* [6] return null */
-		/*******************/
+		// done
 		return null;
 	}
 }

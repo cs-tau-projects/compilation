@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package temp;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
+// temp factory
 public class TempFactory
 {
 	private int counter=0;
@@ -20,7 +10,7 @@ public class TempFactory
 		return new Temp(counter++);
 	}
 	
-	// --- Singleton Implementation ---
+	// singleton
 	private static TempFactory instance = null;
 
 	protected TempFactory() {}
@@ -29,9 +19,7 @@ public class TempFactory
 	{
 		if (instance == null)
 		{
-			/*******************************/
-			/* [0] The instance itself ... */
-			/*******************************/
+			// singleton instance
 			instance = new TempFactory();
 		}
 		return instance;

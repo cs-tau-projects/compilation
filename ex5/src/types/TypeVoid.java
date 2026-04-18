@@ -2,7 +2,7 @@ package types;
 
 public class TypeVoid extends Type
 {
-	// --- Singleton Implementation ---
+	// singleton
 	private static TypeVoid instance = null;
 
 	protected TypeVoid() {}
