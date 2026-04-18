@@ -1,17 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import temp.*;
 
+// const int
 public class IRcommandConstInt extends IrCommand
 {
 	public Temp t;

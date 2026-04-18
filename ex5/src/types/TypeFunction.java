@@ -2,19 +2,13 @@ package types;
 
 public class TypeFunction extends Type
 {
-	/***********************************/
-	/* The return type of the function */
-	/***********************************/
+	// return type
 	public Type returnType;
 
-	/*************************/
-	/* types of input params */
-	/*************************/
+	// params
 	public TypeList params;
 	
-	/****************/
-	/* CTROR(S) ... */
-	/****************/
+	// constructor
 	public TypeFunction(Type returnType, String name, TypeList params)
 	{
 		this.name = name;

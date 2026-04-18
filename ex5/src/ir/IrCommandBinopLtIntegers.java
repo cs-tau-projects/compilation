@@ -1,17 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import temp.*;
 
+// binop lt int
 public class IrCommandBinopLtIntegers extends IrCommand
 {
 	public Temp t1;

@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import cfg.*;
 import ir.*;
 
@@ -26,22 +16,12 @@ import ir.*;
  */
 public abstract class DataflowAnalysis<T extends DataflowState<T>>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
-    
-    /** The control flow graph */
+    // members
     protected CFG cfg;
-    
-    /** IN state for each node (state at entry of node) */
     protected List<T> inStates;
-    
-    /** OUT state for each node (state at exit of node) */
     protected List<T> outStates;
     
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
     public DataflowAnalysis(CFG cfg)
     {
         this.cfg = cfg;
@@ -49,9 +29,7 @@ public abstract class DataflowAnalysis<T extends DataflowState<T>>
         this.outStates = new ArrayList<>();
     }
     
-    /****************************************/
-    /* ABSTRACT METHODS - must be overridden */
-    /****************************************/
+    // abstract methods
     
     /**
      * Create the initial (bottom) state for the lattice.

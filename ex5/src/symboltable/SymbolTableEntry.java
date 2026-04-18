@@ -1,47 +1,23 @@
-/***********/
-/* PACKAGE */
-/***********/
 package symboltable;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import types.*;
 
-/**********************/
-/* SYMBOL TABLE ENTRY */
-/**********************/
+// table entry
 public class SymbolTableEntry
 {
-	/*********/
-	/* index */
-	/*********/
+	// fields
 	int index;
-	
-	/********/
-	/* name */
-	/********/
 	public String name;
-
-	/******************/
-	/* TYPE value ... */
-	/******************/
 	public Type type;
 
-	/*********************************************/
-	/* prevtop and next symbol table entries ... */
-	/*********************************************/
+	// links
 	public SymbolTableEntry prevtop;
 	public SymbolTableEntry next;
 
-	/****************************************************/
-	/* The prevtopIndex is just for debug purposes ... */
-	/****************************************************/
+	// debug
 	public int prevtopIndex;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public SymbolTableEntry(
 		String name,
 		Type type,

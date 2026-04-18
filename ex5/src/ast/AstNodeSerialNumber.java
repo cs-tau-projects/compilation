@@ -2,14 +2,10 @@ package ast;
 
 public class AstNodeSerialNumber
 {
-	/*******************************************/
-	/* The serial number is for debug purposes */
-	/* In particular, it can help in creating  */
-	/* a graphviz dot format of the AST ...    */
-	/*******************************************/
+	// serial number for graphviz / debug
 	public int serialNumber;
 	
-	// --- Singleton Implementation ---
+	// singleton
 	private static AstNodeSerialNumber instance = null;
 
 	protected AstNodeSerialNumber() {}

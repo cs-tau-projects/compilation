@@ -11,9 +11,7 @@ public class AstStmtIfElse extends AstStmt
 	public AstStmtList ifBody;
 	public AstStmtList elseBody;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtIfElse(AstExp cond, AstStmtList ifBody, AstStmtList elseBody, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -24,9 +22,7 @@ public class AstStmtIfElse extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/************************************************************/
-	/* The printing message for an if-else statement AST node */
-	/************************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE IF-ELSE STMT\n");
@@ -42,16 +38,10 @@ public class AstStmtIfElse extends AstStmt
 		if (elseBody != null) AstGraphviz.getInstance().logEdge(serialNumber, elseBody.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for if-else statement              */
-	/* Checks that condition is int and analyzes both       */
-	/* branches in separate scopes                          */
-	/********************************************************/
+	// semant
 	public Type semantMe() throws SemanticException
 	{
-		/****************************/
-		/* [1] Check condition type */
-		/****************************/
+		// check condition type
 		if (cond != null)
 		{
 			Type condType = cond.semantMe();
@@ -62,9 +52,7 @@ public class AstStmtIfElse extends AstStmt
 			}
 		}
 
-		/****************************/
-		/* [2] Analyze if body in new scope */
-		/****************************/
+		// analyze if branch
 		SymbolTable.getInstance().beginScope();
 
 		if (ifBody != null)
@@ -74,9 +62,7 @@ public class AstStmtIfElse extends AstStmt
 
 		SymbolTable.getInstance().endScope();
 
-		/****************************/
-		/* [3] Analyze else body in new scope */
-		/****************************/
+		// analyze else branch
 		SymbolTable.getInstance().beginScope();
 
 		if (elseBody != null)
@@ -91,60 +77,40 @@ public class AstStmtIfElse extends AstStmt
 
 	public Temp irMe()
 	{
-		/*********************************/
-		/* [1] Allocate 2 fresh labels   */
-		/*********************************/
+		// labels
 		String labelElse = IrCommand.getFreshLabel("else");
 		String labelEnd = IrCommand.getFreshLabel("end");
 
-		/********************/
-		/* [2] cond.irMe(); */
-		/********************/
+		// ir cond
 		Temp condTemp = cond.irMe();
 
-		/********************************************/
-		/* [3] Jump conditionally to else branch    */
-		/*     (skip if-body when condition false)  */
-		/********************************************/
+		// jump to else if false
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelElse));
 
-		/***********************/
-		/* [4] ifBody.irMe()   */
-		/***********************/
+		// ir if-body
 		if (ifBody != null) ifBody.irMe();
 
-		/****************************************/
-		/* [5] Jump unconditionally to end      */
-		/*     (skip else-body after if-body)   */
-		/****************************************/
+		// skip else
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandJumpLabel(labelEnd));
 
-		/***********************/
-		/* [6] Else label      */
-		/***********************/
+		// else entry
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandLabel(labelElse));
 
-		/***********************/
-		/* [7] elseBody.irMe() */
-		/***********************/
+		// ir else-body
 		if (elseBody != null) elseBody.irMe();
 
-		/*********************/
-		/* [8] End label     */
-		/*********************/
+		// end label
 		Ir.
 				getInstance().
 				AddIrCommand(new IrCommandLabel(labelEnd));
 
-		/*******************/
-		/* [9] return null */
-		/*******************/
+		// done
 		return null;
 	}
 }

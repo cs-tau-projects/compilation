@@ -6,9 +6,7 @@ public class AstExpString extends AstExp
 {
 	public String value;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpString(String value, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -17,9 +15,7 @@ public class AstExpString extends AstExp
 		this.lineNumber = lineNumber;
 	}
 
-	/***************************************************/
-	/* The printing message for a string exp AST node */
-	/***************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.format("AST NODE STRING( %s )\n", value);

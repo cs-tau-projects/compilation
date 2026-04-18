@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package dataflow;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import cfg.*;
 import ir.*;
 
@@ -24,25 +14,17 @@ import ir.*;
  */
 public class UninitializedVarAnalysis extends DataflowAnalysis<UninitializedVarState>
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
-    
-    /** Set of variable names that were used while possibly uninitialized */
+    // results
     private Set<String> uninitializedUses;
     
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
     public UninitializedVarAnalysis(CFG cfg)
     {
         super(cfg);
-        this.uninitializedUses = new TreeSet<>(); // TreeSet for alphabetical order
+        this.uninitializedUses = new TreeSet<>(); // sorted
     }
     
-    /****************************************/
-    /* ABSTRACT METHOD IMPLEMENTATIONS     */
-    /****************************************/
+    // implementations
     
     /**
      * Create the initial (bottom) state: empty set.
@@ -167,23 +149,19 @@ public class UninitializedVarAnalysis extends DataflowAnalysis<UninitializedVarS
         }
     }
     
-    /****************************************/
-    /* GET RESULTS                         */
-    /****************************************/
+    // accessors
     
-    /**
-     * Get the set of variable names that were used while possibly uninitialized.
-     * The set is sorted alphabetically.
-     */
+    // Get the set of variable names that were used while possibly uninitialized.
+    // The set is sorted alphabetically.
     public Set<String> getUninitializedUses()
     {
         return uninitializedUses;
     }
     
-    /**
-     * Run the dataflow analysis using chaotic iteration (worklist algorithm).
-     * After this method returns, inStates and outStates contain the fixed-point solution.
-     */
+    // analysis
+    
+    // Run the dataflow analysis using chaotic iteration (worklist algorithm).
+    // After this method returns, inStates and outStates contain the fixed-point solution.
     @Override
     public void analyze()
     {

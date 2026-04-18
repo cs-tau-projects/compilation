@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
+// jump to label
 public class IrCommandJumpLabel extends IrCommand
 {
 	public String labelName;

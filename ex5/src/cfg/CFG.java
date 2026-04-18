@@ -1,16 +1,6 @@
-/***********/
-/* PACKAGE */
-/***********/
 package cfg;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.*;
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import ir.*;
 
 /**
@@ -21,25 +11,13 @@ import ir.*;
  */
 public class CFG
 {
-    /****************/
-    /* DATA MEMBERS */
-    /****************/
-    
-    /** The list of IR commands (nodes in the CFG) */
+    // members
     private List<IrCommand> commands;
-    
-    /** Successors for each node (by index) */
     private List<Set<Integer>> successors;
-    
-    /** Predecessors for each node (by index) */
     private List<Set<Integer>> predecessors;
-    
-    /** Map from label names to their command indices */
     private Map<String, Integer> labelToIndex;
     
-    /******************/
-    /* CONSTRUCTOR(S) */
-    /******************/
+    // constructor
     public CFG(List<IrCommand> commands)
     {
         this.commands = commands;

@@ -1,59 +1,39 @@
-/***********/
-/* PACKAGE */
-/***********/
 package ir;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.util.ArrayList;
 import java.util.List;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
-
+// ir manager
 public class Ir
 {
-	/****************************************/
-	/* Store IR commands in an ArrayList   */
-	/* for easy iteration during analysis  */
-	/****************************************/
+	// command list
 	private List<IrCommand> commands = new ArrayList<>();
 
-	/******************/
-	/* Add Ir command */
-	/******************/
+	// add command
 	public void AddIrCommand(IrCommand cmd)
 	{
 		commands.add(cmd);
 	}
 
-	/****************************************/
-	/* Get all IR commands for analysis    */
-	/****************************************/
+	// get all commands
 	public List<IrCommand> getCommands()
 	{
 		return commands;
 	}
 
-	/****************************************/
-	/* Get the number of IR commands       */
-	/****************************************/
+	// num commands
 	public int size()
 	{
 		return commands.size();
 	}
 
-	/****************************************/
-	/* Reset the IR (for testing purposes) */
-	/****************************************/
+	// reset ir
 	public void reset()
 	{
 		commands.clear();
 	}
 
-	// --- Singleton Implementation ---
+	// singleton
 	private static Ir instance = null;
 
 	protected Ir() {}
@@ -62,9 +42,7 @@ public class Ir
 	{
 		if (instance == null)
 		{
-			/*******************************/
-			/* [0] The instance itself ... */
-			/*******************************/
+			// singleton instance
 			instance = new Ir();
 		}
 		return instance;

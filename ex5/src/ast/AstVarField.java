@@ -7,9 +7,7 @@ public class AstVarField extends AstVar
 	public AstVar var;
 	public String fieldName;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructors
 	public AstVarField(AstVar var, String fieldName, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -18,9 +16,7 @@ public class AstVarField extends AstVar
 		this.lineNumber = lineNumber;
 	}
 
-	/*************************************************/
-	/* The printing message for a field var AST node */
-	/*************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE FIELD VAR\n");
@@ -34,10 +30,7 @@ public class AstVarField extends AstVar
 		if (var != null) AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
 	}
 
-	/********************************************************/
-	/* Semantic analysis for field access (var.field)      */
-	/* Looks up the field in the class hierarchy           */
-	/********************************************************/
+	// semant
 	public Type semantMe() throws SemanticException
 	{
 		Type t = null;

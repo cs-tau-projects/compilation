@@ -20,14 +20,10 @@ public class AstDec extends AstNode
         if (decNode != null) AstGraphviz.getInstance().logEdge(serialNumber, decNode.serialNumber);
     }
 
-    /***********************************************/
-	/* The default semantic action for an AST node */
-	/***********************************************/
+	// semant
 	public Type semantMe() throws SemanticException
 	{
-		/******************************************/
-		/* Delegate to the actual declaration node */
-		/******************************************/
+		// delegate
 		if (decNode != null)
 		{
 			return decNode.semantMe();
@@ -35,9 +31,7 @@ public class AstDec extends AstNode
 		return null;
 	}
 
-	/***********************************************/
-	/* IR generation - delegate to the decNode    */
-	/***********************************************/
+	// ir generation - delegate
 	public Temp irMe()
 	{
 		if (decNode != null)

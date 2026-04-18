@@ -7,15 +7,11 @@ import symboltable.*;
 
 public class AstStmtAssign extends AstStmt
 {
-	/***************/
-	/*  var := exp */
-	/***************/
+	// parts
 	public AstVar var;
 	public AstExp exp;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtAssign(AstVar var, AstExp exp, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -24,9 +20,7 @@ public class AstStmtAssign extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/*********************************************************/
-	/* The printing message for an assign statement AST node */
-	/*********************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE ASSIGN STMT\n");
@@ -44,11 +38,11 @@ public class AstStmtAssign extends AstStmt
 		Type t1 = null;
 		Type t2 = null;
 
-		// 1. Semantic analysis of left-hand variable and right-hand expression
+		// semant left and right
 		if (var != null) t1 = var.semantMe();
 		if (exp != null) t2 = exp.semantMe();
 
-		// 2. Validate types existence
+		// check types exist
 		if (t1 == null)
 		{
 			throw new SemanticException("variable has no type", lineNumber);
@@ -58,7 +52,7 @@ public class AstStmtAssign extends AstStmt
 			throw new SemanticException("expression has no type", lineNumber);
 		}
 
-		// 3. Check type compatibility for assignment and return null
+		// check assignment compatibility
 		if (!TypeUtils.canAssignType(t1, t2))
 		{
 			throw new SemanticException("type mismatch in assignment: cannot assign " + t2.name + " to " + t1.name, lineNumber);

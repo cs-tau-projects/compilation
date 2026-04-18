@@ -5,18 +5,13 @@ import types.*;
 public abstract class AstExp extends AstNode
 {
 	public types.Type type;
-	/***********************************************/
-	/* The default semantic action for an AST node */
-	/***********************************************/
+	// semantic analysis
 	public Type semantMe() throws SemanticException
 	{
 		return null;
 	}
 
-	/********************************************************/
-	/* Try to evaluate this expression as a constant        */
-	/* Returns the integer value if constant, null otherwise */
-	/********************************************************/
+	// try constant evaluation
 	public Integer tryEvaluateConstant()
 	{
 		return null;

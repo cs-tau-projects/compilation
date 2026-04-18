@@ -4,9 +4,7 @@ import types.*;
 
 public class AstExpNil extends AstExp
 {
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstExpNil(int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -14,18 +12,14 @@ public class AstExpNil extends AstExp
 		this.lineNumber = lineNumber;
 	}
 
-	/************************************************/
-	/* The printing message for a nil exp AST node */
-	/************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE NIL\n");
 		AstGraphviz.getInstance().logNode(serialNumber, "NIL");
 	}
 
-	/************************************************/
-	/* Semantic analysis for nil expression        */
-	/************************************************/
+	// semant
 	public Type semantMe()
 	{
 		return TypeNil.getInstance();

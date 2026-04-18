@@ -2,7 +2,7 @@ package types;
 
 public class TypeString extends Type
 {
-	// --- Singleton Implementation ---
+	// singleton
 	private static TypeString instance = null;
 
 	protected TypeString() {}

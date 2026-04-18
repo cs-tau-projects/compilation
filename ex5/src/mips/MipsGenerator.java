@@ -36,6 +36,7 @@ public class MipsGenerator {
         addRuntimeStringHandlers();
     }
     
+    // error handlers
     private void addRuntimeErrorHandlers() {
         dataSection.add("msg_div_zero: .asciiz \"Illegal Division By Zero\"");
         dataSection.add("msg_invalid_ptr: .asciiz \"Invalid Pointer Dereference\"");
@@ -65,8 +66,9 @@ public class MipsGenerator {
         textSection.add("");
     }
     
+    // string handlers
     private void addRuntimeStringHandlers() {
-        // --- String Equality (Runtime_StrEq) ---
+        // equality
         textSection.add("Runtime_StrEq:");
         textSection.add("\tmove $s0, $a0");
         textSection.add("\tmove $s1, $a1");

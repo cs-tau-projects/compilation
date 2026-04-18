@@ -6,15 +6,11 @@ import types.*;
 
 public class AstStmtList extends AstNode
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// members
 	public AstStmt head;
 	public AstStmtList tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstStmtList(AstStmt head, AstStmtList tail, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -23,9 +19,7 @@ public class AstStmtList extends AstNode
 		this.lineNumber = lineNumber;
 	}
 
-	/******************************************************/
-	/* The printing message for a statement list AST node */
-	/******************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE STMT LIST\n");

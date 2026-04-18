@@ -6,15 +6,11 @@ package types;
  */
 public class TypeField extends Type
 {
-	/***********************************/
-	/* The type of the field           */
-	/***********************************/
+	// field type
 	public Type fieldType;
 	public ast.AstExp initExp;
 	
-	/****************/
-	/* CTROR(S) ... */
-	/****************/
+	// constructors
 	public TypeField(Type fieldType, String name, ast.AstExp initExp)
 	{
 		this.name = name;

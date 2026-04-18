@@ -5,15 +5,11 @@ import symboltable.*;
 
 public class AstTypeName extends AstNode
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+	// members
 	public String type;
 	public String name;
 	
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
+	// constructor
 	public AstTypeName(String type, String name)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();

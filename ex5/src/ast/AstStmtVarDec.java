@@ -8,9 +8,7 @@ public class AstStmtVarDec extends AstStmt
 {
 	public AstDecVar varDec;
 
-	/*******************/
-	/*  CONSTRUCTOR(S) */
-	/*******************/
+	// constructor
 	public AstStmtVarDec(AstDecVar varDec, int lineNumber)
 	{
 		serialNumber = AstNodeSerialNumber.getFresh();
@@ -19,9 +17,7 @@ public class AstStmtVarDec extends AstStmt
 		this.lineNumber = lineNumber;
 	}
 
-	/********************************************************/
-	/* The printing message for a var dec statement node */
-	/********************************************************/
+	// print
 	public void printMe()
 	{
 		System.out.print("AST NODE VAR DEC STMT\n");

@@ -22,7 +22,7 @@ public class RegisterAllocator {
             workingEdges.put(t, new HashSet<>(graph.edges.get(t)));
         }
 
-        // Simplify phase
+        // simplify
         while (!workingNodes.isEmpty()) {
             Temp toRemove = null;
             
